@@ -9,7 +9,7 @@ export default function Header({ onMenuClick }) {
   const [openDropdown, setOpenDropdown] = useState(false);
 
   return (
-    <header className="bg-[#E3E8F5] flex items-center p-4 relative">
+    <header className="bg-[#E3E8F5] flex items-center px-6 py-4 relative">
       <button
         onClick={onMenuClick}
         className="2xl:hidden p-2 rounded bg-[#2D468A] text-white cursor-pointer"
@@ -54,7 +54,6 @@ export default function Header({ onMenuClick }) {
                 <Icon
                   icon="material-symbols:settings"
                   width="20"
-                  className="inline-block mr-2"
                 />
                 Settings
               </button>

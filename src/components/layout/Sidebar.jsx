@@ -67,13 +67,13 @@ export default function Sidebar({ isOpen, onClose }) {
 
   
   const navLinks = [
-    { name: "Dashboard", path: "/admin/home", icon: "material-symbols:dashboard-outline" },
-    { name: "SOP Management", path: "/admin/sop/management", icon: "material-symbols:news-outline-rounded" },
-    { name: "User Management", path: "/admin/user/management", icon: "material-symbols:group" },
-    { name: "Task Oversight", path: "/admin/task/oversight", icon: "material-symbols:select-check-box" },
-    { name: "Messaging", path: "/admin/messaging/oversight", icon: "material-symbols:chat-bubble-outline" },
-    { name: "Subscription", path: "/admin/subscription/billing", icon: "material-symbols:credit-card-outline" },
-    { name: "Settings", path: "/admin/farm/settings", icon: "material-symbols:settings-outline" },
+    { name: "Dashboard", path: "/dashboard/overview", icon: "material-symbols:dashboard-outline" },
+    { name: "Bulk Import", path: "/admin/sop/management", icon: "iconoir:import" },
+    { name: "CV Queue", path: "/admin/user/management", icon: "radix-icons:file-text" },
+    { name: "AI Re-writer", path: "/admin/task/oversight", icon: "lineicons:open-ai" },
+    { name: "Mail Submission", path: "/admin/messaging/oversight", icon: "hugeicons:sent-02" },
+    { name: "Organizations", path: "/admin/subscription/billing", icon: "ph:building-office" },
+    { name: "Tracking ", path: "/admin/farm/settings", icon: "ant-design:reload-time-outline" },
   ];
 
   return (
