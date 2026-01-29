@@ -43,7 +43,7 @@ const Home = () => {
         Dashboard Overview
       </h3>
           <p className="text-[#4A5565] text-sm md:text-base mt-1.5">
-            Manage all SOP documents in one place
+           Monitor your CV automation workflow in real-time
           </p>
         </div>
 
