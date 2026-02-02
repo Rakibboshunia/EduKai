@@ -86,6 +86,14 @@ const BulkImport = () => {
         <QualityCheck />
       </div>
 
+      <div className="mt-6 bg-white p-8 rounded-md">
+
+         <h3 className='text-[#2D468A] text-2xl font-semibold'>
+        Automated Quality Check Rules
+      </h3>
+        
+      </div>
+
       <div>
         
       </div>
