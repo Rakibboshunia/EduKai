@@ -9,71 +9,22 @@ export default function Sidebar({ isOpen, onClose }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // ROLE (ONLY READ FROM LOCALSTORAGE)
-  // const [role, setRole] = useState('Admin');
-
-  // useEffect(() => {
-  //   const savedRole = localStorage.getItem("userRole");
-  //   if (!savedRole) {
-  //     navigate("/auth/login");
-  //   } else {
-  //     setRole(savedRole);
-  //   }
-  // }, [navigate]);
-
-  //  ROLE-BASED MENU
-  // const sidebarMenu = {
-  //   Admin: [
-  //     { name: "Dashboard", path: "/admin/home", icon: "material-symbols:dashboard-outline" },
-  //     { name: "SOP Management", path: "/admin/sop/management", icon: "material-symbols:news-outline-rounded" },
-  //     { name: "User Management", path: "/admin/user/management", icon: "material-symbols:group" },
-  //     { name: "Task Oversight", path: "/admin/task/oversight", icon: "material-symbols:select-check-box" },
-  //     { name: "Messaging", path: "/admin/messaging/oversight", icon: "material-symbols:chat-bubble-outline" },
-  //     { name: "Subscription", path: "/admin/subscription/billing", icon: "material-symbols:credit-card-outline" },
-  //     { name: "Settings", path: "/admin/farm/settings", icon: "material-symbols:settings-outline" },
-  //   ],
-  //   // Owner: [
-  //   //   { name: "Dashboard", path: "/", icon: "material-symbols:dashboard-outline" },
-  //   //   { name: "Farm Management", path: "/owner/farm/management", icon: "material-symbols:agriculture-outline" },
-  //   //   { name: "Subscription", path: "/owner/subscription/plans", icon: "material-symbols:credit-card-outline" },
-  //   //   { name: "Settings", path: "/owner/system/settings", icon: "material-symbols:settings-outline" },
-  //   // ],
-  // };
-
-  // const roleText = {
-  //   Admin: { title: "Farm Check", name: "John Anderson", subtitle: "Farm Admin" },
-  //   Owner: { title: "Farm Check", subtitle: "Platform Owner" },
-  // };
-
-  // const navLinks = sidebarMenu[role] || [];
+  
 
   const isActivePath = (path) =>
     location.pathname === path || location.pathname.startsWith(path + "/");
 
-  //  LOGOUT
-  // const handleLogout = () => {
-  //   localStorage.removeItem("userRole");
-  //   localStorage.removeItem("isLoggedIn");
-
-    
-  //   setTimeout(() => {
-  //     navigate("/auth/login");
-  //     toast.success('Logged out successfully!')
-    
-  // }, 1000);
-  // };
-
-  // if (!role) return null; // prevent flicker
+  
 
   
   const navLinks = [
     { name: "Dashboard", path: "/", icon: "material-symbols:dashboard-outline" },
     { name: "Bulk Import", path: "/cv/automation/platform", icon: "iconoir:import" },
-    { name: "CV Queue", path: "/admin/user/management", icon: "radix-icons:file-text" },
-    { name: "AI Re-writer", path: "/admin/task/oversight", icon: "lineicons:open-ai" },
-    { name: "Mail Submission", path: "/admin/messaging/oversight", icon: "hugeicons:sent-02" },
-    { name: "Organizations", path: "/admin/subscription/billing", icon: "ph:building-office" },
-    { name: "Tracking ", path: "/admin/farm/settings", icon: "ant-design:reload-time-outline" },
+    { name: "CV Queue", path: "/a", icon: "radix-icons:file-text" },
+    { name: "AI Re-writer", path: "/b", icon: "lineicons:open-ai" },
+    { name: "Mail Submission", path: "/c", icon: "hugeicons:sent-02" },
+    { name: "Organizations", path: "/d", icon: "ph:building-office" },
+    { name: "Tracking ", path: "/e", icon: "ant-design:reload-time-outline" },
   ];
 
   return (
@@ -120,7 +71,7 @@ export default function Sidebar({ isOpen, onClose }) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto border-y border-[#E5E7EB]">
+          <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
             {navLinks.map((item) => (
               <NavLink
                 key={item.path}
