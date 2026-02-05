@@ -9,7 +9,7 @@ import {
 } from "react-icons/fi";
 import { MdOutlineCancel, MdOutlineErrorOutline } from "react-icons/md";
 import { Link } from "react-router-dom";
-import Bredcumb from "../../components/Breadcrumb";
+import Bredcumb from "../components/Breadcrumb";
 import { CiImport } from "react-icons/ci";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { GiCancel } from "react-icons/gi";

@@ -1,11 +1,11 @@
 import React from 'react'
-import Breadcrumb from '../../components/Breadcrumb'
-import InputField from '../../components/InputField'
+import Breadcrumb from '../components/Breadcrumb'
+import InputField from '../components/InputField'
 import { HiOutlineOfficeBuilding } from 'react-icons/hi'
 import { LuSave } from 'react-icons/lu'
-import UploadImage from '../../components/UploadImage'
-import Dropdown from '../../components/Dropdown'
-import Password from '../../components/Password'
+import UploadImage from '../components/UploadImage'
+import Dropdown from '../components/Dropdown'
+import Password from '../components/Password'
 
 const Settings = () => {
   return (
@@ -81,9 +81,6 @@ const Settings = () => {
 
       </div>
 
-      
-
-      
     </div>
   )
 }

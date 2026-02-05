@@ -52,7 +52,7 @@ export default function Header({ onMenuClick }) {
                 Profile
               </button> */}
               <Link to="/settings" onClick={() => setOpenDropdown(false)}>
-              <button className="flex w-full items-center gap-3 px-4 py-3 rounded-lg text-[#0A0A0A] hover:bg-[#2D468A] hover:text-white transition cursor-pointer">
+              <button className="flex w-full items-center gap-3 px-4 py-4 rounded-lg text-[#0A0A0A] hover:bg-[#2D468A] hover:text-white transition cursor-pointer">
                 <Icon
                   icon="material-symbols:settings"
                   width="20"
@@ -60,7 +60,7 @@ export default function Header({ onMenuClick }) {
                 Settings
               </button>
               </Link>
-              <button onClick={() => setOpenDropdown(false)} className="flex w-full items-center gap-3 px-4 py-3 rounded-lg text-[#E7000B] hover:bg-[#2D468A] hover:text-white transition cursor-pointer">
+              <button onClick={() => setOpenDropdown(false)} className="flex w-full items-center gap-3 px-4 py-4 rounded-lg text-[#E7000B] hover:bg-[#2D468A] hover:text-white transition cursor-pointer">
                 <Icon icon="material-symbols:logout" width="20" />
                 Log Out
               </button>

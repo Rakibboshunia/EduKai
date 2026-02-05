@@ -1,43 +1,89 @@
-import React from "react";
+export default function Table({ columns = [], data = [] }) {
+  if (!Array.isArray(data)) data = [];
 
-export default function Table({ TableHeads, TableRows,headClass,tableClass }) {
   return (
-    <table className={`w-full  border-collapse bg-white overflow-hidden ${tableClass}`}>
-      {/* ==== TABLE HEADER ==== */}
-      <thead>
-        <tr className="">
-          {TableHeads.map((head, idx) => (
-            <th
-              key={idx}
-              className={`text-center border-b  border-[#000000]/10 bg-[#E5E7EB]   font-inter text-[#4A5565]  py-[22px]   
-                ${idx === 0 ? "" : ""}
-                ${idx === TableHeads.length - 1 ? "" : ""} ${headClass}`}
-              style={{ width: head.width }}
+    <>
+      {/* ================= DESKTOP TABLE ================= */}
+      <div className="hidden md:block bg-white rounded-2xl overflow-visible shadow-sm">
+        <table className="w-full text-sm">
+          <thead className="bg-[#2D468A] text-white">
+            <tr>
+              {columns.map((col, i) => (
+                <th
+                  key={i}
+                  className={`px-6 py-3 text-left font-medium ${
+                    col.align === "right" ? "text-right" : ""
+                  }`}
+                >
+                  {col.header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {data.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="px-6 py-8 text-center text-gray-500"
+                >
+                  No data found
+                </td>
+              </tr>
+            ) : (
+              data.map((row, rowIndex) => (
+                <tr
+                  key={rowIndex}
+                  className="border border-gray-200 text-[#333843] last:border-none hover:bg-gray-50"
+                >
+                  {columns.map((col, colIndex) => (
+                    <td
+                      key={colIndex}
+                      className={`px-6 py-4 ${
+                        col.align === "right" ? "text-right" : ""
+                      }`}
+                    >
+                      {col.render
+                        ? col.render(row[col.accessor], row)
+                        : row[col.accessor]}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ================= MOBILE CARD VIEW ================= */}
+      <div className="md:hidden space-y-4">
+        {data.length === 0 ? (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">
+            No data found
+          </div>
+        ) : (
+          data.map((row, rowIndex) => (
+            <div
+              key={rowIndex}
+              className="bg-white text-[#333843] rounded-xl shadow-sm p-4 space-y-3"
             >
-              {head.Title}
-            </th>
-          ))}
-        </tr>
-      </thead>
-
-      {/* ==== TABLE BODY ==== */}
-      <tbody className="">
-        {TableRows.map((row, rowIdx) => (
-          <tr key={rowIdx}>
-            {TableHeads.map((head, headIdx) => (
-              <td
-                key={headIdx}
-                className="border-b  border-[#000000]/10  py-[22px] text-center px-3 font-inter  text-[#0A0A0A] "
-              >
-                {/* If render function exists, use it — otherwise show plain data */}
-                {head.render ? head.render(row, rowIdx) : row[head.key]}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+              {columns.map((col, colIndex) => (
+                <div key={colIndex} className="flex justify-between gap-4">
+                  <span className="text-xs text-gray-500">
+                    {col.header}
+                  </span>
+                  <span className="text-sm text-right break-all">
+                    {col.render
+                      ? col.render(row[col.accessor], row)
+                      : row[col.accessor]}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ))
+        )}
+      </div>
+    </>
   );
-
-  //  <Table TableHeads={TableHeads} TableRows={filteredData} />
 }

@@ -6,22 +6,33 @@ const Dropdown = ({
   label = "",
   placeholder = "",
   options = [],
+  value = null, 
   onSelect,
-  className,
-  inputClass,
-  spanClass,
-  optionClass,
-  labelClass,
-  icon
+  className = "",
+  inputClass = "",
+  optionClass = "",
+  labelClass = "",
 }) => {
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(null);
   const [show, setShow] = useState(false);
   const dropdownRef = useRef(null);
 
-  const handleSelect = (value) => {
-    setSelected(value);
+  useEffect(() => {
+    if (value && options.length) {
+      const found =
+        options.find(
+          (o) => typeof o === "object" && o.value === value
+        ) || null;
+      setSelected(found);
+    }
+  }, [value, options]);
+
+  const handleSelect = (item) => {
+    setSelected(item);
     setShow(false);
-    if (onSelect) onSelect(value);
+    if (onSelect) {
+      onSelect(typeof item === "object" ? item.value : item);
+    }
   };
 
   useEffect(() => {
@@ -30,63 +41,64 @@ const Dropdown = ({
         setShow(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const displayValue =
+    selected && typeof selected === "object"
+      ? selected.label
+      : selected || "";
+
   return (
-    <div
-      ref={dropdownRef}
-      className={`flex flex-col gap-2   relative ${className}`}
-    >
-      {/* Label */}
-      <label className={`font-inter text-[#000000]   ${labelClass}`}>
-        {label}
-       
-      </label>
+    <div ref={dropdownRef} className={`relative ${className}`}>
+      {label && (
+        <label className={`text-sm text-black ${labelClass}`}>
+          {label}
+        </label>
+      )}
 
-      {/* Input Box */}
-      <div className="relative">
-        <div onClick={() => setShow(!show)}>
-          <input
-            readOnly
-            value={selected || ""}
-            className={`w-full bg-transparent outline-none text-[#364153]  p-4 rounded-lg  placeholder:text-[#0A0A0A]/50    cursor-pointer ${inputClass}`}
-            placeholder={placeholder}
-          />
+      <div onClick={() => setShow(!show)} className="relative">
+        <input
+          readOnly
+          value={displayValue}
+          placeholder={placeholder}
+          className={`w-full cursor-pointer outline-none ${inputClass}`}
+        />
 
-          {/* Arrow Icon */}
-          <div className={`w-6 h-6  flex items-center justify-center absolute top-1/2 -translate-y-1/2 right-6 text-[#000000]  ${icon}`}>
-            {show ? <FaCaretUp /> : <FaCaretDown />}
-          </div>
+        <div className="absolute top-1/2 -translate-y-1/2 right-3">
+          {show ? <FaCaretUp /> : <FaCaretDown />}
         </div>
+      </div>
 
-        {/* Dropdown Menu */}
-        <div
-          className={`absolute left-0 top-[105%] w-full bg-white  border border-[#D1D5DC] rounded-md shadow-md  text-[#000000] z-30 transition-all duration-300 text-center overflow-y-scroll hide-scrollbar  ${optionClass} ${
-            show
-              ? "opacity-100 visible max-h-40 overflow-auto"
-              : "opacity-0 invisible max-h-0 overflow-hidden"
-          }`}
-        >
-          {options.map((item, index) => (
+      {/* Dropdown menu */}
+      <div
+        className={`absolute left-0 top-[105%] w-full bg-white border border-gray-300 rounded-md shadow-md z-30 transition-all ${optionClass} ${
+          show
+            ? "opacity-100 visible max-h-52 overflow-auto"
+            : "opacity-0 invisible max-h-0 overflow-hidden"
+        }`}
+      >
+        {options.map((item, index) => {
+          const label =
+            typeof item === "object" ? item.label : item;
+          const cls =
+            typeof item === "object" ? item.className : "";
+
+          return (
             <div
               key={index}
               onClick={() => handleSelect(item)}
-              className="py-2 hover:bg-[#015093] hover:text-white cursor-pointer"
+              className={`px-4 py-2 cursor-pointer hover:bg-[#015093] hover:text-white ${cls}`}
             >
-              {item}
+              {label}
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );
 };
 
 export default Dropdown;
-
-
-
-

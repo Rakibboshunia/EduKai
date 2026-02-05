@@ -17,15 +17,46 @@ export default function Sidebar({ isOpen, onClose }) {
   
 
   
-  const navLinks = [
-    { name: "Dashboard", path: "/", icon: "material-symbols:dashboard-outline" },
-    { name: "Bulk Import", path: "/cv/automation/platform", icon: "iconoir:import" },
-    { name: "CV Queue", path: "/a", icon: "radix-icons:file-text" },
-    { name: "AI Re-writer", path: "/b", icon: "lineicons:open-ai" },
-    { name: "Mail Submission", path: "/c", icon: "hugeicons:sent-02" },
-    { name: "Organizations", path: "/d", icon: "ph:building-office" },
-    { name: "Tracking ", path: "/e", icon: "ant-design:reload-time-outline" },
-  ];
+const navLinks = [
+  { 
+    name: "Dashboard", 
+    path: "/", 
+    icon: "material-symbols:dashboard-outline" 
+  },
+  {
+    name: "Bulk Import",
+    path: "/cv/automation/platform",
+    icon: "iconoir:import",
+  },
+  {
+    name: "Availability Check",
+    path: "/availability",
+    icon: "material-symbols:check-circle-outline",
+  },
+  { 
+    name: "CV Queue", 
+    path: "/cv/queue", 
+    icon: "radix-icons:file-text" },
+  { 
+    name: "AI Re-writer", 
+    path: "/ai/re-writer", 
+    icon: "lineicons:open-ai" },
+  {
+    name: "Mail Submission",
+    path: "/mail/submission",
+    icon: "hugeicons:sent-02",
+  },
+  { 
+    name: "Organizations", 
+    path: "/organizations", 
+    icon: "ph:building-office" },
+  {
+    name: "Tracking",
+    path: "/tracking",
+    icon: "ant-design:reload-time-outline",
+  },
+];
+
 
   return (
     <>
@@ -61,8 +92,6 @@ export default function Sidebar({ isOpen, onClose }) {
 
            <div className="">
              <p className="text-2xl text-[#423B3B] font-medium">Edukai</p>
-
-            
 
             <p className="text-xs mt-1  text-[#626262]">
            Automation Engine

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import Breadcrumb from "../../components/Breadcrumb";
-import UploadPDF from "../../components/UploadPDF";
+import Breadcrumb from "../components/Breadcrumb";
+import UploadPDF from "../components/UploadPDF";
 import { CiExport } from "react-icons/ci";
 import { BiCoinStack } from "react-icons/bi";
 import { BsFolder } from "react-icons/bs";
-import ExistingCRM from "../../components/ExistingCRM";
-import PreviousDatabase from "../../components/PreviousDatabase";
-import QualityCheck from "../../components/QualityCheck";
+import ExistingCRM from "../components/ExistingCRM";
+import PreviousDatabase from "../components/PreviousDatabase";
+import QualityCheck from "../components/QualityCheck";
 
 const BulkImport = () => {
   const [activeTab, setActiveTab] = useState("upload");

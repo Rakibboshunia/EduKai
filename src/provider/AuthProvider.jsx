@@ -1,11 +1,14 @@
-import { createContext, useRef } from "react";
+import { createContext } from "react";
 
 export const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
-  const userInfo = {};
+  const userInfo = null; // or {} if you prefer
+
   return (
-    <AuthContext.Provider value={userInfo}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={userInfo}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 
