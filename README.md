@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # How do you use this Repo for Dashboard...
 
 ## Installation
@@ -166,3 +167,6 @@ dependencies: {
     "tailwind-merge": "^2.2.0"
   },
 ```
+=======
+# Okia_CV-Submission
+>>>>>>> 5bd4b0a09c42a20f6b3c8cc7a7a32c926de5bb2e
