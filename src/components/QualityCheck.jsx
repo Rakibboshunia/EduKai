@@ -45,10 +45,6 @@ const QualityCheck = () => {
               inputClass={`border border-[#D9D9D9] rounded-lg`}
             />
             
-
-            
-
-
             {/* <button className='bg-[#2D468A] text-white px-6 py-3 rounded-md mt-4 hover:bg-[#354e92] cursor-pointer '>
               Connect & Import
             </button> */}
