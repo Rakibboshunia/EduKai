@@ -12,7 +12,6 @@ import Tracking from "../pages/Tracking";
 import Organizations from "../pages/Organizations";
 import MailSubmission from "../pages/MailSubmission";
 import CvQueue from "../pages/CvQueue";
-import AiReWriter from "../pages/AiReWriter";
 
 // auth
 import LogIn from "../pages/auth/LogIn";
@@ -20,6 +19,7 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import NewPassword from "../pages/auth/NewPassword";
 import Success from "../pages/auth/Success";
 import OTP from "../pages/auth/OTP";
+import AICVRewriter from "../pages/AICVRewriter";
 
 
 const router = createBrowserRouter([
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
       { path: "organizations", element: <Organizations /> },
       { path: "mail/submission", element: <MailSubmission /> },
       { path: "cv/queue", element: <CvQueue /> },
-      { path: "ai/re-writer", element: <AiReWriter /> },
+      { path: "ai/re-writer", element: <AICVRewriter /> },
     ],
   },
 

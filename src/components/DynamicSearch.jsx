@@ -1,11 +1,15 @@
 import { useState } from "react";
-import { FiSearch } from "react-icons/fi";
+import { FiSearch, FiX } from "react-icons/fi";
 
-const DynamicSearch = ({ data, searchKeys, onFilter }) => {
+const DynamicSearch = ({
+  data = [],
+  searchKeys = [],
+  onFilter,
+  placeholder = "Search...",
+}) => {
   const [query, setQuery] = useState("");
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleSearch = (value) => {
     setQuery(value);
 
     if (!value.trim()) {
@@ -13,16 +17,32 @@ const DynamicSearch = ({ data, searchKeys, onFilter }) => {
       return;
     }
 
+    const q = value.toLowerCase();
+
     const filtered = data.filter((item) =>
-      searchKeys.some((key) =>
-        item[key]
-          ?.toString()
-          .toLowerCase()
-          .includes(value.toLowerCase())
-      )
+      searchKeys.some((key) => {
+        const field = item[key];
+
+        // 🔹 Handle array fields (e.g. skills)
+        if (Array.isArray(field)) {
+          return field.join(" ").toLowerCase().includes(q);
+        }
+
+        // 🔹 Handle string / number
+        if (field !== undefined && field !== null) {
+          return field.toString().toLowerCase().includes(q);
+        }
+
+        return false;
+      })
     );
 
     onFilter(filtered);
+  };
+
+  const clearSearch = () => {
+    setQuery("");
+    onFilter(data);
   };
 
   return (
@@ -36,10 +56,20 @@ const DynamicSearch = ({ data, searchKeys, onFilter }) => {
       <input
         type="text"
         value={query}
-        onChange={handleSearch}
-        placeholder="Search..."
-        className="w-full md:w-130 pl-10 pr-4 py-2 bg-white/70 text-black border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A] transition"
+        onChange={(e) => handleSearch(e.target.value)}
+        placeholder={placeholder}
+        className="w-full pl-10 pr-10 py-3 bg-white text-black border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A] transition"
       />
+
+      {/* Clear button */}
+      {query && (
+        <button
+          onClick={clearSearch}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+        >
+          <FiX size={16} />
+        </button>
+      )}
     </div>
   );
 };

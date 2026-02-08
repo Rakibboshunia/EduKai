@@ -25,14 +25,11 @@ const ResetPassword = () => {
           type={`email`}
           inputClass={`rounded-lg border border-[#2D468A]`}
           label={`Email Address `}
-          placeholder={``}
+          placeholder={`Enter your email address`}
         />
-       
-
-       
 
         <Link className="w-full" to="/auth/verify/otp">
-          <button className="bg-[#2D468A] text-[#ffffff]  w-full py-3 rounded-lg cursor-pointer mt-12">
+          <button className="bg-[#2D468A] text-[#ffffff]  w-full py-3 rounded-lg cursor-pointer mt-8 hover:bg-[#354e90] flex items-center justify-center gap-2">
            Send
           </button>
         </Link>

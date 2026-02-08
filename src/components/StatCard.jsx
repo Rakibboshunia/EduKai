@@ -1,16 +1,18 @@
-export default function StatCard({ title, value, icon, bgColor }) {
+const StatCard = ({ title, value, icon: Icon, iconBg }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm px-6 py-5 flex items-center justify-between">
+    <div className="flex items-center justify-between bg-white rounded-lg shadow-md border border-gray-100 p-10 w-full">
       <div>
-        <p className="text-sm text-gray-500 mb-1">{title}</p>
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
+        <p className="text-xl text-gray-600 mb-4">{title}</p>
+        <h2 className="text-2xl font-bold text-gray-900">{value}</h2>
       </div>
 
       <div
-        className={`w-10 h-10 rounded-lg flex items-center justify-center text-white ${bgColor}`}
+        className={`w-12 h-12 flex items-center justify-center rounded-md ${iconBg}`}
       >
-        {icon}
+        <Icon className="text-white text-3xl" />
       </div>
     </div>
   );
-}
+};
+
+export default StatCard;

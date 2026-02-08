@@ -28,15 +28,14 @@ const handleChange = (e, index) => {
 
   return (
     <main className="bg-white grid justify-center items-center overflow-y-auto hide-scrollbar py-10 md:px-11 px-12  rounded-3xl  ">
-      <form className="gap-5 flex flex-col items-center md:w-[450px] w-full ">
+      <form className="gap-5 flex flex-col items-center md:w-md w-full ">
         <h3 className="text-[#2D468A] font-semibold text-4xl">Edukai</h3>
         <h3 className="font-inter font-medium text-[32px] text-[#2D468A] ">
           Enter your OTP
         </h3>
 
         <p className="font-inter  text-[#333333] text-center">
-       We sent a code to your email address. Please check your email for the
-          6 digit code.
+       We sent a code to your email address. <br />Please check your email for the 6 digit code.
         </p>
 
         <div className="flex gap-4 justify-center my-10">
@@ -50,13 +49,13 @@ const handleChange = (e, index) => {
               onChange={(e) => handleChange(e, i)}
               onKeyDown={(e) => handleKeyDown(e, i)}
               value={otp[i]}
-              className="appearance-none w-[47px] h-[49px] border border-[#2D468A] rounded-[10px] text-center outline-none text-xl font-inter font-bold text-[#2D468A] "
+              className="appearance-none w-11 h-12 border border-[#2D468A] rounded-[10px] text-center outline-none text-xl font-inter font-bold text-[#2D468A] "
             />
           ))}
         </div>
 
         <Link className="w-full" to="/auth/new/password">
-          <button className="bg-[#2D468A] text-[#ffffff]  w-full py-3 rounded-lg cursor-pointer mt-12">
+          <button className="bg-[#2D468A] text-[#ffffff]  w-full py-3 rounded-lg cursor-pointer hover:bg-[#354e90] flex items-center justify-center gap-2">
             Verify
           </button>
         </Link>

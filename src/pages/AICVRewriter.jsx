@@ -1,0 +1,177 @@
+import { useState } from "react";
+import {
+  FiUser,
+  FiCheckCircle,
+  FiSend,
+  FiDownload,
+} from "react-icons/fi";
+import { SiOpenai } from "react-icons/si";
+
+import AnonymizationOption from "../components/AnonymizationOption";
+import CVPreviewCard from "../components/CVPreviewCard";
+
+export default function AICVRewriter() {
+  /* ---------------- State ---------------- */
+  const [selectedCandidate, setSelectedCandidate] = useState("John Smith");
+
+  const [options, setOptions] = useState({
+    removeSurname: true,
+    replaceWithRef: false,
+    removeEmployer: false,
+  });
+
+  /* ---------------- Dummy CV Data ---------------- */
+  const originalCV = `
+      JOHN SMITH
+      Senior Software Developer
+
+      Email: john.smith@email.com | Phone: +44 7700 900123
+
+      PROFESSIONAL SUMMARY
+      Experienced software developer with 5+ years of expertise in building scalable applications.
+      Proven track record at TechCorp International delivering high-quality solutions.
+
+      WORK EXPERIENCE
+      Senior Developer – TechCorp International (2021–Present)
+      - Led development of microservices architecture
+      - Improved application performance by 40%
+
+      EDUCATION
+      BSc Computer Science – University of Technology
+      `;
+
+  const aiCV = `
+      JOHN
+      Senior Software Developer
+
+      Email: anonymized@email.com | Phone: +44 7700 900123
+
+      PROFESSIONAL SUMMARY
+      Experienced software developer with strong expertise in enterprise application development.
+      Demonstrated ability to build scalable, high-performance systems.
+
+      WORK EXPERIENCE
+      Senior Developer – Leading Technology Company (2021–Present)
+      - Designed and implemented scalable architectures
+      - Improved system performance and maintainability
+
+      EDUCATION
+      BSc Computer Science – University of Technology
+      `;
+
+  return (
+    <div className="p-4 sm:p-6">
+      {/* 🔹 Page Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#2D468A]">
+          AI CV Rewriter & Anonymization
+        </h1>
+        <p className="text-sm text-gray-600 mt-1">
+          Enhance CVs with AI and apply anonymization settings
+        </p>
+      </div>
+
+      {/* 🔹 Candidate Select */}
+      <div className="bg-white p-4 rounded-lg border mb-6">
+        <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <FiUser className="text-gray-400" />
+          Select Candidate
+        </label>
+
+        <select
+          value={selectedCandidate}
+          onChange={(e) => setSelectedCandidate(e.target.value)}
+          className="w-full border rounded-md px-4 py-2.5 text-sm text-gray-800 cursor-pointer
+                     focus:outline-none focus:ring-2 focus:ring-[#2D468B]"
+        >
+          <option>John Smith</option>
+          <option>Emily Carter</option>
+          <option>Michael Brown</option>
+        </select>
+      </div>
+
+      {/* 🔹 Anonymization Settings */}
+      <div className="bg-white p-8 mb-8 rounded-lg shadow-sm">
+        <div className="bg-white rounded-lg border mb-6">
+          <h3 className="text-sm font-semibold text-[#2D468A] mb-4">
+            Anonymization Settings
+          </h3>
+
+          <div className="flex flex-col gap-4">
+            <AnonymizationOption
+              title="Remove Surname"
+              description="Keep first name only"
+              checked={options.removeSurname}
+              onChange={() =>
+                setOptions((p) => ({
+                  ...p,
+                  removeSurname: !p.removeSurname,
+                }))
+              }
+            />
+
+            <AnonymizationOption
+              title="Replace with Database Reference"
+              description="Use candidate reference ID instead of name"
+              checked={options.replaceWithRef}
+              onChange={() =>
+                setOptions((p) => ({
+                  ...p,
+                  replaceWithRef: !p.replaceWithRef,
+                }))
+              }
+            />
+
+            <AnonymizationOption
+              title="Remove Current Employer Name"
+              description="Replace with generic company description"
+              checked={options.removeEmployer}
+              onChange={() =>
+                setOptions((p) => ({
+                  ...p,
+                  removeEmployer: !p.removeEmployer,
+                }))
+              }
+            />
+          </div>
+
+          {/* Rewrite Button */}
+          <button className="mt-5 bg-[#2D468B] text-white px-4 py-2 rounded-md text-smhover:bg-[#354e92] transition flex items-center gap-2 cursor-pointer shadow-sm hover:shadow-[#2D468B]/50">
+            <SiOpenai className="text-lg" />
+            Rewrite with AI
+          </button>
+        </div>
+
+        {/* 🔹 CV Comparison */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 pt-8">
+          {/* AI Enhanced CV */}
+          <CVPreviewCard
+            title="AI-Enhanced CV"
+            status="Processed"
+            content={aiCV}
+          />
+
+          {/* Original CV */}
+          <CVPreviewCard
+            title="Original CV"
+            status="Before AI processing"
+            content={originalCV}
+          />
+        </div>
+
+        {/* 🔹 Footer Actions */}
+        <div className="flex items-center gap-4 pt-8 ">
+          <button className="flex-1 bg-[#2D468B] text-white px-6 py-3 rounded-md cursor-pointer hover:bg-[#354e92] flex items-center justify-center gap-2">
+            <FiSend />
+            Mail Submission
+          </button>
+
+          <button className="border border-gray-300 px-5 py-3 rounded-md text-sm text-black cursor-pointer hover:bg-gray-300 flex items-center gap-2">
+            <FiDownload />
+            Download CV
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

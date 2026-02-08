@@ -1,68 +1,93 @@
 import Table from "../components/Table";
 import StatusBadge from "../components/StatusBadge";
+import StatCard from "../components/StatCard";
+import {
+  FiSend,
+  FiEye,
+  FiMessageSquare,
+  FiCheckCircle,
+} from "react-icons/fi";
 
 export default function Tracking() {
   const data = [
-  {
-    date: "23 Jan, 2025 10:30 AM",
-    name: "John Doe",
-    organization: "TechCorp Solutions",
-    file: "John_Doe_CV.pdf",
-    status: "opened",
-    sender: "recruiter@company.com",
-  },
-  {
-    date: "23 Jan, 2025 11:15 AM",
-    name: "Emily Carter",
-    organization: "Innova Labs",
-    file: "Emily_Carter_CV.pdf",
-    status: "responded",
-    sender: "hr@innovalabs.com",
-  },
-  {
-    date: "23 Jan, 2025 12:00 PM",
-    name: "Michael Brown",
-    organization: "NextGen Systems",
-    file: "Michael_Brown_CV.pdf",
-    status: "sent",
-    sender: "talent@nextgen.io",
-  },
-  {
-    date: "23 Jan, 2025 01:45 PM",
-    name: "Sarah Johnson",
-    organization: "BlueWave Tech",
-    file: "Sarah_Johnson_CV.pdf",
-    status: "delivered",
-    sender: "jobs@bluewave.com",
-  },
-  {
-    date: "23 Jan, 2025 02:30 PM",
-    name: "Aisha Rahman",
-    organization: "StartupX",
-    file: "Aisha_Rahman_CV.pdf",
-    status: "responded",
-    sender: "careers@startupx.ai",
-  },
-  {
-    date: "23 Jan, 2025 03:10 PM",
-    name: "Carlos Mendes",
-    organization: "GlobalSoft",
-    file: "Carlos_Mendes_CV.pdf",
-    status: "opened",
-    sender: "hr@globalsoft.com",
-  },
-];
+    {
+      date: "23 Jan, 2025 10:30 AM",
+      name: "John Doe",
+      organization: "TechCorp Solutions",
+      file: "John_Doe_CV.pdf",
+      status: "opened",
+      sender: "recruiter@company.com",
+    },
+    {
+      date: "23 Jan, 2025 11:15 AM",
+      name: "Emily Carter",
+      organization: "Innova Labs",
+      file: "Emily_Carter_CV.pdf",
+      status: "responded",
+      sender: "hr@innovalabs.com",
+    },
+    {
+      date: "23 Jan, 2025 12:00 PM",
+      name: "Michael Brown",
+      organization: "NextGen Systems",
+      file: "Michael_Brown_CV.pdf",
+      status: "sent",
+      sender: "talent@nextgen.io",
+    },
+    {
+      date: "23 Jan, 2025 01:45 PM",
+      name: "Sarah Johnson",
+      organization: "BlueWave Tech",
+      file: "Sarah_Johnson_CV.pdf",
+      status: "delivered",
+      sender: "jobs@bluewave.com",
+    },
+    {
+      date: "23 Jan, 2025 02:30 PM",
+      name: "Aisha Rahman",
+      organization: "StartupX",
+      file: "Aisha_Rahman_CV.pdf",
+      status: "responded",
+      sender: "careers@startupx.ai",
+    },
+    {
+      date: "23 Jan, 2025 03:10 PM",
+      name: "Carlos Mendes",
+      organization: "GlobalSoft",
+      file: "Carlos_Mendes_CV.pdf",
+      status: "opened",
+      sender: "hr@globalsoft.com",
+    },
+  ];
 
+  // 🔹 Stats
+  const total = data.length;
+  const opened = data.filter((d) => d.status === "opened").length;
+  const responded = data.filter((d) => d.status === "responded").length;
+  const delivered = data.filter((d) => d.status === "delivered").length;
 
   const columns = [
-    { header: "Date & Time", accessor: "date" },
-    { header: "Candidate", accessor: "name" },
-    { header: "Organization", accessor: "organization" },
+    {
+      header: "Date & Time",
+      accessor: "date",
+      className: "min-w-[180px]",
+    },
+    {
+      header: "Candidate",
+      accessor: "name",
+      className: "min-w-[160px]",
+    },
+    {
+      header: "Organization",
+      accessor: "organization",
+      className: "min-w-[180px]",
+    },
     {
       header: "CV File",
       accessor: "file",
+      className: "min-w-[160px]",
       render: (v) => (
-        <span className="text-blue-600 underline cursor-pointer">
+        <span className="text-blue-600 underline cursor-pointer truncate block max-w-[150px]">
           {v}
         </span>
       ),
@@ -70,17 +95,21 @@ export default function Tracking() {
     {
       header: "Status",
       accessor: "status",
-      render: (v) => (
-        <StatusBadge status={v} variant="tracking" />
-      ),
+      className: "min-w-[140px]",
+      render: (v) => <StatusBadge status={v} variant="tracking" />,
     },
-    { header: "Sent By", accessor: "sender" },
+    {
+      header: "Sent By",
+      accessor: "sender",
+      className: "min-w-[200px]",
+    },
     {
       header: "Action",
       accessor: "action",
       align: "right",
+      className: "min-w-[140px]",
       render: () => (
-        <button className="text-blue-600 text-sm hover:underline">
+        <button className="text-blue-600 text-sm font-medium hover:underline whitespace-nowrap">
           View Details
         </button>
       ),
@@ -88,13 +117,52 @@ export default function Tracking() {
   ];
 
   return (
-      <div className="p-6">
-        <h1 className="text-3xl font-bold mb-4 text-[#2D468A]">
+    <div className="p-6 sm:p-6">
+      {/* 🔹 Page Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#2D468A] mb-2">
           Submission Tracking & Audit Log
         </h1>
-        <p className="text-md text-gray-600 mb-8">Complete history of all submissions and interactions.</p>
-  
+        <p className="text-sm sm:text-md text-gray-600">
+          Complete history of all submissions and interactions.
+        </p>
+      </div>
+
+      {/* 🔹 Responsive Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+        <StatCard
+          title="Total Submissions"
+          value={total}
+          icon={FiSend}
+          iconBg="bg-blue-600"
+        />
+
+        <StatCard
+          title="Opened"
+          value={opened}
+          icon={FiEye}
+          iconBg="bg-yellow-500"
+        />
+
+        <StatCard
+          title="Responded"
+          value={responded}
+          icon={FiMessageSquare}
+          iconBg="bg-green-500"
+        />
+
+        <StatCard
+          title="Delivered"
+          value={delivered}
+          icon={FiCheckCircle}
+          iconBg="bg-purple-600"
+        />
+      </div>
+
+      {/* 🔹 Responsive Table Wrapper */}
+      <div className="overflow-x-auto rounded-lg">
         <Table columns={columns} data={data} />
       </div>
-    );
+    </div>
+  );
 }

@@ -73,7 +73,7 @@ export default function Availability() {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4 text-[#2D468A]">
+      <h1 className="text-3xl font-semibold mb-4 text-[#2D468A]">
         Availability Check
       </h1>
 

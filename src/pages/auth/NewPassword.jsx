@@ -18,27 +18,23 @@ const NewPassword = () => {
         <p className="font-inter  text-[#333333]">
          Ensure it different from previous ones for security
         </p>
-
-        
-        
+   
         <Password
           label="New Password"
+          placeholder="Enter your new password"
           inputClass={`rounded-lg border border-[#2D468A]`}
           // placeholder="Enter your password"
         />
 
         <Password
           label="Confirm Password"
+          placeholder="Confirm your new password"
           inputClass={`rounded-lg border border-[#2D468A]`}
           // placeholder="Enter your password"
         />
 
-        
-
-       
-
         <Link className="w-full" to="/auth/success">
-          <button className="bg-[#2D468A] text-[#ffffff]  w-full py-3 rounded-lg cursor-pointer mt-12">
+          <button className="bg-[#2D468A] text-[#ffffff]  w-full py-3 rounded-lg cursor-pointer mt-10 hover:bg-[#354e90] flex items-center justify-center gap-2">
          Reset Password
           </button>
         </Link>
