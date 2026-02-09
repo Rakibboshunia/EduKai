@@ -7,6 +7,8 @@ import { Icon } from "@iconify/react";
 import { Link, useNavigate } from "react-router-dom";
 import NotificationsDropdown from "../../components/NotificationsDropdown";
 
+import logo from "../../assets/logo1.avif"
+
 export default function Header({ onMenuClick }) {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [openNotifications, setOpenNotifications] = useState(false);
@@ -34,7 +36,7 @@ export default function Header({ onMenuClick }) {
         {/* 🔔 Notifications */}
         <div className="relative">
           <IoNotifications
-            className="w-8 h-8 sm:w-10 sm:h-10 text-[#2D468A] cursor-pointer"
+            className="w-8 h-8 sm:w-8 sm:h-8 text-[#2D468A] cursor-pointer"
             onClick={() => {
               setOpenNotifications((prev) => !prev);
               setOpenDropdown(false);
@@ -58,7 +60,7 @@ export default function Header({ onMenuClick }) {
           >
             {/* Avatar */}
             <Image
-              src="/logo.png"
+              src={logo}
               alt="User Avatar"
               className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
             />
@@ -66,7 +68,7 @@ export default function Header({ onMenuClick }) {
             {/* User info (hide on small screens) */}
             <div className="hidden sm:block">
               <p className="text-sm sm:text-base text-white font-medium">
-                John Doe
+                Olivia Macdona
               </p>
               <p className="text-[10px] sm:text-xs text-white">
                 Admin

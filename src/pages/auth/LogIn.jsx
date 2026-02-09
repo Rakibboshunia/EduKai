@@ -44,7 +44,9 @@ const LogIn = () => {
       }
 
       toast.success("Logged in successfully!");
-      navigate("/dashboard", { replace: true });
+
+      // ✅ FIXED ROUTE
+      navigate("/", { replace: true });
 
       setLoading(false);
     }, 1000);
