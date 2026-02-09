@@ -92,7 +92,7 @@ BSc Computer Science – University of Technology
       {/* 🔹 Anonymization Settings */}
       <div className="bg-white p-4 sm:p-6 md:p-8 mb-8 rounded-lg shadow-sm">
         <div className="bg-white rounded-lg border mb-6 p-4 sm:p-6">
-          <h3 className="text-sm font-semibold text-[#2D468A] mb-4">
+          <h3 className="text-xl font-semibold text-[#2D468A] mb-4">
             Anonymization Settings
           </h3>
 
