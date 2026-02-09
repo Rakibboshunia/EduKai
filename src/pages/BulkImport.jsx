@@ -7,12 +7,13 @@ import { BsFolder } from "react-icons/bs";
 import ExistingCRM from "../components/ExistingCRM";
 import PreviousDatabase from "../components/PreviousDatabase";
 import QualityCheck from "../components/QualityCheck";
+import ChannelSelector from "../components/ChannelSelector";
 
 const BulkImport = () => {
   const [activeTab, setActiveTab] = useState("upload");
 
   return (
-    <div>
+    <div className="p-4">
       {/* ===== HEADER ===== */}
       <div className="flex items-center justify-between">
         <div>
@@ -60,7 +61,9 @@ const BulkImport = () => {
         >
           <BsFolder className="w-11 h-11" />
           Previous Database
-          <p className="text-[#7C7C7C] text-xs">Import from previous database</p>
+          <p className="text-[#7C7C7C] text-xs">
+            Import from previous database
+          </p>
         </button>
       </div>
 
@@ -73,29 +76,25 @@ const BulkImport = () => {
             }}
           />
         )}
-        {activeTab === "crm" && (
-          <ExistingCRM />
-        )}
+        {activeTab === "crm" && <ExistingCRM />}
 
-        {activeTab === "database" && (
-          <PreviousDatabase />
-        )}
+        {activeTab === "database" && <PreviousDatabase />}
       </div>
 
       <div className="mt-6 ">
         <QualityCheck />
       </div>
 
-      <div className="mt-6 bg-white p-8 rounded-md">
+      <div className="mt-6 bg-white p-8 rounded-md space-y-4">
+        <h2 className="text-2xl font-semibold text-[#2D468A]">
+          Availability Check Workflow
+        </h2>
 
-         <h3 className='text-[#2D468A] text-2xl font-semibold'>
-        Automated Quality Check Rules
-      </h3>
-        
-      </div>
+        <p className="text-sm font-medium text-gray-700">Select Channels</p>
 
-      <div>
-        
+        <div>
+          <ChannelSelector />
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import InputField from "../../components/InputField";
 import Password from "../../components/Password";
-import { MdLogin } from "react-icons/md";
+import { MdLogin, MdArrowBack } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -13,7 +13,7 @@ const LogIn = () => {
   const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Load remembered email on mount
+  /* ================= Load Remembered Email ================= */
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberEmail");
     if (savedEmail) {
@@ -22,6 +22,7 @@ const LogIn = () => {
     }
   }, []);
 
+  /* ================= Login Handler ================= */
   const handleLogin = (e) => {
     e.preventDefault();
 
@@ -32,11 +33,10 @@ const LogIn = () => {
 
     setLoading(true);
 
-    // Simulated API call
+    // 🔹 Simulated API call
     setTimeout(() => {
       localStorage.setItem("isLoggedIn", "true");
 
-      // Remember email logic
       if (remember) {
         localStorage.setItem("rememberEmail", email);
       } else {
@@ -51,15 +51,30 @@ const LogIn = () => {
   };
 
   return (
-    <main className="bg-white grid justify-center items-center py-16 md:px-11 px-6 rounded-3xl border border-[#E5E7EB] shadow-lg">
+    <main className="bg-white grid justify-center items-center py-16 md:px-11 px-6 rounded-3xl border border-[#E5E7EB] shadow-lg relative">
       <Toaster position="top-center" />
+
+      {/* 🔙 Back Button */}
+      <button
+        type="button"
+        onClick={() => navigate("/")}
+        className="absolute top-6 left-6 flex items-center gap-1 text-[#2D468A] hover:underline text-sm cursor-pointer"
+      >
+        <MdArrowBack size={18} />
+        Back to Home
+      </button>
 
       <form
         onSubmit={handleLogin}
-        className="gap-5 flex flex-col items-center md:w-md w-full"
+        noValidate
+        className="gap-5 flex flex-col items-center md:w-[420px] w-full"
       >
-        <h3 className="text-[#2D468A] font-semibold text-4xl">Edukai</h3>
+        {/* Logo */}
+        <h3 className="text-[#2D468A] font-semibold text-4xl">
+          Edukai
+        </h3>
 
+        {/* Title */}
         <h3 className="text-[32px] text-[#2D468A] font-medium">
           Login to Account
         </h3>
@@ -68,6 +83,7 @@ const LogIn = () => {
           Please enter your email and password to continue
         </p>
 
+        {/* Email */}
         <InputField
           type="email"
           label="Email Address"
@@ -77,6 +93,7 @@ const LogIn = () => {
           inputClass="rounded-lg border border-[#2D468A]"
         />
 
+        {/* Password */}
         <Password
           label="Password"
           placeholder="Enter your password"
@@ -85,6 +102,7 @@ const LogIn = () => {
           inputClass="rounded-lg border border-[#2D468A]"
         />
 
+        {/* Remember + Forgot */}
         <div className="w-full flex items-center justify-between text-sm">
           <label className="flex items-center gap-2 cursor-pointer text-[#333]">
             <input
@@ -104,10 +122,11 @@ const LogIn = () => {
           </Link>
         </div>
 
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg mt-6 flex items-center justify-center gap-2 cursor-pointer
+          className={`w-full py-3 rounded-lg mt-6 flex items-center justify-center gap-2
             ${
               loading
                 ? "bg-gray-400 cursor-not-allowed"

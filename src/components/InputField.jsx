@@ -9,7 +9,7 @@ const InputField = ({
   value,
   onChange,
   type,
-  name,          // ✅ ADD THIS
+  name,     
 }) => {
   return (
     <div className={`flex flex-col w-full gap-2 ${className}`}>
@@ -19,7 +19,7 @@ const InputField = ({
 
       <input
         type={type}
-        name={name}          // ✅ ADD THIS
+        name={name}    
         placeholder={placeholder}
         value={value}
         onChange={onChange}

@@ -20,6 +20,7 @@ import NewPassword from "../pages/auth/NewPassword";
 import Success from "../pages/auth/Success";
 import OTP from "../pages/auth/OTP";
 import AICVRewriter from "../pages/AICVRewriter";
+import EmailCompose from "../pages/EmailCompose";
 
 
 const router = createBrowserRouter([
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
       { path: "tracking", element: <Tracking /> },
       { path: "organizations", element: <Organizations /> },
       { path: "mail/submission", element: <MailSubmission /> },
+      { path: "mail/submission/compose", element: <EmailCompose />,},
       { path: "cv/queue", element: <CvQueue /> },
       { path: "ai/re-writer", element: <AICVRewriter /> },
     ],

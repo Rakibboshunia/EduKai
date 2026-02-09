@@ -9,7 +9,7 @@ const PreviousDatabase = () => {
         Import from Database Archive
       </h3>
 
-      <div className='mt-5 grid grid-cols-12 gap-6 '>
+      <div className='mt-5 grid grid-cols-12 gap-6 text-black '>
 
         <Dropdown
           label="Set Database"

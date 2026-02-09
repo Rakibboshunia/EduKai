@@ -23,7 +23,7 @@ const QualityCheck = () => {
               "5",
             ]}
           inputClass={`border border-[#D9D9D9] `}
-          className={`col-span-6`}
+          className={`col-span-6 text-black`}
         />
           
             <InputField

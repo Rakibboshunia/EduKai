@@ -1,6 +1,8 @@
+import { useEffect, useMemo, useState } from "react";
 import Table from "../components/Table";
 import StatusBadge from "../components/StatusBadge";
 import StatCard from "../components/StatCard";
+import Pagination from "../components/Pagination";
 import {
   FiSend,
   FiEye,
@@ -9,7 +11,7 @@ import {
 } from "react-icons/fi";
 
 export default function Tracking() {
-  const data = [
+  const data = useMemo(() => [
     {
       date: "23 Jan, 2025 10:30 AM",
       name: "John Doe",
@@ -58,13 +60,56 @@ export default function Tracking() {
       status: "opened",
       sender: "hr@globalsoft.com",
     },
-  ];
+    {
+      date: "23 Jan, 2025 03:10 PM",
+      name: "Carlos Mendes",
+      organization: "GlobalSoft",
+      file: "Carlos_Mendes_CV.pdf",
+      status: "opened",
+      sender: "hr@globalsoft.com",
+    },
+    {
+      date: "23 Jan, 2025 03:10 PM",
+      name: "Carlos Mendes",
+      organization: "GlobalSoft",
+      file: "Carlos_Mendes_CV.pdf",
+      status: "opened",
+      sender: "hr@globalsoft.com",
+    },
+    {
+      date: "23 Jan, 2025 03:10 PM",
+      name: "Carlos Mendes",
+      organization: "GlobalSoft",
+      file: "Carlos_Mendes_CV.pdf",
+      status: "opened",
+      sender: "hr@globalsoft.com",
+    },
+    {
+      date: "23 Jan, 2025 03:10 PM",
+      name: "Carlos Mendes",
+      organization: "GlobalSoft",
+      file: "Carlos_Mendes_CV.pdf",
+      status: "opened",
+      sender: "hr@globalsoft.com",
+    },
+    {
+      date: "23 Jan, 2025 03:10 PM",
+      name: "Carlos Mendes",
+      organization: "GlobalSoft",
+      file: "Carlos_Mendes_CV.pdf",
+      status: "opened",
+      sender: "hr@globalsoft.com",
+    },
+  ],[]);
 
-  // 🔹 Stats
+  /* ================= STATS ================= */
+
   const total = data.length;
   const opened = data.filter((d) => d.status === "opened").length;
   const responded = data.filter((d) => d.status === "responded").length;
   const delivered = data.filter((d) => d.status === "delivered").length;
+
+  /* ================= TABLE COLUMNS ================= */
 
   const columns = [
     {
@@ -87,7 +132,7 @@ export default function Tracking() {
       accessor: "file",
       className: "min-w-[160px]",
       render: (v) => (
-        <span className="text-blue-600 underline cursor-pointer truncate block max-w-[150px]">
+        <span className="text-blue-600 underline cursor-pointer truncate block max-w-38">
           {v}
         </span>
       ),
@@ -116,8 +161,29 @@ export default function Tracking() {
     },
   ];
 
+  /* ================= PAGINATION STATE ================= */
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const PER_PAGE = 8;
+
+  const totalPages = Math.ceil(data.length / PER_PAGE);
+
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * PER_PAGE;
+    const end = start + PER_PAGE;
+    return data.slice(start, end);
+  }, [currentPage, data]);
+
+  /* ================= RESET PAGE IF DATA CHANGES ================= */
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, []);
+
+  /* ================= RENDER ================= */
+
   return (
-    <div className="p-6 sm:p-6">
+    <div className="p-4">
       {/* 🔹 Page Header */}
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-[#2D468A] mb-2">
@@ -128,7 +194,7 @@ export default function Tracking() {
         </p>
       </div>
 
-      {/* 🔹 Responsive Stat Cards */}
+      {/* 🔹 Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
         <StatCard
           title="Total Submissions"
@@ -136,21 +202,18 @@ export default function Tracking() {
           icon={FiSend}
           iconBg="bg-blue-600"
         />
-
         <StatCard
           title="Opened"
           value={opened}
           icon={FiEye}
           iconBg="bg-yellow-500"
         />
-
         <StatCard
           title="Responded"
           value={responded}
           icon={FiMessageSquare}
           iconBg="bg-green-500"
         />
-
         <StatCard
           title="Delivered"
           value={delivered}
@@ -159,10 +222,17 @@ export default function Tracking() {
         />
       </div>
 
-      {/* 🔹 Responsive Table Wrapper */}
+      {/* 🔹 Table */}
       <div className="overflow-x-auto rounded-lg">
-        <Table columns={columns} data={data} />
+        <Table columns={columns} data={paginatedData} />
       </div>
+
+      {/* 🔹 Pagination */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }

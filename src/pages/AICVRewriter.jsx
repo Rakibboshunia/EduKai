@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   FiUser,
-  FiCheckCircle,
   FiSend,
   FiDownload,
 } from "react-icons/fi";
@@ -22,51 +21,51 @@ export default function AICVRewriter() {
 
   /* ---------------- Dummy CV Data ---------------- */
   const originalCV = `
-      JOHN SMITH
-      Senior Software Developer
+JOHN SMITH
+Senior Software Developer
 
-      Email: john.smith@email.com | Phone: +44 7700 900123
+Email: john.smith@email.com | Phone: +44 7700 900123
 
-      PROFESSIONAL SUMMARY
-      Experienced software developer with 5+ years of expertise in building scalable applications.
-      Proven track record at TechCorp International delivering high-quality solutions.
+PROFESSIONAL SUMMARY
+Experienced software developer with 5+ years of expertise in building scalable applications.
+Proven track record at TechCorp International delivering high-quality solutions.
 
-      WORK EXPERIENCE
-      Senior Developer – TechCorp International (2021–Present)
-      - Led development of microservices architecture
-      - Improved application performance by 40%
+WORK EXPERIENCE
+Senior Developer – TechCorp International (2021–Present)
+- Led development of microservices architecture
+- Improved application performance by 40%
 
-      EDUCATION
-      BSc Computer Science – University of Technology
-      `;
+EDUCATION
+BSc Computer Science – University of Technology
+`;
 
   const aiCV = `
-      JOHN
-      Senior Software Developer
+JOHN
+Senior Software Developer
 
-      Email: anonymized@email.com | Phone: +44 7700 900123
+Email: anonymized@email.com | Phone: +44 7700 900123
 
-      PROFESSIONAL SUMMARY
-      Experienced software developer with strong expertise in enterprise application development.
-      Demonstrated ability to build scalable, high-performance systems.
+PROFESSIONAL SUMMARY
+Experienced software developer with strong expertise in enterprise application development.
+Demonstrated ability to build scalable, high-performance systems.
 
-      WORK EXPERIENCE
-      Senior Developer – Leading Technology Company (2021–Present)
-      - Designed and implemented scalable architectures
-      - Improved system performance and maintainability
+WORK EXPERIENCE
+Senior Developer – Leading Technology Company (2021–Present)
+- Designed and implemented scalable architectures
+- Improved system performance and maintainability
 
-      EDUCATION
-      BSc Computer Science – University of Technology
-      `;
+EDUCATION
+BSc Computer Science – University of Technology
+`;
 
   return (
     <div className="p-4 sm:p-6">
       {/* 🔹 Page Header */}
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#2D468A]">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#2D468A]">
           AI CV Rewriter & Anonymization
         </h1>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-gray-600 mt-1 max-w-2xl">
           Enhance CVs with AI and apply anonymization settings
         </p>
       </div>
@@ -82,7 +81,7 @@ export default function AICVRewriter() {
           value={selectedCandidate}
           onChange={(e) => setSelectedCandidate(e.target.value)}
           className="w-full border rounded-md px-4 py-2.5 text-sm text-gray-800 cursor-pointer
-                     focus:outline-none focus:ring-2 focus:ring-[#2D468B]"
+          focus:outline-none focus:ring-2 focus:ring-[#2D468B]"
         >
           <option>John Smith</option>
           <option>Emily Carter</option>
@@ -91,8 +90,8 @@ export default function AICVRewriter() {
       </div>
 
       {/* 🔹 Anonymization Settings */}
-      <div className="bg-white p-8 mb-8 rounded-lg shadow-sm">
-        <div className="bg-white rounded-lg border mb-6">
+      <div className="bg-white p-4 sm:p-6 md:p-8 mb-8 rounded-lg shadow-sm">
+        <div className="bg-white rounded-lg border mb-6 p-4 sm:p-6">
           <h3 className="text-sm font-semibold text-[#2D468A] mb-4">
             Anonymization Settings
           </h3>
@@ -136,22 +135,20 @@ export default function AICVRewriter() {
           </div>
 
           {/* Rewrite Button */}
-          <button className="mt-5 bg-[#2D468B] text-white px-4 py-2 rounded-md text-smhover:bg-[#354e92] transition flex items-center gap-2 cursor-pointer shadow-sm hover:shadow-[#2D468B]/50">
+          <button className="mt-5 bg-[#2D468B] text-white px-4 py-2 rounded-md text-sm hover:bg-[#354e92] transition flex items-center gap-2 cursor-pointer shadow-sm hover:shadow-[#2D468B]/50">
             <SiOpenai className="text-lg" />
             Rewrite with AI
           </button>
         </div>
 
         {/* 🔹 CV Comparison */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 pt-8">
-          {/* AI Enhanced CV */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 pt-6 sm:pt-8">
           <CVPreviewCard
             title="AI-Enhanced CV"
             status="Processed"
             content={aiCV}
           />
 
-          {/* Original CV */}
           <CVPreviewCard
             title="Original CV"
             status="Before AI processing"
@@ -160,13 +157,13 @@ export default function AICVRewriter() {
         </div>
 
         {/* 🔹 Footer Actions */}
-        <div className="flex items-center gap-4 pt-8 ">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-6 sm:pt-8">
           <button className="flex-1 bg-[#2D468B] text-white px-6 py-3 rounded-md cursor-pointer hover:bg-[#354e92] flex items-center justify-center gap-2">
             <FiSend />
             Mail Submission
           </button>
 
-          <button className="border border-gray-300 px-5 py-3 rounded-md text-sm text-black cursor-pointer hover:bg-gray-300 flex items-center gap-2">
+          <button className="border border-gray-300 px-6 py-3 rounded-md text-sm text-black cursor-pointer hover:bg-gray-100 flex items-center justify-center gap-2">
             <FiDownload />
             Download CV
           </button>

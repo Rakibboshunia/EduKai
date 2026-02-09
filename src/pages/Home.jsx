@@ -1,6 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaArrowRight, FaClockRotateLeft, FaRegCircleCheck } from "react-icons/fa6";
+import {
+  FaArrowRight,
+  FaClockRotateLeft,
+  FaRegCircleCheck,
+} from "react-icons/fa6";
 import { MdOutlineCancel } from "react-icons/md";
 import { FiSend } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
@@ -10,17 +14,30 @@ import { CiImport } from "react-icons/ci";
 import StatCard from "../components/StatCard";
 
 /* ---------------- Activities Card ---------------- */
-const ActivitiesCard = ({ title, name, time, dotColor = "bg-[#00C950]" }) => {
+const ActivitiesCard = ({
+  title,
+  name,
+  time,
+  dotColor = "bg-[#00C950]",
+}) => {
   return (
-    <div className="flex items-center justify-between bg-[#E8EDFB] p-4 rounded-xl">
-      <div className="flex items-center gap-4">
-        <span className={`w-2 h-2 rounded-full ${dotColor}`} />
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-[#E8EDFB] p-4 rounded-xl">
+      <div className="flex items-start sm:items-center gap-4">
+        <span className={`w-2 h-2 mt-2 sm:mt-0 rounded-full ${dotColor}`} />
+
         <div>
-          <p className="text-[#000000] font-medium text-xl">{title}</p>
-          <p className="text-[#767676] text-sm">{name}</p>
+          <p className="text-[#000000] font-medium text-base sm:text-lg">
+            {title}
+          </p>
+          <p className="text-[#767676] text-sm">
+            {name}
+          </p>
         </div>
       </div>
-      <p className="text-[#767676] text-sm">{time}</p>
+
+      <p className="text-[#767676] text-xs sm:text-sm whitespace-nowrap">
+        {time}
+      </p>
     </div>
   );
 };
@@ -98,46 +115,47 @@ const Home = () => {
   ];
 
   return (
-    <div>
+    <div className="p-4 sm:p-6">
       {/* 🔹 Page Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div>
-          <h3 className="text-[#2D468A] text-3xl whitespace-nowrap">
+          <h3 className="text-[#2D468A] text-2xl sm:text-3xl font-semibold">
             Dashboard Overview
           </h3>
-          <p className="text-[#4A5565] text-sm md:text-base mt-1.5">
+
+          <p className="text-[#4A5565] text-sm sm:text-base mt-1.5 max-w-xl">
             Monitor your CV automation workflow in real-time
           </p>
         </div>
 
         <Link to="cv/automation/platform">
-          <button className="bg-[#2D468B] text-white px-6 py-2 rounded-md flex items-center gap-2 hover:bg-[#354e92] cursor-pointer transition">
-            <CiImport className="w-6 h-6" />
+          <button className="bg-[#2D468B] text-white px-5 py-2.5 rounded-md flex items-center gap-2 hover:bg-[#354e92] transition text-sm sm:text-base">
+            <CiImport className="w-5 h-5 sm:w-6 sm:h-6" />
             Bulk Import
           </button>
         </Link>
       </div>
 
       {/* 🔹 Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6 mt-8">
         {stats.map((item, index) => (
           <StatCard key={index} {...item} />
         ))}
       </div>
 
       {/* 🔹 Activities Section */}
-      <div className="mt-10 bg-white p-5 rounded-lg border-2 border-[#E5E7EB]">
-        <h3 className="text-[#2D468A] text-2xl font-semibold">
+      <div className="mt-10 bg-white p-4 sm:p-6 rounded-xl border border-[#E5E7EB]">
+        <h3 className="text-[#2D468A] text-xl sm:text-2xl font-semibold">
           Recent Automated Activities
         </h3>
 
-        <div className="mt-6 flex flex-col gap-6">
+        <div className="mt-6 flex flex-col gap-4 sm:gap-6">
           {activities.map((activity, index) => (
             <ActivitiesCard key={index} {...activity} />
           ))}
         </div>
 
-        <button className="mt-6 text-[#2D468A] flex items-center gap-2 font-semibold hover:underline">
+        <button className="mt-6 text-[#2D468A] flex items-center gap-2 font-semibold text-sm sm:text-base hover:underline">
           View All Activities <FaArrowRight />
         </button>
       </div>

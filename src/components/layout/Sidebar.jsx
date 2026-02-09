@@ -1,62 +1,57 @@
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import Image from "../Image";
-import { useEffect, useState } from "react";
 import { FiX } from "react-icons/fi";
-import toast, { Toaster } from "react-hot-toast";
 
 export default function Sidebar({ isOpen, onClose }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  
-
   const isActivePath = (path) =>
     location.pathname === path || location.pathname.startsWith(path + "/");
 
-  
-
-  
-const navLinks = [
-  { 
-    name: "Dashboard", 
-    path: "/", 
-    icon: "material-symbols:dashboard-outline" 
-  },
-  {
-    name: "Bulk Import",
-    path: "/cv/automation/platform",
-    icon: "iconoir:import",
-  },
-  {
-    name: "Availability Check",
-    path: "/availability",
-    icon: "material-symbols:check-circle-outline",
-  },
-  { 
-    name: "CV Queue", 
-    path: "/cv/queue", 
-    icon: "radix-icons:file-text" },
-  { 
-    name: "AI Re-writer", 
-    path: "/ai/re-writer", 
-    icon: "lineicons:open-ai" },
-  {
-    name: "Mail Submission",
-    path: "/mail/submission",
-    icon: "hugeicons:sent-02",
-  },
-  { 
-    name: "Organizations", 
-    path: "/organizations", 
-    icon: "ph:building-office" },
-  {
-    name: "Tracking",
-    path: "/tracking",
-    icon: "ant-design:reload-time-outline",
-  },
-];
-
+  const navLinks = [
+    {
+      name: "Dashboard",
+      path: "/",
+      icon: "material-symbols:dashboard-outline",
+    },
+    {
+      name: "Bulk Import",
+      path: "/cv/automation/platform",
+      icon: "iconoir:import",
+    },
+    {
+      name: "Availability Check",
+      path: "/availability",
+      icon: "material-symbols:check-circle-outline",
+    },
+    {
+      name: "CV Queue",
+      path: "/cv/queue",
+      icon: "radix-icons:file-text",
+    },
+    {
+      name: "AI Re-writer",
+      path: "/ai/re-writer",
+      icon: "lineicons:open-ai",
+    },
+    {
+      name: "Mail Submission",
+      path: "/mail/submission",
+      icon: "hugeicons:sent-02",
+    },
+    {
+      name: "Organizations",
+      path: "/organizations",
+      icon: "ph:building-office",
+    },
+    {
+      name: "Tracking",
+      path: "/tracking",
+      icon: "ant-design:reload-time-outline",
+    },
+  ];
 
   return (
     <>
@@ -67,7 +62,6 @@ const navLinks = [
           onClick={onClose}
         />
       )}
-      
 
       {/* Sidebar */}
       <aside
@@ -90,13 +84,11 @@ const navLinks = [
           <div className="px-6 py-6 flex  items-center gap-4">
             <Image src="/logo.png" alt="Company Logo" />
 
-           <div className="">
-             <p className="text-2xl text-[#423B3B] font-medium">Edukai</p>
+            <div className="">
+              <p className="text-2xl text-[#423B3B] font-medium">Edukai</p>
 
-            <p className="text-xs mt-1  text-[#626262]">
-           Automation Engine
-            </p>
-           </div>
+              <p className="text-xs mt-1  text-[#626262]">Automation Engine</p>
+            </div>
           </div>
 
           {/* Navigation */}

@@ -50,7 +50,7 @@ export default function Organizations() {
   const [organizations, setOrganizations] = useState(initialOrganizations);
   const [filteredData, setFilteredData] = useState(initialOrganizations);
   const [industry, setIndustry] = useState("");
-  const [openAdd, setOpenAdd] = useState(false); // ✅ ADD
+  const [openAdd, setOpenAdd] = useState(false);
 
   /* ---------------- Search Sync ---------------- */
   const handleSearchFilter = (data) => {
@@ -105,7 +105,7 @@ export default function Organizations() {
   };
 
   return (
-    <div className="p-4 sm:p-6">
+    <div className="p-4">
       {/* 🔹 Page Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10">
         <div>

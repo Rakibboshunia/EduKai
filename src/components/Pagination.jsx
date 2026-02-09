@@ -1,103 +1,99 @@
 "use client";
-import React from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
 export default function Pagination({
-  totalPages,
-  currentPage,
-  setCurrentPage,
+  totalPages = 1,
+  currentPage = 1,
+  onPageChange,
 }) {
-  
+  if (totalPages <= 1) return null;
+
   const getPageNumbers = () => {
     const pages = [];
+    const maxVisible = 8;
 
-    if (totalPages <= 5) {
-    
+    if (totalPages <= maxVisible) {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      
-      if (currentPage <= 3) {
-        pages.push(1, 2, 3, 4, "...", totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1, "...", totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
-      } else {
-        pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
-      }
+      return pages;
     }
+
+    pages.push(1);
+
+    let start = Math.max(2, currentPage - 2);
+    let end = Math.min(totalPages - 1, currentPage + 2);
+
+    if (currentPage <= 4) {
+      start = 2;
+      end = 6;
+    }
+
+    if (currentPage >= totalPages - 3) {
+      start = totalPages - 5;
+      end = totalPages - 1;
+    }
+
+    if (start > 2) {
+      pages.push("...");
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    if (end < totalPages - 1) {
+      pages.push("...");
+    }
+
+    pages.push(totalPages);
 
     return pages;
   };
 
-  const pages = getPageNumbers();
-
   return (
     <div className="flex justify-center items-center gap-2 mt-6">
-      {/* Prev Button */}
+
       <button
-        className="p-2 rounded-md text-[#364153] disabled:text-[#697077] font-inter flex items-center gap-2"      
         disabled={currentPage === 1}
-        onClick={() => setCurrentPage((prev) => prev - 1)}
+        onClick={() => onPageChange(currentPage - 1)}
+        className="p-2 flex items-center gap-2 text-[#364153] disabled:text-[#697077]"
       >
-        <MdKeyboardArrowLeft className='w-6 h-6' />
-            Previous
+        <MdKeyboardArrowLeft className="w-6 h-6" />
+        Previous
       </button>
 
-      {/* Page Numbers */}
-      {pages.map((page, index) =>
+      {getPageNumbers().map((page, index) =>
         page === "..." ? (
-          <span key={index} className="px-2 text-gray-500 select-none">
+          <span
+            key={`dots-${index}`}
+            className="px-2 text-gray-400 select-none"
+          >
             ...
           </span>
         ) : (
           <button
-            key={index}
-            onClick={() => setCurrentPage(page)}
-            className={`px-3 py-1 rounded-md transition-all duration-200 font-inter ${
-              currentPage === page
-                ? "bg-[#F6A62D] text-[#F1F1F1] rounded-full"
-                : "text-[#F6A62D]"
-            }`}
+            key={page}
+            onClick={() => onPageChange(page)}
+            className={`px-3 py-1 rounded-md font-inter transition
+              ${
+                currentPage === page
+                  ? "bg-[#F6A62D] text-white rounded-full"
+                  : "text-[#F6A62D] hover:bg-[#F6A62D]/10"
+              }
+            `}
           >
             {page}
           </button>
         )
       )}
 
-      {/* Next Button */}
       <button
-        className="p-2 rounded-md text-[#364153] disabled:text-[#697077] font-inter flex items-center gap-2"
         disabled={currentPage === totalPages}
-        onClick={() => setCurrentPage((prev) => prev + 1)}
+        onClick={() => onPageChange(currentPage + 1)}
+        className="p-2 flex items-center gap-2 text-[#364153] disabled:text-[#697077]"
       >
         Next
-        <MdKeyboardArrowRight className='w-6 h-6' />
+        <MdKeyboardArrowRight className="w-6 h-6" />
       </button>
     </div>
   );
 }
-
-  // const [baseOnTitle, setBaseOnTitle] = useState([]);
-  // const [currentPage, setCurrentPage] = useState(1);
-
-  // Set data for pagination
-  
-  // useEffect(() => {
-  //   setBaseOnTitle(pageItems);
-  // }, []);
-
-// Pagination setup
-
-  // const itemsPerPage = 10;
-  // const totalPages = Math.ceil(baseOnTitle.length / itemsPerPage);
-  // const startIndex = (currentPage - 1) * itemsPerPage;
-  // const currentItems = baseOnTitle.slice(startIndex, startIndex + itemsPerPage);
-
-
-// call
-
-
-{/* <Pagination
-        totalPages={totalPages}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      /> */}

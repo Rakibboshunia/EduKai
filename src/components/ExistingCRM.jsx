@@ -9,7 +9,7 @@ const ExistingCRM = () => {
         Connect to CRM System 
       </h3>
 
-      <div className='mt-5 flex flex-col gap-6 '>
+      <div className='mt-5 flex flex-col gap-6 text-black '>
 
         <Dropdown
           label="CRM Provider"

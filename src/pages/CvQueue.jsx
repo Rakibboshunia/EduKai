@@ -5,7 +5,7 @@ import CVCard from "../components/CVCard";
 export default function CVQueuePage() {
   const [activeTab, setActiveTab] = useState("all");
 
-  // 🔥 Dummy data (API replace later) – memoized
+  /* ================= DUMMY DATA ================= */
   const cvs = useMemo(
     () => [
       {
@@ -19,7 +19,6 @@ export default function CVQueuePage() {
         availability: "available",
         createdAt: "2025-01-23 09:30",
       },
-
       {
         id: 2,
         name: "Emily Johnson",
@@ -35,7 +34,6 @@ export default function CVQueuePage() {
           "Missing required skills",
         ],
       },
-
       {
         id: 3,
         name: "Michael Brown",
@@ -49,7 +47,6 @@ export default function CVQueuePage() {
         createdAt: "2025-01-23 11:00",
         issues: ["Incomplete formatting", "Missing employment dates"],
       },
-
       {
         id: 4,
         name: "Sarah Williams",
@@ -63,7 +60,6 @@ export default function CVQueuePage() {
         createdAt: "2025-01-23 11:45",
         issues: ["Employment gap not explained"],
       },
-
       {
         id: 5,
         name: "Daniel Lee",
@@ -76,7 +72,6 @@ export default function CVQueuePage() {
         createdAt: "2025-01-23 12:20",
         issues: ["Missing JavaScript experience"],
       },
-
       {
         id: 6,
         name: "Olivia Martin",
@@ -89,9 +84,10 @@ export default function CVQueuePage() {
         createdAt: "2025-01-23 13:10",
       },
     ],
-    [],
+    []
   );
 
+  /* ================= TABS ================= */
   const tabs = useMemo(
     () => [
       { key: "all", label: "All CVs", count: cvs.length },
@@ -114,38 +110,52 @@ export default function CVQueuePage() {
     [cvs]
   );
 
+  /* ================= FILTER ================= */
   const filtered = useMemo(() => {
     if (activeTab === "all") return cvs;
-    if (activeTab === "manual")
+    if (activeTab === "manual") {
       return cvs.filter((c) => c.reviewType === "manual");
+    }
     return cvs.filter((c) => c.status === activeTab);
   }, [activeTab, cvs]);
 
+  /* ================= RENDER ================= */
   return (
-    <div className="p-6 space-y-10 min-h-screen">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-semibold text-[#2D468A]">
+    <div className="p-4 sm:p-6 space-y-8 min-h-screen">
+      {/* Header */}
+      <div className="space-y-1">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-[#2D468A]">
           CV Processing Queue
         </h1>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm sm:text-base text-gray-600 max-w-2xl">
           Monitor automated quality checks and availability confirmations
         </p>
       </div>
 
-      <Tabs 
-        tabs={tabs} 
-        active={activeTab} 
-        onChange={setActiveTab} 
-      />
+      {/* Tabs */}
+      <div className="overflow-x-auto">
+        <Tabs
+          tabs={tabs}
+          active={activeTab}
+          onChange={setActiveTab}
+        />
+      </div>
 
-      <div className="space-y-8">
-        {filtered.map((cv) => (
-          <CVCard
-            key={cv.id}
-            data={cv}
-            onView={() => console.log("View CV:", cv.id)}
-          />
-        ))}
+      {/* CV Cards */}
+      <div className="space-y-6">
+        {filtered.length > 0 ? (
+          filtered.map((cv) => (
+            <CVCard
+              key={cv.id}
+              data={cv}
+              onView={() => console.log("View CV:", cv.id)}
+            />
+          ))
+        ) : (
+          <div className="text-center py-12 text-gray-500">
+            No CVs found for this category
+          </div>
+        )}
       </div>
     </div>
   );

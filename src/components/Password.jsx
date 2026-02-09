@@ -12,7 +12,7 @@ const Password = ({
   inputClass = "",
   value,
   onChange,
-  name, // optional: "password" or "password_confirmation"
+  name, 
 }) => {
   const [showPass, setShowPass] = useState(false);
 
