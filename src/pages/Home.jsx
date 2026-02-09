@@ -129,7 +129,7 @@ const Home = () => {
         </div>
 
         <Link to="cv/automation/platform">
-          <button className="bg-[#2D468B] text-white px-5 py-2.5 rounded-md flex items-center gap-2 hover:bg-[#354e92] transition text-sm sm:text-base">
+          <button className="bg-[#2D468B] text-white px-5 py-2.5 rounded-md flex items-center gap-2 hover:bg-[#354e92] transition text-sm sm:text-base cursor-pointer">
             <CiImport className="w-5 h-5 sm:w-6 sm:h-6" />
             Bulk Import
           </button>

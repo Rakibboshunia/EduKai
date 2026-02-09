@@ -12,7 +12,7 @@ export default function Availability() {
       email: "john.doe@abc.com",
       whatsapp: "+1 555 101 0199",
       source: "CRM",
-      status: "active",
+      status: "follow_up",
     },
     {
       date: "20 Nov, 2025",
@@ -44,7 +44,7 @@ export default function Availability() {
       email: "aisha.rahman@startup.ai",
       whatsapp: "+880 1711 223344",
       source: "CRM",
-      status: "active",
+      status: "na",
     },
     {
       date: "23 Nov, 2025",
@@ -60,7 +60,7 @@ export default function Availability() {
       email: "aisha.rahman@startup.ai",
       whatsapp: "+880 1711 223344",
       source: "CRM",
-      status: "active",
+      status: "follow_up",
     },
     {
       date: "23 Nov, 2025",
@@ -76,7 +76,7 @@ export default function Availability() {
       email: "aisha.rahman@startup.ai",
       whatsapp: "+880 1711 223344",
       source: "CRM",
-      status: "active",
+      status: "follow_up",
     },
     {
       date: "23 Nov, 2025",
@@ -92,23 +92,7 @@ export default function Availability() {
       email: "aisha.rahman@startup.ai",
       whatsapp: "+880 1711 223344",
       source: "CRM",
-      status: "active",
-    },
-    {
-      date: "23 Nov, 2025",
-      name: "Carlos Mendes",
-      email: "carlos.mendes@global.net",
-      whatsapp: "+351 912 345 678",
-      source: "WhatsApp",
       status: "follow_up",
-    },
-    {
-      date: "22 Nov, 2025",
-      name: "Aisha Rahman",
-      email: "aisha.rahman@startup.ai",
-      whatsapp: "+880 1711 223344",
-      source: "CRM",
-      status: "active",
     },
     {
       date: "23 Nov, 2025",

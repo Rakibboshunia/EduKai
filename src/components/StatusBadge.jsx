@@ -1,19 +1,20 @@
+import { useState, useRef, useEffect } from "react";
 import {
   CheckCircle,
   XCircle,
   AlertCircle,
   Clock,
   MailCheck,
+  ChevronDown,
 } from "lucide-react";
 
 export default function StatusBadge({ status, variant = "availability" }) {
-  // ================= AVAILABILITY STATUS =================
+  const [currentStatus, setCurrentStatus] = useState(status);
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  /* ================= AVAILABILITY STATUS ================= */
   const availabilityMap = {
-    active: {
-      label: "Active",
-      icon: MailCheck,
-      className: "bg-green-100 text-green-700",
-    },
     available: {
       label: "Available",
       icon: MailCheck,
@@ -36,7 +37,7 @@ export default function StatusBadge({ status, variant = "availability" }) {
     },
   };
 
-  // ================= TRACKING STATUS =================
+  /* ================= TRACKING STATUS ================= */
   const trackingMap = {
     opened: {
       label: "Opened",
@@ -60,7 +61,7 @@ export default function StatusBadge({ status, variant = "availability" }) {
     },
   };
 
-  // ================= QUALITY STATUS (SCREENSHOT MATCHED) =================
+  /* ================= QUALITY STATUS ================= */
   const qualityMap = {
     passed: {
       label: "Quality Passed",
@@ -84,7 +85,7 @@ export default function StatusBadge({ status, variant = "availability" }) {
     },
   };
 
-  // ================= VARIANT MAP =================
+  /* ================= VARIANT MAP ================= */
   const variantMap = {
     availability: availabilityMap,
     tracking: trackingMap,
@@ -93,7 +94,7 @@ export default function StatusBadge({ status, variant = "availability" }) {
 
   const map = variantMap[variant] || {};
   const current =
-    map[status] || {
+    map[currentStatus] || {
       label: "Unknown",
       icon: Clock,
       className: "bg-gray-300 text-gray-600",
@@ -101,12 +102,63 @@ export default function StatusBadge({ status, variant = "availability" }) {
 
   const Icon = current.icon;
 
+  /* ===== close dropdown on outside click ===== */
+  useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  /* ================= READ ONLY (QUALITY) ================= */
+  if (variant === "quality") {
+    return (
+      <span
+        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${current.className}`}
+      >
+        <Icon size={14} />
+        {current.label}
+      </span>
+    );
+  }
+
+  /* ================= DROPDOWN (AVAILABILITY + TRACKING) ================= */
   return (
-    <span
-      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${current.className}`}
-    >
-      <Icon size={14} />
-      {current.label}
-    </span>
+    <div ref={ref} className="relative inline-block text-right">
+      <button
+        onClick={() => setOpen((p) => !p)}
+        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${current.className}`}
+      >
+        <Icon size={14} />
+        {current.label}
+        <ChevronDown size={12} className="ml-1" />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+          {Object.entries(map).map(([key, item]) => {
+            const ItemIcon = item.icon;
+            return (
+              <button
+                key={key}
+                onClick={() => {
+                  setCurrentStatus(key);
+                  setOpen(false);
+                  console.log(`${variant} status changed to:`, key);
+                  // 🔥 API call later
+                }}
+                className={`w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 ${item.className}`}
+              >
+                <ItemIcon size={14} />
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }

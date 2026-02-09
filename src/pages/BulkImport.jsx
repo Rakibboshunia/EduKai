@@ -24,7 +24,7 @@ const BulkImport = () => {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6 rounded-lg p-1.5 w-full mt-6  ">
+      <div className="grid md:grid-cols-3 gap-6 rounded-lg p-1.5 w-full mt-6">
         <button
           onClick={() => setActiveTab("upload")}
           className={`md:px-20 px-[38px] py-6 rounded-md cursor-pointer flex items-center flex-col gap-1 text-2xl ${
@@ -72,19 +72,19 @@ const BulkImport = () => {
         {activeTab === "upload" && (
           <UploadPDF
             onFileSelect={(file) => {
-              console.log("Selected PDF:", file);
+              console.log("Selected files:", file);
             }}
           />
         )}
         {activeTab === "crm" && <ExistingCRM />}
-
         {activeTab === "database" && <PreviousDatabase />}
       </div>
 
-      <div className="mt-6 ">
+      <div className="mt-6">
         <QualityCheck />
       </div>
 
+      {/* ===== LAST SECTION ===== */}
       <div className="mt-6 bg-white p-8 rounded-md space-y-4">
         <h2 className="text-2xl font-semibold text-[#2D468A]">
           Availability Check Workflow
@@ -92,8 +92,18 @@ const BulkImport = () => {
 
         <p className="text-sm font-medium text-gray-700">Select Channels</p>
 
-        <div>
-          <ChannelSelector />
+        <ChannelSelector />
+
+        {/* ✅ ONLY NEW PART */}
+        <div className="pt-4 flex justify-end">
+          <button
+            className="bg-[#2D468A] text-white px-8 py-3 rounded-md hover:bg-[#354e92] cursor-pointer"
+            onClick={() => {
+              console.log("Submit CV clicked");
+            }}
+          >
+            Submit CV
+          </button>
         </div>
       </div>
     </div>

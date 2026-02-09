@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FiUser,
   FiSend,
@@ -10,6 +11,9 @@ import AnonymizationOption from "../components/AnonymizationOption";
 import CVPreviewCard from "../components/CVPreviewCard";
 
 export default function AICVRewriter() {
+  /* ---------------- Navigation ---------------- */
+  const navigate = useNavigate();
+
   /* ---------------- State ---------------- */
   const [selectedCandidate, setSelectedCandidate] = useState("John Smith");
 
@@ -158,7 +162,10 @@ BSc Computer Science – University of Technology
 
         {/* 🔹 Footer Actions */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-6 sm:pt-8">
-          <button className="flex-1 bg-[#2D468B] text-white px-6 py-3 rounded-md cursor-pointer hover:bg-[#354e92] flex items-center justify-center gap-2">
+          <button
+            onClick={() => navigate("/mail/submission")}
+            className="flex-1 bg-[#2D468B] text-white px-6 py-3 rounded-md cursor-pointer hover:bg-[#354e92] flex items-center justify-center gap-2"
+          >
             <FiSend />
             Mail Submission
           </button>

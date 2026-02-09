@@ -31,7 +31,7 @@ const Password = ({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className={`w-full outline-none p-4 text-black placeholder:text-black/50 
+          className={`w-full outline-none p-2 text-black placeholder:text-black/50 
           font-inter text-[16px] rounded-lg bg-white ${inputClass}`}
           aria-label={label || "password"}
           autoComplete={name === "password" ? "new-password" : "off"}

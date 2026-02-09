@@ -64,7 +64,7 @@ const Dropdown = ({
           readOnly
           value={displayValue}
           placeholder={placeholder}
-          className={`w-full outline-none p-4 
+          className={`w-full outline-none p-2 
           bg-[#F9FAFB] text-gray-900 placeholder:text-gray-400
           rounded-lg border border-gray-300 ${inputClass}`}
         />

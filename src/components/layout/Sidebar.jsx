@@ -36,11 +36,11 @@ export default function Sidebar({ isOpen, onClose }) {
       path: "/ai/re-writer",
       icon: "lineicons:open-ai",
     },
-    {
-      name: "Mail Submission",
-      path: "/mail/submission",
-      icon: "hugeicons:sent-02",
-    },
+    // {
+    //   name: "Mail Submission",
+    //   path: "/mail/submission",
+    //   icon: "hugeicons:sent-02",
+    // },
     {
       name: "Organizations",
       path: "/organizations",
