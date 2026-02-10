@@ -15,3 +15,15 @@
     font-family: 'Inter', sans-serif;
   }
 }
+
+@media print {
+  body {
+    margin: 0;
+  }
+
+  @page {
+    size: A4;
+    margin: 20mm;
+  }
+}
+

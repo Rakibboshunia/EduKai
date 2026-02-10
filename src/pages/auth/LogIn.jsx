@@ -128,7 +128,7 @@ const LogIn = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg mt-6 flex items-center justify-center gap-2
+          className={`w-full py-3 rounded-lg mt-6 flex items-center justify-center gap-2 cursor-pointer
             ${
               loading
                 ? "bg-gray-400 cursor-not-allowed"

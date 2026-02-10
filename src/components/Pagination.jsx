@@ -55,7 +55,7 @@ export default function Pagination({
       <button
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
-        className="p-2 flex items-center gap-2 text-[#364153] disabled:text-[#697077]"
+        className="p-2 flex items-center gap-2 text-[#364153] disabled:text-[#697077] cursor-pointer"
       >
         <MdKeyboardArrowLeft className="w-6 h-6" />
         Previous
@@ -73,11 +73,11 @@ export default function Pagination({
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`px-3 py-1 rounded-md font-inter transition
+            className={`px-3 py-1 rounded-md font-inter transition cursor-pointer
               ${
                 currentPage === page
-                  ? "bg-[#F6A62D] text-white rounded-full"
-                  : "text-[#F6A62D] hover:bg-[#F6A62D]/10"
+                  ? "bg-[#2D468A] text-white rounded-full"
+                  : "text-[#2D468A] hover:bg-[#F6A62D]/10"
               }
             `}
           >
@@ -89,7 +89,7 @@ export default function Pagination({
       <button
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
-        className="p-2 flex items-center gap-2 text-[#364153] disabled:text-[#697077]"
+        className="p-2 flex items-center gap-2 text-[#364153] disabled:text-[#697077] cursor-pointer"
       >
         Next
         <MdKeyboardArrowRight className="w-6 h-6" />

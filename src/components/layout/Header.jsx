@@ -90,7 +90,7 @@ export default function Header({ onMenuClick }) {
                 to="/settings"
                 onClick={() => setOpenDropdown(false)}
               >
-                <button className="flex w-full items-center gap-3 px-4 py-3 text-sm rounded-lg text-[#0A0A0A] hover:bg-[#2D468A] hover:text-white transition">
+                <button className="flex w-full items-center gap-3 px-4 py-3 text-sm rounded-lg text-[#0A0A0A] hover:bg-[#2D468A] hover:text-white transition cursor-pointer">
                   <Icon
                     icon="material-symbols:settings"
                     width="18"
@@ -101,7 +101,7 @@ export default function Header({ onMenuClick }) {
 
               <button
                 onClick={handleLogout}
-                className="flex w-full items-center gap-3 px-4 py-3 text-sm rounded-lg text-[#E7000B] hover:bg-[#2D468A] hover:text-white transition"
+                className="flex w-full items-center gap-3 px-4 py-3 text-sm rounded-lg text-[#E7000B] hover:bg-[#2D468A] hover:text-white transition cursor-pointer"
               >
                 <Icon
                   icon="material-symbols:logout"

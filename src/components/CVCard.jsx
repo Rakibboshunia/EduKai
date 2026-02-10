@@ -11,8 +11,6 @@ export default function CVCard({ data, onView }) {
     status,
     reviewType,
     availability,
-    awaitingResponse,
-    issues,
     createdAt,
   } = data;
 
@@ -43,7 +41,7 @@ export default function CVCard({ data, onView }) {
 
       {/* Skills */}
       <div className="mt-4">
-        <p className="text-sm text-black mb-2">skills</p>
+        <p className="text-sm text-black mb-2">Skills</p>
         <div className="flex gap-2 flex-wrap">
           {skills.map((skill) => (
             <span
@@ -56,9 +54,8 @@ export default function CVCard({ data, onView }) {
         </div>
       </div>
 
-      {/* ✅ Status row (FIXED) */}
+      {/* Status */}
       <div className="mt-4 flex gap-3 flex-wrap items-center">
-        {/* Quality status */}
         <StatusBadge
           status={
             status === "failed" && isManual
@@ -68,46 +65,16 @@ export default function CVCard({ data, onView }) {
           variant="quality"
         />
 
-        {/* Awaiting Response (only for failed/manual) */}
-        {awaitingResponse && (
-          <StatusBadge
-            status="awaiting_response"
-            variant="quality"
-          />
-        )}
-
-        {/* Available (only for passed) */}
         {availability === "available" && (
-          <StatusBadge
-            status="available"
-            variant="availability"
-          />
+          <StatusBadge status="available" variant="availability" />
         )}
       </div>
-
-      {/* Issues */}
-      {issues?.length > 0 && (
-        <div
-          className={`mt-4 p-4 rounded-xl text-sm ${
-            isManual
-              ? "bg-yellow-50 border border-yellow-200 text-yellow-700"
-              : "bg-red-50 border border-red-200 text-red-700"
-          }`}
-        >
-          <p className="font-medium mb-2">Quality Issues:</p>
-          <ul className="list-disc list-inside space-y-1">
-            {issues.map((i, idx) => (
-              <li key={idx}>{i}</li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       {/* Action */}
       <div className="mt-5 flex justify-end">
         <button
           onClick={() => onView(data)}
-          className="px-6 py-2 border rounded-xl text-sm text-gray-600 cursor-pointer transition shadow-sm hover:bg-[#2D468A] hover:text-white"
+          className="px-6 py-2 border rounded-xl text-sm text-gray-600 transition hover:bg-[#2D468A] hover:text-white"
         >
           View CV
         </button>

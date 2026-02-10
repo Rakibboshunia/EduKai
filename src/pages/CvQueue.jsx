@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
 import Tabs from "../components/Tabs";
 import CVCard from "../components/CVCard";
+import PDFCVPreview from "../components/PDFCVPreview";
 
 export default function CVQueuePage() {
   const [activeTab, setActiveTab] = useState("all");
+  const [selectedCV, setSelectedCV] = useState(null);
 
   /* ================= DUMMY DATA ================= */
   const cvs = useMemo(
@@ -148,7 +150,7 @@ export default function CVQueuePage() {
             <CVCard
               key={cv.id}
               data={cv}
-              onView={() => console.log("View CV:", cv.id)}
+              onView={(cvData) => setSelectedCV(cvData)}
             />
           ))
         ) : (
@@ -157,6 +159,14 @@ export default function CVQueuePage() {
           </div>
         )}
       </div>
+
+      {/* PDF CV Preview Modal */}
+      {selectedCV && (
+        <PDFCVPreview
+          data={selectedCV}
+          onClose={() => setSelectedCV(null)}
+        />
+      )}
     </div>
   );
 }
