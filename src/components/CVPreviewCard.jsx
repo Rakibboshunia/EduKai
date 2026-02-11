@@ -12,8 +12,8 @@ const CVPreviewCard = ({
 }) => {
   return (
     <div
-      className={`bg-white rounded-xl border shadow-md flex flex-col
-        ${selected ? "border-[#2D468A] ring-1 ring-[#2D468A]" : "border-gray-300"}
+      className={`bg-white/60 rounded-xl border shadow-md flex flex-col
+        ${selected ? "border-[#2D468A] ring-1 ring-[#2D468A]" : "border-gray-200"}
       `}
     >
       {/* Header */}

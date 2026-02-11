@@ -9,7 +9,7 @@ export default function Tabs({ tabs, active, onChange }) {
             ${
               active === tab.key
                 ? "bg-[#2D468A] text-white border-[#2D468A]"
-                : "bg-white text-gray-600 hover:bg-gray-200"
+                : "bg-white/70 text-gray-600 hover:bg-gray-200"
             }`}
         >
           {tab.label} ({tab.count})

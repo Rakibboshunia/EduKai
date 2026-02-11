@@ -144,7 +144,7 @@ const Home = () => {
       </div>
 
       {/* 🔹 Activities Section */}
-      <div className="mt-10 bg-white p-4 sm:p-6 rounded-xl border border-[#E5E7EB]">
+      <div className="mt-10 bg-white/60 p-4 sm:p-6 rounded-xl border border-[#E5E7EB]">
         <h3 className="text-[#2D468A] text-xl sm:text-2xl font-semibold">
           Recent Automated Activities
         </h3>

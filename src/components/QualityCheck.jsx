@@ -4,7 +4,7 @@ import InputField from './InputField'
 
 const QualityCheck = () => {
   return (
-     <div className='bg-white p-8 rounded-md'>
+     <div className='bg-white/60 p-8 rounded-xl'>
       <h3 className='text-[#2D468A] text-2xl font-semibold'>
         Automated Quality Check Rules
       </h3>

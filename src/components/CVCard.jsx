@@ -17,7 +17,7 @@ export default function CVCard({ data, onView }) {
   const isManual = reviewType === "manual";
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-200">
+    <div className="bg-white/60 rounded-2xl p-6 border border-gray-300">
       {/* Header */}
       <div className="flex justify-between items-start pb-2">
         <div className="space-y-2">
@@ -74,7 +74,7 @@ export default function CVCard({ data, onView }) {
       <div className="mt-5 flex justify-end">
         <button
           onClick={() => onView(data)}
-          className="px-6 py-2 border rounded-xl text-sm text-gray-600 transition hover:bg-[#2D468A] hover:text-white"
+          className="px-6 py-2 border rounded-xl text-sm text-gray-600 transition hover:bg-[#2D468A] hover:text-white cursor-pointer"
         >
           View CV
         </button>

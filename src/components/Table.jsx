@@ -4,7 +4,7 @@ export default function Table({ columns = [], data = [] }) {
   return (
     <>
       {/* ================= DESKTOP TABLE ================= */}
-      <div className="hidden md:block bg-white rounded-2xl overflow-visible shadow-sm">
+      <div className="hidden md:block bg-white/60 rounded-2xl overflow-visible shadow-sm">
         <table className="w-full text-sm">
           <thead className="bg-[#2D468A] text-white">
             <tr>

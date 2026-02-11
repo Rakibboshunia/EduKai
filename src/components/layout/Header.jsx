@@ -1,18 +1,20 @@
 import { FiMenu } from "react-icons/fi";
 import { IoNotifications } from "react-icons/io5";
-import Image from "../Image";
 import { FaAngleDown } from "react-icons/fa";
-import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { Link, useNavigate } from "react-router-dom";
-import NotificationsDropdown from "../../components/NotificationsDropdown";
+import { useState, useContext } from "react";
 
-import logo from "../../assets/logo1.avif"
+import Image from "../Image";
+import NotificationsDropdown from "../../components/NotificationsDropdown";
+import { AuthContext } from "../../provider/AuthProvider";
 
 export default function Header({ onMenuClick }) {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [openNotifications, setOpenNotifications] = useState(false);
   const navigate = useNavigate();
+
+  const { user } = useContext(AuthContext);
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
@@ -26,17 +28,17 @@ export default function Header({ onMenuClick }) {
       {/* ☰ Mobile Menu */}
       <button
         onClick={onMenuClick}
-        className="2xl:hidden p-2 rounded bg-[#2D468A] text-white cursor-pointer"
+        className="2xl:hidden p-2 rounded bg-[#2D468A] text-white"
       >
         <FiMenu size={22} />
       </button>
 
-      {/* Right section */}
-      <div className="flex items-center justify-end ml-auto gap-2 sm:gap-4 relative">
+      {/* Right Section */}
+      <div className="flex items-center justify-end ml-auto gap-4">
         {/* 🔔 Notifications */}
         <div className="relative">
           <IoNotifications
-            className="w-8 h-8 sm:w-8 sm:h-8 text-[#2D468A] cursor-pointer"
+            className="w-8 h-8 text-[#2D468A] cursor-pointer"
             onClick={() => {
               setOpenNotifications((prev) => !prev);
               setOpenDropdown(false);
@@ -52,32 +54,29 @@ export default function Header({ onMenuClick }) {
         {/* 👤 Profile */}
         <div className="relative">
           <div
-            className="flex items-center gap-2 sm:gap-3 bg-[#2D468A] px-2 sm:px-3 py-2 border border-[#A0A0A0] rounded-lg cursor-pointer"
+            className="flex items-center gap-3 bg-[#2D468A] px-3 py-2 rounded-lg cursor-pointer"
             onClick={() => {
               setOpenDropdown((prev) => !prev);
               setOpenNotifications(false);
             }}
           >
-            {/* Avatar */}
             <Image
-              src={logo}
+              src={user.avatar}
               alt="User Avatar"
-              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
+              className="w-9 h-9 rounded-full object-cover"
             />
 
-            {/* User info (hide on small screens) */}
             <div className="hidden sm:block">
-              <p className="text-sm sm:text-base text-white font-medium">
-                Olivia Macdona
+              <p className="text-sm text-white font-medium">
+                {user.name}
               </p>
-              <p className="text-[10px] sm:text-xs text-white">
-                Admin
+              <p className="text-xs text-white">
+                {user.role}
               </p>
             </div>
 
-            {/* Arrow */}
             <FaAngleDown
-              className={`w-4 h-4 sm:w-5 sm:h-5 text-white transition-transform duration-200 ${
+              className={`w-4 h-4 text-white transition ${
                 openDropdown ? "rotate-180" : ""
               }`}
             />
@@ -85,28 +84,22 @@ export default function Header({ onMenuClick }) {
 
           {/* Dropdown */}
           {openDropdown && (
-            <div className="absolute right-0 mt-2 w-44 sm:w-48 bg-white rounded-lg shadow-lg border z-50">
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-50">
               <Link
                 to="/settings"
                 onClick={() => setOpenDropdown(false)}
               >
-                <button className="flex w-full items-center gap-3 px-4 py-3 text-sm rounded-lg text-[#0A0A0A] hover:bg-[#2D468A] hover:text-white transition cursor-pointer">
-                  <Icon
-                    icon="material-symbols:settings"
-                    width="18"
-                  />
+                <button className="flex w-full items-center gap-3 px-4 py-3 text-sm hover:bg-[#2D468A] hover:text-white">
+                  <Icon icon="material-symbols:settings" width="18" />
                   Settings
                 </button>
               </Link>
 
               <button
                 onClick={handleLogout}
-                className="flex w-full items-center gap-3 px-4 py-3 text-sm rounded-lg text-[#E7000B] hover:bg-[#2D468A] hover:text-white transition cursor-pointer"
+                className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-[#2D468A] hover:text-white"
               >
-                <Icon
-                  icon="material-symbols:logout"
-                  width="18"
-                />
+                <Icon icon="material-symbols:logout" width="18" />
                 Log Out
               </button>
             </div>

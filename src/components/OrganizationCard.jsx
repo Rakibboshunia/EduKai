@@ -37,7 +37,7 @@ const OrganizationCard = ({
   return (
     <div
       onClick={selectable ? onSelect : undefined}
-      className={`bg-white rounded-2xl shadow-md border p-6 transition
+      className={`bg-white/60 cursor-pointer rounded-2xl shadow-md border p-6 transition
         ${
           selectable
             ? "cursor-pointer"

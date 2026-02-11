@@ -58,7 +58,7 @@ const DynamicSearch = ({
         value={query}
         onChange={(e) => handleSearch(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-10 pr-10 py-3 bg-white text-black border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A] transition"
+        className="w-full pl-10 pr-10 py-3 bg-white/60 text-black border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A] transition"
       />
 
       {/* Clear button */}

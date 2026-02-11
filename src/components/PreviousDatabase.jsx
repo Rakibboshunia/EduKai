@@ -4,7 +4,7 @@ import Dropdown from './Dropdown'
 
 const PreviousDatabase = () => {
   return (
-    <div className='bg-white p-8'>
+    <div className='bg-white/60 rounded-xl p-8'>
       <h3 className='text-[#2D468A] text-2xl font-semibold'>
         Import from Database Archive
       </h3>

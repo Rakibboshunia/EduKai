@@ -1,6 +1,6 @@
 const StatCard = ({ title, value, icon: Icon, iconBg }) => {
   return (
-    <div className="flex items-center justify-between bg-white rounded-lg shadow-md border border-gray-100 p-10 w-full">
+    <div className="flex items-center justify-between bg-white/60 rounded-lg shadow-md border border-gray-100 p-10 w-full">
       <div>
         <p className="text-xl text-gray-600 mb-4">{title}</p>
         <h2 className="text-2xl font-bold text-gray-900">{value}</h2>

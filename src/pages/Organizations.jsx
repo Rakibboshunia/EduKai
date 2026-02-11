@@ -128,7 +128,7 @@ export default function Organizations() {
       </div>
 
       {/* 🔹 Search & Filter */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border mb-10 flex-col md:flex-row gap-4 flex justify-between items-center">
+      <div className="bg-white/60 p-6 rounded-lg shadow-sm border mb-10 flex-col md:flex-row gap-4 flex justify-between items-center">
         <DynamicSearch
           data={organizations}
           searchKeys={["name", "email", "industry", "location"]}

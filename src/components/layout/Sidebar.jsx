@@ -65,7 +65,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-64 bg-white text-[#364153]
+        className={`fixed inset-y-0 left-0 z-30 w-64 bg-white/60 text-[#364153]
         border-r border-[#E5E7EB]
         transform transition-transform duration-300
         ${isOpen ? "translate-x-0" : "-translate-x-full"}

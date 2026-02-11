@@ -27,10 +27,10 @@ const BulkImport = () => {
       <div className="grid md:grid-cols-3 gap-6 rounded-lg p-1.5 w-full mt-6">
         <button
           onClick={() => setActiveTab("upload")}
-          className={`md:px-20 px-[38px] py-6 rounded-md cursor-pointer flex items-center flex-col gap-1 text-2xl ${
+          className={`md:px-20 px-10 py-6 rounded-md cursor-pointer flex items-center flex-col gap-1 text-2xl ${
             activeTab === "upload"
               ? "border border-[#2D468A] text-[#000000]"
-              : "bg-[#FFFFFF] text-[#0A0A0A]"
+              : "bg-white/60 text-[#0A0A0A]"
           }`}
         >
           <CiExport className="w-11 h-11" />
@@ -40,10 +40,10 @@ const BulkImport = () => {
 
         <button
           onClick={() => setActiveTab("crm")}
-          className={`md:px-20 px-[38px] py-6 rounded-md cursor-pointer flex items-center flex-col gap-1 text-2xl ${
+          className={`md:px-20 px-10 py-6 rounded-md cursor-pointer flex items-center flex-col gap-1 text-2xl ${
             activeTab === "crm"
               ? "border border-[#2D468A] text-[#000000]"
-              : "bg-[#FFFFFF] text-[#0A0A0A]"
+              : "bg-white/60 text-[#0A0A0A]"
           }`}
         >
           <BiCoinStack className="w-11 h-11" />
@@ -53,10 +53,10 @@ const BulkImport = () => {
 
         <button
           onClick={() => setActiveTab("database")}
-          className={`md:px-20 px-[38px] py-6 rounded-md cursor-pointer flex items-center flex-col gap-1 text-2xl ${
+          className={`md:px-20 px-10 py-6 rounded-md cursor-pointer flex items-center flex-col gap-1 text-2xl ${
             activeTab === "database"
               ? "border border-[#2D468A] text-[#000000]"
-              : "bg-[#FFFFFF] text-[#0A0A0A]"
+              : "bg-white/60 text-[#0A0A0A]"
           }`}
         >
           <BsFolder className="w-11 h-11" />
@@ -85,7 +85,7 @@ const BulkImport = () => {
       </div>
 
       {/* ===== LAST SECTION ===== */}
-      <div className="mt-6 bg-white p-8 rounded-md space-y-4">
+      <div className="mt-6 bg-white/60 p-8 rounded-xl space-y-4">
         <h2 className="text-2xl font-semibold text-[#2D468A]">
           Availability Check Workflow
         </h2>

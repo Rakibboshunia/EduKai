@@ -26,7 +26,7 @@ const InputField = ({
         value={value}
         onChange={onChange}
         className={`outline-none p-2 text-black placeholder:text-black/50 rounded-lg 
-        focus:ring-2 focus:ring-[#2D468A] bg-white ${inputClass}`}
+        focus:ring-2 focus:ring-[#2D468A] bg-white border border-gray-300 ${inputClass}`}
       />
     </div>
   );

@@ -39,7 +39,7 @@ const UploadPDF = ({ onFileSelect }) => {
   };
 
   return (
-    <div className="bg-white p-10">
+    <div className="bg-white/60 rounded-xl p-10">
       <div
         onDragOver={(e) => {
           e.preventDefault();

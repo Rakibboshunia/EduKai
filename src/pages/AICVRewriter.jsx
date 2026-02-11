@@ -113,7 +113,7 @@ BSc Computer Science – University of Technology
       </div>
 
       {/* 🔹 Candidate Select */}
-      <div className="bg-white p-4 rounded-lg border mb-6">
+      <div className="bg-white/60 p-4 rounded-lg border mb-6">
         <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
           <FiUser className="text-gray-400" />
           Select Candidate
@@ -132,8 +132,8 @@ BSc Computer Science – University of Technology
       </div>
 
       {/* 🔹 Anonymization Settings */}
-      <div className="bg-white p-4 sm:p-6 md:p-8 mb-8 rounded-lg shadow-sm">
-        <div className="bg-white rounded-lg border mb-6 p-4 sm:p-6">
+      <div className="bg-white/60 p-4 sm:p-6 md:p-8 mb-8 rounded-lg shadow-sm">
+        <div className="bg-white/60 rounded-lg shadow-md border border-gray-200 mb-6 p-4 sm:p-6">
           <h3 className="text-xl font-semibold text-[#2D468A] mb-4">
             Anonymization Settings
           </h3>
