@@ -195,16 +195,17 @@ BSc Computer Science – University of Technology
 
         {/* 🔹 CV Comparison */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 pt-6 sm:pt-8">
-          <CVPreviewCard
-            title="AI-Enhanced CV"
-            status="Processed by ChatGPT"
-            content={aiCV}
-          />
-
+          
           <CVPreviewCard
             title="Original CV"
             status="Before AI processing"
             content={originalCV}
+          />
+          
+          <CVPreviewCard
+            title="AI-Enhanced CV"
+            status="Processed by ChatGPT"
+            content={aiCV}
           />
         </div>
 
