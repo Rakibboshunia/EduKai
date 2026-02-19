@@ -114,12 +114,21 @@ BSc Computer Science – University of Technology
 
       {/* 🔹 Candidate Select */}
       <div className="bg-white/60 p-4 rounded-lg border mb-6">
-        <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-          <FiUser className="text-gray-400" />
-          Select Candidate
-        </label>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+            <FiUser className="text-gray-400" />
+            Candidate
+          </label>
 
-        <select
+          <input
+            type="text"
+            value="John Smith"
+            readOnly
+            className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-700 focus:outline-none"
+          />
+        </div>
+
+        {/* <select
           value={selectedCandidate}
           onChange={(e) => setSelectedCandidate(e.target.value)}
           className="w-full border rounded-md px-4 py-2.5 text-sm text-gray-800 cursor-pointer
@@ -128,12 +137,12 @@ BSc Computer Science – University of Technology
           <option>John Smith</option>
           <option>Emily Carter</option>
           <option>Michael Brown</option>
-        </select>
+        </select> */}
       </div>
 
       {/* 🔹 Anonymization Settings */}
       <div className="bg-white/60 p-4 sm:p-6 md:p-8 mb-8 rounded-lg shadow-sm">
-        <div className="bg-white/60 rounded-lg shadow-md border border-gray-200 mb-6 p-4 sm:p-6">
+        {/* <div className="bg-white/60 rounded-lg shadow-md border border-gray-200 mb-6 p-4 sm:p-6">
           <h3 className="text-xl font-semibold text-[#2D468A] mb-4">
             Anonymization Settings
           </h3>
@@ -174,34 +183,35 @@ BSc Computer Science – University of Technology
                 }))
               }
             />
-          </div>
+          </div> 
+        </div> */}
 
-          {/* Rewrite Button (ChatGPT) */}
+        {/* Rewrite Button (ChatGPT) */}
+        <div className="inline-block border border-gray-200 rounded-xl p-2 bg-white">
           <button
             onClick={handleRewriteWithAI}
             disabled={isRewriting}
-            className={`mt-5 px-4 py-2 rounded-md text-sm transition flex items-center gap-2 shadow-sm
-              ${
-                isRewriting
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-[#2D468B] text-white hover:bg-[#354e92] cursor-pointer hover:shadow-[#2D468B]/50"
-              }
-            `}
+            className={`px-3 py-4 rounded-md text-sm transition flex items-center gap-2 cursor-pointer
+      ${
+        isRewriting
+          ? "bg-gray-400 text-white cursor-not-allowed"
+          : "bg-[#2D468A] text-white hover:bg-[#243a73]"
+      }
+    `}
           >
-            <SiOpenai className="text-lg" />
+            <SiOpenai className="text-base" />
             {isRewriting ? "ChatGPT is rewriting..." : "Rewrite with ChatGPT"}
           </button>
         </div>
 
         {/* 🔹 CV Comparison */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 pt-6 sm:pt-8">
-          
           <CVPreviewCard
             title="Original CV"
             status="Before AI processing"
             content={originalCV}
           />
-          
+
           <CVPreviewCard
             title="AI-Enhanced CV"
             status="Processed by ChatGPT"
@@ -219,7 +229,7 @@ BSc Computer Science – University of Technology
             Mail Submission
           </button>
 
-          <button className="border border-gray-300 px-6 py-3 rounded-md text-sm text-black cursor-pointer hover:bg-gray-100 flex items-center justify-center gap-2">
+          <button className="border border-gray-300 px-6 py-3 rounded-md text-sm text-black cursor-pointer hover:bg-gray-300 transition-all flex items-center justify-center gap-2">
             <FiDownload />
             Download CV
           </button>

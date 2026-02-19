@@ -7,8 +7,9 @@ export default function CVQueuePage() {
   const [activeTab, setActiveTab] = useState("all");
   const [selectedCV, setSelectedCV] = useState(null);
 
-  /* ================= DUMMY DATA ================= */
-  const cvs = useMemo(
+  /* ================= INITIAL DATA ================= */
+
+  const initialCVs = useMemo(
     () => [
       {
         id: 1,
@@ -29,6 +30,7 @@ export default function CVQueuePage() {
         experience: 1,
         skills: ["JavaScript"],
         status: "failed",
+        reviewType: "auto",
         awaitingResponse: true,
         createdAt: "2025-01-23 10:15",
         issues: [
@@ -51,36 +53,11 @@ export default function CVQueuePage() {
       },
       {
         id: 4,
-        name: "Sarah Williams",
-        email: "sarah.williams@email.com",
-        phone: "+44 7733 445566",
-        experience: 4,
-        skills: ["React", "TypeScript"],
-        status: "failed",
-        reviewType: "manual",
-        awaitingResponse: true,
-        createdAt: "2025-01-23 11:45",
-        issues: ["Employment gap not explained"],
-      },
-      {
-        id: 5,
-        name: "Daniel Lee",
-        email: "daniel.lee@email.com",
-        phone: "+44 7744 556677",
-        experience: 2,
-        skills: ["HTML", "CSS"],
-        status: "failed",
-        awaitingResponse: true,
-        createdAt: "2025-01-23 12:20",
-        issues: ["Missing JavaScript experience"],
-      },
-      {
-        id: 6,
         name: "Olivia Martin",
         email: "olivia.martin@email.com",
         phone: "+44 7755 667788",
         experience: 6,
-        skills: ["JavaScript", "React", "Node.js"],
+        skills: ["JavaScript", "React"],
         status: "passed",
         availability: "available",
         createdAt: "2025-01-23 13:10",
@@ -89,7 +66,31 @@ export default function CVQueuePage() {
     []
   );
 
-  /* ================= TABS ================= */
+  const [cvs, setCVs] = useState(initialCVs);
+
+  /* ================= HANDLERS ================= */
+
+  const updateStatus = (id, newStatus) => {
+    const updated = cvs.map((cv) =>
+      cv.id === id ? { ...cv, status: newStatus } : cv
+    );
+    setCVs(updated);
+
+    // 🔥 Future API call
+    console.log("Quality status updated:", id, newStatus);
+  };
+
+  const updateAvailability = (id, newAvailability) => {
+    const updated = cvs.map((cv) =>
+      cv.id === id ? { ...cv, availability: newAvailability } : cv
+    );
+    setCVs(updated);
+
+    console.log("Availability updated:", id, newAvailability);
+  };
+
+  /* ================= TABS (AUTO UPDATE COUNT) ================= */
+
   const tabs = useMemo(
     () => [
       { key: "all", label: "All CVs", count: cvs.length },
@@ -113,6 +114,7 @@ export default function CVQueuePage() {
   );
 
   /* ================= FILTER ================= */
+
   const filtered = useMemo(() => {
     if (activeTab === "all") return cvs;
     if (activeTab === "manual") {
@@ -122,6 +124,7 @@ export default function CVQueuePage() {
   }, [activeTab, cvs]);
 
   /* ================= RENDER ================= */
+
   return (
     <div className="p-4 sm:p-6 space-y-8 min-h-screen">
       {/* Header */}
@@ -136,11 +139,7 @@ export default function CVQueuePage() {
 
       {/* Tabs */}
       <div className="overflow-x-auto">
-        <Tabs
-          tabs={tabs}
-          active={activeTab}
-          onChange={setActiveTab}
-        />
+        <Tabs tabs={tabs} active={activeTab} onChange={setActiveTab} />
       </div>
 
       {/* CV Cards */}
@@ -148,10 +147,17 @@ export default function CVQueuePage() {
         {filtered.length > 0 ? (
           filtered.map((cv) => (
             <CVCard
-              key={cv.id}
-              data={cv}
-              onView={(cvData) => setSelectedCV(cvData)}
-            />
+  key={cv.id}
+  data={cv}
+  onView={() => setSelectedCV(cv)}
+  onStatusChange={(newStatus) =>
+    updateStatus(cv.id, newStatus)
+  }
+  onAvailabilityChange={(newAvailability) =>
+    updateAvailability(cv.id, newAvailability)
+  }
+/>
+
           ))
         ) : (
           <div className="text-center py-12 text-gray-500">
@@ -160,7 +166,7 @@ export default function CVQueuePage() {
         )}
       </div>
 
-      {/* PDF CV Preview Modal */}
+      {/* PDF Modal */}
       {selectedCV && (
         <PDFCVPreview
           data={selectedCV}

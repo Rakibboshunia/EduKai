@@ -6,14 +6,14 @@ export default function Table({ columns = [], data = [] }) {
       {/* ================= DESKTOP TABLE ================= */}
       <div className="hidden md:block bg-white/60 rounded-2xl overflow-visible shadow-sm">
         <table className="w-full text-sm">
-          <thead className="bg-[#2D468A] text-white">
+          <thead className="bg-[#2D468A] text-white sticky top-0 z-10">
             <tr>
               {columns.map((col, i) => (
                 <th
                   key={i}
                   className={`px-6 py-3 text-left font-medium ${
                     col.align === "right" ? "text-right" : ""
-                  }`}
+                  } ${col.className ?? ""}`}
                 >
                   {col.header}
                 </th>
@@ -34,15 +34,15 @@ export default function Table({ columns = [], data = [] }) {
             ) : (
               data.map((row, rowIndex) => (
                 <tr
-                  key={rowIndex}
-                  className="border border-gray-200 text-[#333843] last:border-none hover:bg-gray-50"
+                  key={row.id ?? rowIndex}
+                  className="border border-gray-200 text-[#333843] last:border-none hover:bg-gray-50 transition"
                 >
                   {columns.map((col, colIndex) => (
                     <td
                       key={colIndex}
                       className={`px-6 py-4 ${
                         col.align === "right" ? "text-right" : ""
-                      }`}
+                      } ${col.className ?? ""}`}
                     >
                       {col.render
                         ? col.render(row[col.accessor], row)
@@ -65,8 +65,8 @@ export default function Table({ columns = [], data = [] }) {
         ) : (
           data.map((row, rowIndex) => (
             <div
-              key={rowIndex}
-              className="bg-white text-[#333843] rounded-xl shadow-sm p-4 space-y-3"
+              key={row.id ?? rowIndex}
+              className="bg-white text-[#333843] rounded-xl shadow-sm p-4 space-y-3 hover:shadow-md transition"
             >
               {columns.map((col, colIndex) => (
                 <div key={colIndex} className="flex justify-between gap-4">

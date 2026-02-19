@@ -1,108 +1,119 @@
 import { useEffect, useMemo, useState } from "react";
+import { MailCheck, XCircle } from "lucide-react";
+
 import Table from "../components/Table";
 import StatusBadge from "../components/StatusBadge";
 import DynamicSearch from "../components/DynamicSearch";
 import Pagination from "../components/Pagination";
 
 export default function Availability() {
-  const data = useMemo(() => [
-    {
-      date: "20 Nov, 2025",
-      name: "John Doe",
-      email: "john.doe@abc.com",
-      whatsapp: "+1 555 101 0199",
-      source: "CRM",
-      status: "follow_up",
+
+  const availabilityOptions = {
+    available: {
+      label: "available",
+      icon: MailCheck,
+      className: "bg-green-100 text-green-700",
     },
-    {
-      date: "20 Nov, 2025",
-      name: "Emily Carter",
-      email: "emily.carter@xyz.com",
-      whatsapp: "+44 7700 900123",
-      source: "Email",
-      status: "not_available",
+    not_available: {
+      label: "not_available",
+      icon: XCircle,
+      className: "bg-red-100 text-red-600",
     },
-    {
-      date: "21 Nov, 2025",
-      name: "Michael Brown",
-      email: "michael.brown@company.io",
-      whatsapp: "+1 555 222 3344",
-      source: "WhatsApp",
-      status: "follow_up",
-    },
-    {
-      date: "21 Nov, 2025",
-      name: "Sarah Johnson",
-      email: "sarah.johnson@domain.com",
-      whatsapp: "+61 412 345 678",
-      source: "CRM",
-      status: "na",
-    },
-    {
-      date: "22 Nov, 2025",
-      name: "Aisha Rahman",
-      email: "aisha.rahman@startup.ai",
-      whatsapp: "+880 1711 223344",
-      source: "CRM",
-      status: "na",
-    },
-    {
-      date: "23 Nov, 2025",
-      name: "Carlos Mendes",
-      email: "carlos.mendes@global.net",
-      whatsapp: "+351 912 345 678",
-      source: "WhatsApp",
-      status: "follow_up",
-    },
-    {
-      date: "22 Nov, 2025",
-      name: "Aisha Rahman",
-      email: "aisha.rahman@startup.ai",
-      whatsapp: "+880 1711 223344",
-      source: "CRM",
-      status: "follow_up",
-    },
-    {
-      date: "23 Nov, 2025",
-      name: "Carlos Mendes",
-      email: "carlos.mendes@global.net",
-      whatsapp: "+351 912 345 678",
-      source: "WhatsApp",
-      status: "follow_up",
-    },
-    {
-      date: "22 Nov, 2025",
-      name: "Aisha Rahman",
-      email: "aisha.rahman@startup.ai",
-      whatsapp: "+880 1711 223344",
-      source: "CRM",
-      status: "follow_up",
-    },
-    {
-      date: "23 Nov, 2025",
-      name: "Carlos Mendes",
-      email: "carlos.mendes@global.net",
-      whatsapp: "+351 912 345 678",
-      source: "WhatsApp",
-      status: "follow_up",
-    },
-    {
-      date: "22 Nov, 2025",
-      name: "Aisha Rahman",
-      email: "aisha.rahman@startup.ai",
-      whatsapp: "+880 1711 223344",
-      source: "CRM",
-      status: "follow_up",
-    },
-    {
-      date: "23 Nov, 2025",
-      name: "Carlos Mendes",
-      email: "carlos.mendes@global.net",
-      whatsapp: "+351 912 345 678",
-      source: "WhatsApp",
-      status: "follow_up",
-    },
-  ], []);
+  };
+
+
+  const initialData = useMemo(
+    () => [
+      {
+        id: 1,
+        date: "20 Nov, 2025",
+        name: "John Doe",
+        email: "john.doe@abc.com",
+        whatsapp: "+1 555 101 0199",
+        source: "CRM",
+        status: "available",
+      },
+      {
+        id: 2,
+        date: "20 Nov, 2025",
+        name: "Emily Carter",
+        email: "emily.carter@xyz.com",
+        whatsapp: "+44 7700 900123",
+        source: "Email",
+        status: "not_available",
+      },
+      {
+        id: 3,
+        date: "21 Nov, 2025",
+        name: "Michael Brown",
+        email: "michael.brown@company.io",
+        whatsapp: "+1 555 222 3344",
+        source: "WhatsApp",
+        status: "available",
+      },
+      {
+        id: 1,
+        date: "20 Nov, 2025",
+        name: "John Doe",
+        email: "john.doe@abc.com",
+        whatsapp: "+1 555 101 0199",
+        source: "CRM",
+        status: "available",
+      },
+      {
+        id: 2,
+        date: "20 Nov, 2025",
+        name: "Emily Carter",
+        email: "emily.carter@xyz.com",
+        whatsapp: "+44 7700 900123",
+        source: "Email",
+        status: "not_available",
+      },
+      {
+        id: 3,
+        date: "21 Nov, 2025",
+        name: "Michael Brown",
+        email: "michael.brown@company.io",
+        whatsapp: "+1 555 222 3344",
+        source: "WhatsApp",
+        status: "available",
+      },
+    ],
+    []
+  );
+
+
+  const [data, setData] = useState(initialData);
+  const [filteredData, setFilteredData] = useState(initialData);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const PER_PAGE = 8;
+
+
+  const handleStatusChange = (id, newStatus) => {
+    const updated = data.map((item) =>
+      item.id === id ? { ...item, status: newStatus } : item
+    );
+
+    setData(updated);
+    setFilteredData(updated);
+
+    console.log("Update availability:", id, newStatus);
+  };
+
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredData]);
+
+
+  const totalPages = Math.ceil(filteredData.length / PER_PAGE);
+
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * PER_PAGE;
+    return filteredData.slice(start, start + PER_PAGE);
+  }, [filteredData, currentPage]);
+
 
   const columns = [
     { header: "Date", accessor: "date" },
@@ -114,34 +125,18 @@ export default function Availability() {
       header: "Status",
       accessor: "status",
       align: "right",
-      render: (value) => <StatusBadge status={value} />,
+      render: (value, row) => (
+        <StatusBadge
+          value={value}
+          options={availabilityOptions}
+          onChange={(newStatus) =>
+            handleStatusChange(row.id, newStatus)
+          }
+        />
+      ),
     },
   ];
 
-  /* ================= STATE ================= */
-
-  const [filteredData, setFilteredData] = useState(data);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const PER_PAGE = 8;
-
-  /* ================= RESET PAGE ON SEARCH ================= */
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filteredData]);
-
-  /* ================= PAGINATION LOGIC ================= */
-
-  const totalPages = Math.ceil(filteredData.length / PER_PAGE);
-
-  const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * PER_PAGE;
-    const end = start + PER_PAGE;
-    return filteredData.slice(start, end);
-  }, [filteredData, currentPage]);
-
-  /* ================= RENDER ================= */
 
   return (
     <div className="p-4">
@@ -153,7 +148,6 @@ export default function Availability() {
         Track candidate availability via Email, SMS, and WhatsApp.
       </p>
 
-      {/* Search */}
       <div className="mb-10">
         <DynamicSearch
           data={data}
@@ -162,10 +156,8 @@ export default function Availability() {
         />
       </div>
 
-      {/* Table */}
       <Table columns={columns} data={paginatedData} />
 
-      {/* Pagination */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

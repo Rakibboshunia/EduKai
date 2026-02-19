@@ -1,7 +1,20 @@
 import StatusBadge from "./StatusBadge";
-import { Mail, Phone, Briefcase } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  Briefcase,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Clock,
+} from "lucide-react";
 
-export default function CVCard({ data, onView }) {
+export default function CVCard({
+  data,
+  onView,
+  onStatusChange,
+  onAvailabilityChange,
+}) {
   const {
     name,
     email,
@@ -14,10 +27,48 @@ export default function CVCard({ data, onView }) {
     createdAt,
   } = data;
 
-  const isManual = reviewType === "manual";
+  /* ================= OPTIONS ================= */
+
+  const qualityOptions = {
+    passed: {
+      label: "Quality Passed",
+      icon: CheckCircle,
+      className: "bg-green-100 text-green-700",
+    },
+    failed: {
+      label: "Quality Failed",
+      icon: XCircle,
+      className: "bg-red-100 text-red-700",
+    },
+    manual_review: {
+      label: "Manual Review",
+      icon: AlertCircle,
+      className: "bg-yellow-100 text-yellow-700",
+    },
+  };
+
+  const availabilityOptions = {
+    available: {
+      label: "Available",
+      icon: CheckCircle,
+      className: "bg-green-100 text-green-700",
+    },
+    not_available: {
+      label: "Not Available",
+      icon: XCircle,
+      className: "bg-red-100 text-red-700",
+    },
+  };
+
+  /* ================= COMPUTED STATUS ================= */
+
+  const finalStatus =
+    status === "failed" && reviewType === "manual"
+      ? "manual_review"
+      : status;
 
   return (
-    <div className="bg-white/60 rounded-2xl p-6 border border-gray-300">
+    <div className="bg-white/60 text-black rounded-2xl p-6 border border-gray-300">
       {/* Header */}
       <div className="flex justify-between items-start pb-2">
         <div className="space-y-2">
@@ -56,17 +107,21 @@ export default function CVCard({ data, onView }) {
 
       {/* Status */}
       <div className="mt-4 flex gap-3 flex-wrap items-center">
+        {/* Quality */}
         <StatusBadge
-          status={
-            status === "failed" && isManual
-              ? "manual_review"
-              : status
-          }
-          variant="quality"
+          value={finalStatus}
+          options={qualityOptions}
+          readOnly={false}
+          onChange={onStatusChange}
         />
 
-        {availability === "available" && (
-          <StatusBadge status="available" variant="availability" />
+        {/* Availability */}
+        {availability && (
+          <StatusBadge
+            value={availability}
+            options={availabilityOptions}
+            onChange={onAvailabilityChange}
+          />
         )}
       </div>
 

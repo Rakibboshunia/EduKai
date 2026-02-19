@@ -1,35 +1,116 @@
 import { useMemo, useState } from "react";
-import { FiCheckCircle } from "react-icons/fi";
+import { FiCheckCircle, FiUser } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
-import FilterBar from "../components/FilterBar";
-import OrganizationCard from "../components/OrganizationCard";
 import Pagination from "../components/Pagination";
+import Table from "../components/Table";
 
 /* ================= FILTER CONFIG ================= */
 
 const FILTERS = [
-  { name: "city", label: "City", options: ["London", "New York", "Helsinki", "Copenhagen", "San Francisco"] },
-  { name: "town", label: "Town", options: ["Central London", "Camden", "Greenwich", "Hackney", "Westminster"] },
-  { name: "postcode", label: "Post Code", options: ["EC1A", "W1A", "SW1A", "NW1", "E1"] },
-  { name: "job", label: "Job Title", options: ["HR Manager", "Recruitment Officer", "Talent Acquisition", "People Operations", "HR Executive"] },
-  { name: "phase", label: "Phase", options: ["Active", "Inactive", "Interviewing", "On Hold", "Closed"] },
-  { name: "radius", label: "Radius", options: ["0 KM", "5 KM", "10 KM", "25 KM", "50 KM"] },
+  {
+    name: "city",
+    label: "Location",
+    options: ["London", "New York", "Helsinki", "Copenhagen", "Stockholm"],
+  },
+  {
+    name: "job",
+    label: "Job Title",
+    options: [
+      "HOD Science",
+      "Science Teacher",
+      "Maths Teacher",
+      "HOD Maths",
+      "Geography Teacher",
+      "Drama Lead",
+      "Music Teacher",
+      "Business Studies Teacher",
+      "Humanities Teacher",
+      "ICT Teacher",
+      "English Teacher",
+    ],
+  },
+  {
+    name: "phase",
+    label: "Phase",
+    options: ["Active", "Inactive"],
+  },
+  {
+    name: "radius",
+    label: "Radius",
+    options: ["0 KM", "5 KM", "10 KM", "25 KM", "50 KM"],
+  },
 ];
 
 /* ================= ORGANIZATION DATA ================= */
 
 const ORGANIZATIONS = [
-  { id: 1, name: "TechCorp Solutions", email: "recruitment@techcorp.com", location: "London", skills: ["Technology", "London"] },
-  { id: 2, name: "NordicSoft", email: "careers@nordicsoft.fi", location: "Helsinki", skills: ["Software", "Finland"] },
-  { id: 3, name: "Denmark Systems", email: "jobs@dksystems.dk", location: "Copenhagen", skills: ["IT", "Denmark"] },
-  { id: 4, name: "USA Tech Group", email: "hr@usatech.com", location: "New York", skills: ["Technology", "USA"] },
-  { id: 5, name: "London Recruiters", email: "contact@londonrec.co.uk", location: "London", skills: ["HR", "UK"] },
-  { id: 6, name: "Scandi Talent", email: "talent@scandi.com", location: "Stockholm", skills: ["Recruitment", "Nordic"] },
-  { id: 7, name: "London Recruiters", email: "contact@londonrec.co.uk", location: "London", skills: ["HR", "UK"] },
-  { id: 8, name: "Scandi Talent", email: "talent@scandi.com", location: "Stockholm", skills: ["Recruitment", "Nordic"] },
-  { id: 9, name: "London Recruiters", email: "contact@londonrec.co.uk", location: "London", skills: ["HR", "UK"] },
-  { id: 10, name: "Scandi Talent", email: "talent@scandi.com", location: "Stockholm", skills: ["Recruitment", "Nordic"] },
+  {
+    id: 1,
+    name: "TechCorp Solutions",
+    email: "info@techcorp.com",
+    contact_person: "Anik",
+    industry: "School",
+    location: "London",
+    job_title: "HOD Science",
+    phase: "Active",
+    radius: "10 KM",
+  },
+  {
+    id: 2,
+    name: "NordicSoft",
+    email: "careers@nordicsoft.fi",
+    contact_person: "Esther Howard",
+    industry: "School",
+    location: "Helsinki",
+    job_title: "Science Teacher",
+    phase: "Active",
+    radius: "5 KM",
+  },
+  {
+    id: 3,
+    name: "Denmark Systems",
+    email: "jobs@dksystems.dk",
+    contact_person: "Cameron Williamson",
+    industry: "School",
+    location: "Copenhagen",
+    job_title: "Science Teacher",
+    phase: "Inactive",
+    radius: "25 KM",
+  },
+  {
+    id: 1,
+    name: "TechCorp Solutions",
+    email: "info@techcorp.com",
+    contact_person: "Anik",
+    industry: "School",
+    location: "London",
+    job_title: "HOD Science",
+    phase: "Active",
+    radius: "10 KM",
+  },
+  {
+    id: 2,
+    name: "NordicSoft",
+    email: "careers@nordicsoft.fi",
+    contact_person: "Esther Howard",
+    industry: "School",
+    location: "Helsinki",
+    job_title: "Science Teacher",
+    phase: "Active",
+    radius: "5 KM",
+  },
+  {
+    id: 3,
+    name: "Denmark Systems",
+    email: "jobs@dksystems.dk",
+    contact_person: "Cameron Williamson",
+    industry: "School",
+    location: "Copenhagen",
+    job_title: "Science Teacher",
+    phase: "Inactive",
+    radius: "25 KM",
+  },
 ];
 
 /* ================= PAGE ================= */
@@ -43,15 +124,20 @@ export default function MailSubmission() {
 
   const PER_PAGE = 6;
 
-  /* ---------- Filter Logic ---------- */
+  /* ================= FILTER LOGIC ================= */
+
   const filteredOrganizations = useMemo(() => {
     return ORGANIZATIONS.filter((org) => {
       if (filters.city && org.location !== filters.city) return false;
+      if (filters.job && org.job_title !== filters.job) return false;
+      if (filters.phase && org.phase !== filters.phase) return false;
+      if (filters.radius && org.radius !== filters.radius) return false;
       return true;
     });
   }, [filters]);
 
-  /* ---------- Pagination ---------- */
+  /* ================= PAGINATION ================= */
+
   const totalPages = Math.ceil(filteredOrganizations.length / PER_PAGE);
 
   const paginatedOrganizations = filteredOrganizations.slice(
@@ -59,72 +145,121 @@ export default function MailSubmission() {
     currentPage * PER_PAGE
   );
 
-  /* ---------- Selection ---------- */
+  /* ================= SELECTION ================= */
+
   const toggleSelect = (id) => {
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(id)
+        ? prev.filter((x) => x !== id)
+        : [...prev, id]
     );
   };
 
   const toggleSelectAll = () => {
-    setSelectedIds(
-      selectedIds.length === filteredOrganizations.length
-        ? []
-        : filteredOrganizations.map((o) => o.id)
-    );
+    if (selectedIds.length === filteredOrganizations.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredOrganizations.map((o) => o.id));
+    }
   };
+
+  /* ================= TABLE COLUMNS ================= */
+
+  const columns = [
+    {
+      header: "Select",
+      accessor: "select",
+      render: (_, row) => (
+        <input
+          type="checkbox"
+          checked={selectedIds.includes(row.id)}
+          onChange={() => toggleSelect(row.id)}
+        />
+      ),
+    },
+    { header: "Organization Name", accessor: "name" },
+    { header: "Email Name", accessor: "email" },
+    { header: "Contact Person", accessor: "contact_person" },
+    { header: "Job Title", accessor: "job_title" },
+    { header: "Industry", accessor: "industry" },
+    { header: "Location", accessor: "location" },
+    { header: "Radius", accessor: "radius" },
+    { header: "Phase", accessor: "phase" },
+  ];
 
   /* ================= RENDER ================= */
 
   return (
-    <div className="p-4 sm:p-6 space-y-8">
-
-      {/* ================= HEADER ================= */}
+    <div className="p-6 space-y-8">
+      {/* HEADER */}
       <div className="space-y-2">
         <h2 className="text-3xl font-semibold text-[#2D468A]">
           Email Submission & Outlook Integration
         </h2>
 
-        <p className="text-sm text-gray-700 max-w-2xl">
+        <p className="text-sm text-gray-600">
           Generate and send candidate application emails automatically
         </p>
 
-        <div className="mt-3 flex items-center gap-2 text-green-600 text-sm bg-green-50 border border-green-200 px-3 py-2 rounded-md w-fit">
+        <div className="flex items-center gap-2 text-green-600 text-sm bg-green-50 border border-green-200 px-3 py-2 rounded-md w-fit">
           <FiCheckCircle />
           Outlook Account Connected — recruiter@company.com
         </div>
       </div>
 
-      {/* ================= MAIN WRAPPER ================= */}
+      {/* MAIN CARD */}
       <div className="bg-white p-8 rounded-xl border border-gray-200 space-y-10">
-
-        {/* ================= CANDIDATE ================= */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-[#2D468A]">
-            Candidate Name
+        {/* Candidate */}
+        <div>
+          <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
+            <FiUser className="text-gray-400" />
+            Candidate
           </label>
+
           <input
-            readOnly
+            type="text"
             value="John Smith"
-            className="w-full border text-[#2D468A] rounded-lg px-3 py-2 bg-gray-50"
+            readOnly
+            className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-700"
           />
         </div>
 
-        {/* ================= SELECT ORGANIZATIONS ================= */}
+        {/* Filters */}
         <div className="space-y-6">
           <h3 className="font-medium text-[#2D468A]">
             Select Organizations
           </h3>
 
-          <FilterBar
-            filters={FILTERS}
-            values={filters}
-            onChange={(name, value) => {
-              setFilters((prev) => ({ ...prev, [name]: value }));
-              setCurrentPage(1);
-            }}
-          />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {FILTERS.map((filter) => (
+              <div key={filter.name} className="space-y-1">
+                <label className="text-xs text-[#2D468A] font-medium">
+                  {filter.label}
+                </label>
 
+                <select
+                  value={filters[filter.name] || ""}
+                  onChange={(e) => {
+                    setFilters((prev) => ({
+                      ...prev,
+                      [filter.name]: e.target.value,
+                    }));
+                    setCurrentPage(1);
+                  }}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white text-black"
+                >
+                  <option value="">All</option>
+                  {filter.options.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ))}
+          </div>
+
+          {/* Select All */}
           <label className="flex items-center gap-2 text-sm text-[#2D468A]">
             <input
               type="checkbox"
@@ -137,21 +272,12 @@ export default function MailSubmission() {
             Select All
           </label>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {paginatedOrganizations.map((org) => (
-              <OrganizationCard
-                key={org.id}
-                id={org.id}
-                name={org.name}
-                email={org.email}
-                skills={org.skills}
-                selectable
-                selected={selectedIds.includes(org.id)}
-                onSelect={() => toggleSelect(org.id)}
-              />
-            ))}
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <Table columns={columns} data={paginatedOrganizations} />
           </div>
 
+          {/* Pagination */}
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -159,21 +285,19 @@ export default function MailSubmission() {
           />
         </div>
 
-        {/* ================= SUBMIT ================= */}
-        <div className="flex justify-center pt-4">
+        {/* Submit Button */}
+        <div>
           <button
             disabled={selectedIds.length === 0}
-            onClick={() => {
-              if (selectedIds.length === 0) return;
-
+            onClick={() =>
               navigate("/mail/submission/compose", {
                 state: {
                   candidate: "John Smith",
                   organizations: selectedIds,
                 },
-              });
-            }}
-            className={`px-8 sm:px-10 py-3 rounded-lg font-medium transition cursor-pointer
+              })
+            }
+            className={`w-full py-3 rounded-lg font-medium text-sm transition
               ${
                 selectedIds.length
                   ? "bg-[#2D468A] text-white hover:bg-[#243a73]"
@@ -181,10 +305,9 @@ export default function MailSubmission() {
               }
             `}
           >
-            Proceed to Email Submission
+            ✈️ Proceed to Email Submission
           </button>
         </div>
-
       </div>
     </div>
   );
