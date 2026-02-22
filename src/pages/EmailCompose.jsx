@@ -1,12 +1,64 @@
-import { FiEdit2, FiPaperclip, FiSend } from "react-icons/fi";
+import { useState } from "react";
+import { FiEdit2, FiPaperclip, FiSend, FiSave, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 export default function EmailCompose() {
   const navigate = useNavigate();
 
+  /* ================= STATE ================= */
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [subject, setSubject] = useState(
+    "Candidate Submission - John Smith for Senior Software Developer"
+  );
+
+  const [body, setBody] = useState(`Dear Hiring Manager,
+
+I am pleased to present John Smith, an exceptional candidate for your consideration.
+
+CANDIDATE OVERVIEW:
+John Smith is a highly skilled Senior Software Developer with 8+ years of professional experience in enterprise application development.
+
+KEY QUALIFICATIONS:
+• 8+ years of software development experience
+• Expert in JavaScript, React, Node.js, Python, and AWS
+• Proven leadership in managing development teams
+• Strong track record of improving application performance
+
+ACHIEVEMENTS:
+• Led development of microservices architecture
+• Improved application performance by 40%
+• Successfully mentored junior developers
+
+This candidate has undergone our comprehensive quality screening process and has confirmed their immediate availability.
+
+Kind regards,`);
+
+  const [draftSubject, setDraftSubject] = useState(subject);
+  const [draftBody, setDraftBody] = useState(body);
+
+  /* ================= HANDLERS ================= */
+
+  const handleEdit = () => {
+    setDraftSubject(subject);
+    setDraftBody(body);
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    setSubject(draftSubject);
+    setBody(draftBody);
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
+
   return (
     <div className="p-4 space-y-16">
-      {/* ================= HEADER ================= */}
+      {/* HEADER */}
       <div className="space-y-2">
         <h2 className="text-3xl font-semibold text-[#2D468A]">
           Email Submission & Outlook Integration
@@ -21,110 +73,86 @@ export default function EmailCompose() {
         </div>
       </div>
 
-      {/* ================= EMAIL COMPOSITION CARD ================= */}
-      <div className="bg-white rounded-xl border border-gray-300 p-8 max-w-7xl items-center">
+      {/* EMAIL CARD */}
+      <div className="bg-white rounded-xl border border-gray-300 p-8 max-w-7xl">
 
-        {/* Header */}
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-[#2D468A]">
-              Email Composition
-            </h3>
+        {/* Top Header */}
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-[#2D468A]">
+            Email Composition
+          </h3>
 
-            <button className="flex items-center gap-1 text-sm text-[#2D468A] hover:underline cursor-pointer">
+          {!isEditing ? (
+            <button
+              onClick={handleEdit}
+              className="flex items-center gap-1 text-sm text-[#2D468A] hover:underline cursor-pointer"
+            >
               <FiEdit2 />
               Edit Email
             </button>
-          </div>
+          ) : (
+            <div className="flex gap-3">
+              <button
+                onClick={handleSave}
+                className="flex items-center gap-1 text-sm text-green-600 hover:underline cursor-pointer"
+              >
+                <FiSave />
+                Save
+              </button>
 
-        {/* 🔹 CENTER WRAPPER */}
+              <button
+                onClick={handleCancel}
+                className="flex items-center gap-1 text-sm text-red-600 hover:underline cursor-pointer"
+              >
+                <FiX />
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* CENTER WRAPPER */}
         <div className="max-w-[820px] mx-auto pt-12 space-y-8">
 
-          {/* Subject */}
+          {/* SUBJECT */}
           <div>
-            <label className="text-xs text-black font-medium">
+            <label className="text-xs font-medium text-black">
               Subject :
             </label>
-            <input
-              readOnly
-              value="Candidate Submission - John Smith for Senior Software Developer"
-              className="text-black w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50"
+
+            {isEditing ? (
+              <input
+                value={draftSubject}
+                onChange={(e) => setDraftSubject(e.target.value)}
+                className="w-full text-black mt-1 border border-gray-400 rounded-lg px-3 py-2 text-sm bg-white focus:ring-[#2D468A]"
+              />
+            ) : (
+              <input
+                readOnly
+                value={subject}
+                className="w-full text-black mt-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50"
+              />
+            )}
+          </div>
+
+          {/* BODY */}
+          {isEditing ? (
+            <textarea
+              value={draftBody}
+              onChange={(e) => setDraftBody(e.target.value)}
+              rows={16}
+              className="w-full border border-gray-400 rounded-lg p-4 text-sm focus:ring-[#2D468A] text-black"
             />
-          </div>
-
-          {/* Email Body */}
-          <div className="border border-gray-300 rounded-lg p-4 text-sm text-gray-700 leading-relaxed whitespace-pre-line bg-gray-50">
-            Dear Hiring Manager,
-
-            {"\n\n"}
-            I am pleased to present John Smith, an exceptional candidate for your
-            consideration.
-
-            {"\n\n"}
-            CANDIDATE OVERVIEW:
-            {"\n"}
-            John Smith is a highly skilled Senior Software Developer with 8+ years
-            of professional experience in enterprise application development.
-
-            {"\n\n"}
-            KEY QUALIFICATIONS:
-            {"\n"}
-            • 8+ years of software development experience
-            {"\n"}
-            • Expert in JavaScript, React, Node.js, Python, and AWS
-            {"\n"}
-            • Proven leadership in managing development teams
-            {"\n"}
-            • Strong track record of improving application performance
-
-            {"\n\n"}
-            ACHIEVEMENTS:
-            {"\n"}
-            • Led development of microservices architecture
-            {"\n"}
-            • Improved application performance by 40%
-            {"\n"}
-            • Successfully mentored junior developers
-
-            {"\n\n"}
-            This candidate has undergone our comprehensive quality screening
-            process and has confirmed their immediate availability.
-
-            {"\n\n"}
-            Kind regards,
-          </div>
+          ) : (
+            <div className="border border-gray-300 rounded-lg p-4 text-sm text-black leading-relaxed whitespace-pre-line bg-gray-50">
+              {body}
+            </div>
+          )}
 
           {/* Attachment */}
           <div className="flex items-center gap-2 text-sm text-[#2D468A] bg-blue-50 border border-blue-200 px-3 py-2 rounded-md w-fit">
             <FiPaperclip />
             Attached: John_Smith_CV_Enhanced.pdf
-          </div>
-
-          {/* Sender Info */}
-          <div className="border border-gray-300 rounded-lg p-4 flex items-center gap-4">
-            <img
-              src="/logo.png"
-              alt="sender"
-              className="w-12 h-12 rounded-full"
-            />
-
-            <div className="flex-1">
-              <p className="text-sm font-medium text-[#0A0A0A]">
-                Samuel Crona
-              </p>
-              <p className="text-xs text-gray-500">
-                Senior Communications Designer
-              </p>
-              <p className="text-xs text-gray-500">
-                samuel@walmart.com
-              </p>
-              <p className="text-xs text-gray-500">
-                +1 234 568 8897
-              </p>
-            </div>
-
-            <span className="text-blue-600 text-sm font-medium">
-              Walmart ✨
-            </span>
           </div>
 
           {/* Actions */}
@@ -134,7 +162,7 @@ export default function EmailCompose() {
               Send Via Outlook to 1 Organization
             </button>
 
-            <button className="px-6 py-3 text-black cursor-pointer border border-gray-300 rounded-lg text-sm hover:bg-[#243a73] hover:text-white transition-all">
+            <button className="px-6 py-3 text-black border border-gray-300 rounded-lg text-sm hover:bg-gray-200 transition-all cursor-pointer">
               Save as Draft
             </button>
           </div>

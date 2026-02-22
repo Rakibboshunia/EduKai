@@ -90,7 +90,7 @@ export default function Organizations() {
   const [openAdd, setOpenAdd] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const PER_PAGE = 4;
+  const PER_PAGE = 6;
 
   /* ---------------- Reset Page On Filter ---------------- */
   useEffect(() => {
@@ -159,7 +159,7 @@ export default function Organizations() {
 
         <button
           onClick={() => setOpenAdd(true)}
-          className="bg-[#2D468B] text-white px-5 py-3 rounded-md flex items-center gap-2 hover:bg-[#354e92]"
+          className="bg-[#2D468B] text-white px-5 py-3 rounded-md flex items-center gap-2 hover:bg-[#354e92] cursor-pointer"
         >
           <FiPlus />
           Add Organization
@@ -189,7 +189,7 @@ export default function Organizations() {
       </div>
 
       {/* 🔹 Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {paginatedData.length > 0 ? (
           paginatedData.map((org) => (
             <OrganizationCard

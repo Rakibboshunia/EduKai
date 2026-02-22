@@ -62,7 +62,7 @@ export default function CVQueuePage() {
         createdAt: "2025-01-23 13:10",
       },
     ],
-    []
+    [],
   );
 
   const [cvs, setCVs] = useState(initialCVs);
@@ -71,7 +71,7 @@ export default function CVQueuePage() {
 
   const updateStatus = (id, newStatus) => {
     const updated = cvs.map((cv) =>
-      cv.id === id ? { ...cv, status: newStatus } : cv
+      cv.id === id ? { ...cv, status: newStatus } : cv,
     );
     setCVs(updated);
 
@@ -81,7 +81,7 @@ export default function CVQueuePage() {
 
   const updateAvailability = (id, newAvailability) => {
     const updated = cvs.map((cv) =>
-      cv.id === id ? { ...cv, availability: newAvailability } : cv
+      cv.id === id ? { ...cv, availability: newAvailability } : cv,
     );
     setCVs(updated);
 
@@ -109,7 +109,7 @@ export default function CVQueuePage() {
         count: cvs.filter((c) => c.reviewType === "manual").length,
       },
     ],
-    [cvs]
+    [cvs],
   );
 
   /* ================= FILTER ================= */
@@ -142,21 +142,18 @@ export default function CVQueuePage() {
       </div>
 
       {/* CV Cards */}
-      <div className="space-y-6">
+      <div className="space-y-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {filtered.length > 0 ? (
           filtered.map((cv) => (
             <CVCard
-  key={cv.id}
-  data={cv}
-  onView={() => setSelectedCV(cv)}
-  onStatusChange={(newStatus) =>
-    updateStatus(cv.id, newStatus)
-  }
-  onAvailabilityChange={(newAvailability) =>
-    updateAvailability(cv.id, newAvailability)
-  }
-/>
-
+              key={cv.id}
+              data={cv}
+              onView={() => setSelectedCV(cv)}
+              onStatusChange={(newStatus) => updateStatus(cv.id, newStatus)}
+              onAvailabilityChange={(newAvailability) =>
+                updateAvailability(cv.id, newAvailability)
+              }
+            />
           ))
         ) : (
           <div className="text-center py-12 text-gray-500">
@@ -167,10 +164,7 @@ export default function CVQueuePage() {
 
       {/* PDF Modal */}
       {selectedCV && (
-        <PDFCVPreview
-          data={selectedCV}
-          onClose={() => setSelectedCV(null)}
-        />
+        <PDFCVPreview data={selectedCV} onClose={() => setSelectedCV(null)} />
       )}
     </div>
   );

@@ -229,7 +229,7 @@ BSc Computer Science – University of Technology
             Mail Submission
           </button>
 
-          <button className="border border-gray-300 px-6 py-3 rounded-md text-sm text-black cursor-pointer hover:bg-gray-300 transition-all flex items-center justify-center gap-2">
+          <button className="border border-gray-300 px-6 py-3 rounded-md text-sm text-black hover:text-white cursor-pointer hover:bg-[#2D468B] transition-all flex items-center justify-center gap-2 ">
             <FiDownload />
             Download CV
           </button>
