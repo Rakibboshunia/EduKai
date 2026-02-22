@@ -43,6 +43,42 @@ const initialOrganizations = [
     location: "Sylhet",
     skills: ["AI", "ML", "Python"],
   },
+  {
+    id: 1,
+    name: "TechCorp Solutions",
+    email: "info@techcorp.com",
+    industry: "Technology",
+    totalSubmissions: 23,
+    location: "Dhaka",
+    skills: ["JavaScript", "React", "Node.js"],
+  },
+  {
+    id: 2,
+    name: "Innova Labs",
+    email: "contact@innovalabs.com",
+    industry: "Software",
+    totalSubmissions: 15,
+    location: "Chittagong",
+    skills: ["Python", "Django", "PostgreSQL"],
+  },
+  {
+    id: 3,
+    name: "BlueWave Tech",
+    email: "hr@bluewave.com",
+    industry: "Technology",
+    totalSubmissions: 30,
+    location: "Dhaka",
+    skills: ["Vue", "Laravel", "MySQL"],
+  },
+  {
+    id: 4,
+    name: "StartupX",
+    email: "careers@startupx.ai",
+    industry: "AI",
+    totalSubmissions: 12,
+    location: "Sylhet",
+    skills: ["AI", "ML", "Python"],
+  },
 ];
 
 export default function Organizations() {

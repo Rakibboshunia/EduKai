@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import Tabs from "../components/Tabs";
 import CVCard from "../components/CVCard";
-import PDFCVPreview from "../components/PDFCVPreview";
 
 export default function CVQueuePage() {
   const [activeTab, setActiveTab] = useState("all");

@@ -187,11 +187,11 @@ BSc Computer Science – University of Technology
         </div> */}
 
         {/* Rewrite Button (ChatGPT) */}
-        <div className="inline-block border border-gray-200 rounded-xl p-2 bg-white">
+        <div className="inline-block border border-gray-100 rounded-xl p-3 bg-white">
           <button
             onClick={handleRewriteWithAI}
             disabled={isRewriting}
-            className={`px-3 py-4 rounded-md text-sm transition flex items-center gap-2 cursor-pointer
+            className={`px-2 py-3 rounded-md text-sm transition flex items-center gap-2 cursor-pointer
       ${
         isRewriting
           ? "bg-gray-400 text-white cursor-not-allowed"
@@ -222,7 +222,7 @@ BSc Computer Science – University of Technology
         {/* 🔹 Footer Actions */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-6 sm:pt-8">
           <button
-            onClick={() => navigate("/mail/submission")}
+            onClick={() => navigate("/ai/mail-submission")}
             className="flex-1 bg-[#2D468B] text-white px-6 py-3 rounded-md cursor-pointer hover:bg-[#354e92] flex items-center justify-center gap-2"
           >
             <FiSend />

@@ -12,16 +12,16 @@ import Organizations from "../pages/Organizations";
 import CvQueue from "../pages/CvQueue";
 import AICVRewriter from "../pages/AICVRewriter";
 import EmailCompose from "../pages/EmailCompose";
+import MailSubmission from "../pages/MailSubmission";
 
 import LogIn from "../pages/auth/LogIn";
 import ResetPassword from "../pages/auth/ResetPassword";
 import NewPassword from "../pages/auth/NewPassword";
 import Success from "../pages/auth/Success";
 import OTP from "../pages/auth/OTP";
-import MailSubmission from "../pages/MailSubmission";
-
 
 const router = createBrowserRouter([
+  /* ================= AUTH ================= */
   {
     path: "/auth",
     element: <AuthLayout />,
@@ -35,28 +35,33 @@ const router = createBrowserRouter([
     ],
   },
 
+  /* ================= DASHBOARD ================= */
   {
     path: "/",
     element: <DashboardLayout />,
     children: [
       { index: true, element: <Home /> },
+
       { path: "cv/automation/platform", element: <BulkImport /> },
       { path: "cv/queue", element: <CvQueue /> },
       { path: "availability", element: <Availability /> },
       { path: "tracking", element: <Tracking /> },
       { path: "settings", element: <Settings /> },
+      { path: "organizations", element: <Organizations /> },
 
-      { path: "ai/re-writer", element: <AICVRewriter /> },
-      { path: "mail/submission", element: <MailSubmission/>},
+      /* ================= AI SECTION ================= */
       {
-        path: "mail/submission/compose",
-        element: <EmailCompose />,                                 
+        path: "ai",
+        children: [
+          { path: "re-writer", element: <AICVRewriter /> },
+          { path: "mail-submission", element: <MailSubmission /> },
+          { path: "mail-submission/compose", element: <EmailCompose /> },
+        ],
       },
-                
-      { path: "organizations", element: <Organizations /> },       
     ],
   },
 
+  /* ================= 404 ================= */
   {
     path: "*",
     element: (

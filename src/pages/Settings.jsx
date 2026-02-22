@@ -1,22 +1,20 @@
 import React, { useContext, useState } from "react";
-import Breadcrumb from "../components/Breadcrumb";
+import { FiEdit2 } from "react-icons/fi";
+import { AuthContext } from "../provider/AuthProvider";
 import InputField from "../components/InputField";
 import Dropdown from "../components/Dropdown";
 import Password from "../components/Password";
-import { FiEdit2 } from "react-icons/fi";
-import { AuthContext } from "../provider/AuthProvider";
 
 const Settings = () => {
   const { user, updateUser } = useContext(AuthContext);
   const [isEdit, setIsEdit] = useState(false);
 
   return (
-    <div className="w-full space-y-8">
-      <Breadcrumb />
+    <div className="p-6 space-y-8">
 
-      {/* ================= PROFILE CARD ================= */}
-      <div className="bg-white/60 rounded-2xl p-6 flex items-center justify-between">
-        <div className="flex items-center gap-5">
+      {/* ================= PROFILE HEADER ================= */}
+      <div className="bg-white/60 rounded-2xl p-6 flex justify-between items-center">
+        <div className="flex items-center gap-4">
           <div className="relative">
             <img
               src={user.avatar}
@@ -47,9 +45,7 @@ const Settings = () => {
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg text-[#0A0A0A]">
-              {user.name}
-            </h3>
+            <h3 className="font-semibold text-lg text-black">{user.name}</h3>
             <p className="text-sm text-gray-500">{user.email}</p>
           </div>
         </div>
@@ -57,7 +53,7 @@ const Settings = () => {
         {!isEdit && (
           <button
             onClick={() => setIsEdit(true)}
-            className="px-5 py-2 bg-[#2D468A] text-white rounded-lg cursor-pointer"
+            className="px-6 py-2 bg-[#2D468A] text-white rounded-lg"
           >
             Edit
           </button>
@@ -65,31 +61,30 @@ const Settings = () => {
       </div>
 
       {/* ================= PERSONAL INFO ================= */}
-      <div className="bg-white/60 rounded-2xl p-6">
-        <h4 className="text-lg font-semibold text-[#0A0A0A] mb-6">
-          Personal Information
-        </h4>
-
+      <div className="bg-white/60 rounded-2xl p-8 space-y-6">
         <div className="grid grid-cols-12 gap-6">
+
           <InputField
-            label="Name"
-            value={user.name}
+            label="Full Name"
+            placeholder="Your First Name"
+            value={user.firstName || ""}
             disabled={!isEdit}
-            onChange={(e) => updateUser({ name: e.target.value })}
+            onChange={(e) => updateUser({ firstName: e.target.value })}
             className="col-span-12 md:col-span-6"
           />
 
           <InputField
-            label="Email"
-            value={user.email}
+            label="Last Name"
+            placeholder="Last Name"
+            value={user.lastName || ""}
             disabled={!isEdit}
-            onChange={(e) => updateUser({ email: e.target.value })}
+            onChange={(e) => updateUser({ lastName: e.target.value })}
             className="col-span-12 md:col-span-6"
           />
 
           <Dropdown
             label="Gender"
-            placeholder="Select Gender"
+            placeholder="Select Your Gender"
             options={["Male", "Female", "Other"]}
             disabled={!isEdit}
             className="col-span-12 md:col-span-6"
@@ -97,85 +92,86 @@ const Settings = () => {
 
           <Dropdown
             label="Country"
-            placeholder="Select Country"
-            options={["USA", "Canada", "UK"]}
+            placeholder="Select Your Country"
+            options={["USA", "UK", "Canada"]}
             disabled={!isEdit}
             className="col-span-12 md:col-span-6"
           />
 
           <Dropdown
             label="Language"
-            placeholder="Select Your Language"
-            className="col-span-12 md:col-span-6"
-            options={["English", "Spanish", "French"]}
+            placeholder="Select your Language"
+            options={["English", "Spanish"]}
             disabled={!isEdit}
+            className="col-span-12 md:col-span-6"
           />
 
           <Dropdown
             label="Time Zone"
-            placeholder="Select Your Time Zone"
-            className="col-span-12 md:col-span-6"
-            options={["GMT", "EST", "PST"]}
+            placeholder="Select your Time zone"
+            options={["GMT", "EST"]}
             disabled={!isEdit}
+            className="col-span-12 md:col-span-6"
           />
 
         </div>
       </div>
 
       {/* ================= MICROSOFT OUTLOOK ================= */}
-      <div className="bg-white/60 rounded-2xl p-6">
-        <div className="flex items-center justify-between">
+      <div className="bg-white/60 rounded-2xl p-6 space-y-4">
+        <div className="flex justify-between items-center">
           <div>
-            <h4 className="text-lg font-semibold text-[#0A0A0A]">
-              Microsoft Outlook
-            </h4>
-            <p className="text-sm text-gray-500 mt-1">
-              Connect your Outlook account to sync emails
+            <h4 className="font-semibold text-black">Microsoft Outlook</h4>
+            <p className="text-sm text-gray-500">
+              Connected as user@example.com
             </p>
           </div>
 
-          {!isEdit && (
-            <button className="px-5 py-2 bg-[#2D468A] text-white rounded-lg cursor-pointer">
-              Connect
-            </button>
-          )}
+          <button className="px-5 py-2 bg-[#2D468A] text-white rounded-lg">
+            Connect
+          </button>
         </div>
 
-        <div className="mt-4 bg-green-100 text-green-700 px-4 py-3 rounded-lg text-sm">
-          Connected successfully · Last checked 2 minutes ago
+        <div className="bg-green-100 text-green-700 px-4 py-2 rounded-md text-sm">
+          Connection successful. Last tested: 2 minutes ago
         </div>
       </div>
 
-      {/* ================= SECURITY ================= */}
-      {isEdit && (
-        <div className="bg-white/60 rounded-2xl p-6">
-          <h4 className="text-lg font-semibold text-[#0A0A0A] mb-6">
-            Security
-          </h4>
+      {/* ================= EMAIL ================= */}
+      <div className="bg-white/60 rounded-2xl p-6">
+        <InputField
+          label="Email"
+          placeholder="Enter Your Email"
+          disabled={!isEdit}
+        />
+      </div>
 
-          <div className="grid grid-cols-12 gap-6">
-            <Password
-              label="Current Password"
-              placeholder="Enter your current password"
-              className="col-span-12 md:col-span-6"
-            />
-            <Password
-              label="New Password"
-              placeholder="Enter your new password"
-              className="col-span-12 md:col-span-6"
-            />
-          </div>
+      {/* ================= PASSWORD ================= */}
+      <div className="bg-white/60 rounded-2xl p-6 space-y-6">
+        <h4 className="font-semibold text-black">Password</h4>
 
-          <div className="flex justify-end mt-8">
-            <button
-              onClick={() => setIsEdit(false)}
-              className="px-6 py-2 bg-[#2D468A] text-white rounded-lg cursor-pointer"
-            >
-              Save changes
-            </button>
-          </div>
+        <div className="grid grid-cols-12 gap-6">
+          <Password
+            label="Current Password"
+            placeholder="Enter Your Old Password"
+            className="col-span-12 md:col-span-6"
+          />
+          <Password
+            label="New Password"
+            placeholder="Enter Your New Password"
+            className="col-span-12 md:col-span-6"
+          />
         </div>
-      )}
+
+        <div className="flex justify-end">
+          <button
+            onClick={() => setIsEdit(false)}
+            className="px-6 py-2 bg-[#2D468A] text-white rounded-lg"
+          >
+            Save changes
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

@@ -290,14 +290,14 @@ export default function MailSubmission() {
           <button
             disabled={selectedIds.length === 0}
             onClick={() =>
-              navigate("/mail/submission/compose", {
+              navigate("/ai/mail-submission/compose", {
                 state: {
                   candidate: "John Smith",
                   organizations: selectedIds,
                 },
               })
             }
-            className={`w-full py-3 rounded-lg font-medium text-sm transition
+            className={`w-full py-3 rounded-lg font-medium text-sm transition cursor-pointer
               ${
                 selectedIds.length
                   ? "bg-[#2D468A] text-white hover:bg-[#243a73]"

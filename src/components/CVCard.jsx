@@ -6,15 +6,16 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Clock,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function CVCard({
   data,
-  onView,
   onStatusChange,
   onAvailabilityChange,
 }) {
+  const navigate = useNavigate();
+
   const {
     name,
     email,
@@ -67,6 +68,14 @@ export default function CVCard({
       ? "manual_review"
       : status;
 
+  /* ================= NAVIGATION ================= */
+
+  const handleViewCV = () => {
+    navigate("/ai/re-writer", {
+      state: { candidate: data }, // চাইলে পুরো CV data পাঠাতে পারো
+    });
+  };
+
   return (
     <div className="bg-white/60 text-black rounded-2xl p-6 border border-gray-300">
       {/* Header */}
@@ -107,7 +116,6 @@ export default function CVCard({
 
       {/* Status */}
       <div className="mt-4 flex gap-3 flex-wrap items-center">
-        {/* Quality */}
         <StatusBadge
           value={finalStatus}
           options={qualityOptions}
@@ -115,7 +123,6 @@ export default function CVCard({
           onChange={onStatusChange}
         />
 
-        {/* Availability */}
         {availability && (
           <StatusBadge
             value={availability}
@@ -128,7 +135,7 @@ export default function CVCard({
       {/* Action */}
       <div className="mt-5 flex justify-end">
         <button
-          onClick={() => onView(data)}
+          onClick={handleViewCV}
           className="px-6 py-2 border rounded-xl text-sm text-gray-600 transition hover:bg-[#2D468A] hover:text-white cursor-pointer"
         >
           View CV

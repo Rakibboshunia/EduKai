@@ -7,21 +7,20 @@ const UploadPDF = ({ onFileSelect }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState([]);
 
-  const allowedTypes = [
-    "application/pdf",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  ];
+
+  const allowedType = "application/pdf";
 
   const handleFiles = (fileList) => {
     const selectedFiles = Array.from(fileList);
 
-    const validFiles = selectedFiles.filter((file) =>
-      allowedTypes.includes(file.type)
+    const validFiles = selectedFiles.filter(
+      (file) =>
+        file.type === allowedType ||
+        file.name.toLowerCase().endsWith(".pdf")
     );
 
     if (validFiles.length !== selectedFiles.length) {
-      alert("Only PDF, DOC, DOCX files are allowed");
+      alert("Only PDF files are allowed.");
     }
 
     setFiles(validFiles);
@@ -30,6 +29,7 @@ const UploadPDF = ({ onFileSelect }) => {
 
   const handleChange = (e) => {
     handleFiles(e.target.files);
+    e.target.value = ""; 
   };
 
   const handleDrop = (e) => {
@@ -54,12 +54,12 @@ const UploadPDF = ({ onFileSelect }) => {
 
         <p className="text-[#4A5565] text-center">
           {files.length > 0
-            ? `${files.length} file(s) selected`
-            : "Drop CVs here or click to browse"}
+            ? `${files.length} PDF file(s) selected`
+            : "Drop PDF files here or click to browse"}
         </p>
 
         <p className="text-[#7C7C7C] text-xs">
-          Support for PDF, DOC, DOCX formats
+          Only PDF format is supported
         </p>
 
         <p className="text-[#4A5565] text-center">or</p>
@@ -70,21 +70,19 @@ const UploadPDF = ({ onFileSelect }) => {
           className="bg-[#2D468A] text-white px-10 py-2 rounded-md flex items-center gap-2 hover:bg-[#354e92] cursor-pointer"
         >
           <HiOutlineDocumentDownload className="w-6 h-6" />
-          Select files
+          Select PDF
         </button>
 
-        {/* Hidden input */}
         <input
           ref={inputRef}
           type="file"
-          accept=".pdf,.doc,.docx"
+          accept=".pdf,application/pdf"   
           multiple
           onChange={handleChange}
           className="hidden"
         />
       </div>
 
-      {/* Selected file list */}
       {files.length > 0 && (
         <ul className="mt-4 text-sm text-gray-600">
           {files.map((file, index) => (

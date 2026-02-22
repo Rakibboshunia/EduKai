@@ -134,7 +134,7 @@ export default function EmailCompose() {
               Send Via Outlook to 1 Organization
             </button>
 
-            <button className="px-6 py-3 text-black cursor-pointer border border-gray-300 rounded-lg text-sm hover:bg-gray-100">
+            <button className="px-6 py-3 text-black cursor-pointer border border-gray-300 rounded-lg text-sm hover:bg-[#243a73] hover:text-white transition-all">
               Save as Draft
             </button>
           </div>
