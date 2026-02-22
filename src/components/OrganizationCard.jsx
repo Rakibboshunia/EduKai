@@ -19,7 +19,6 @@ const InfoRow = ({ label, value }) => (
 
 /* ---------- Organization Card ---------- */
 const OrganizationCard = ({
-  /* existing props */
   id,
   name,
   email,

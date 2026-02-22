@@ -142,7 +142,8 @@ export default function CVQueuePage() {
       </div>
 
       {/* CV Cards */}
-      <div className="space-y-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div
+       className="space-y-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {filtered.length > 0 ? (
           filtered.map((cv) => (
             <CVCard

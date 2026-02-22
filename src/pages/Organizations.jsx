@@ -178,7 +178,7 @@ export default function Organizations() {
           <select
             value={industry}
             onChange={(e) => handleIndustryFilter(e.target.value)}
-            className="w-full bg-white border text-black border-gray-300 rounded-lg px-4 py-3"
+            className="w-full bg-white border text-black border-gray-300 rounded-lg px-4 py-3 cursor-pointer"
           >
             <option value="">All Industries</option>
             <option value="Technology">Technology</option>

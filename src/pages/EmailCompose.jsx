@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FiEdit2, FiPaperclip, FiSend, FiSave, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import EmailSignatureCard from "../components/EmailSignatureCard";
 
 export default function EmailCompose() {
   const navigate = useNavigate();
@@ -18,20 +19,21 @@ export default function EmailCompose() {
 I am pleased to present John Smith, an exceptional candidate for your consideration.
 
 CANDIDATE OVERVIEW:
-John Smith is a highly skilled Senior Software Developer with 8+ years of professional experience in enterprise application development.
+John Smith is a highly skilled Senior Software Developer with 8+ years of progressive experience in enterprise application development. They bring a strong track record of delivering scalable solutions and technical leadership.
 
 KEY QUALIFICATIONS:
-• 8+ years of software development experience
+• 5+ years of software development experience
 • Expert in JavaScript, React, Node.js, Python, and AWS
 • Proven leadership in managing development teams
 • Strong track record of improving application performance
+• Experience with microservices architecture and cloud technologies
 
 ACHIEVEMENTS:
 • Led development of microservices architecture
 • Improved application performance by 40%
 • Successfully mentored junior developers
 
-This candidate has undergone our comprehensive quality screening process and has confirmed their immediate availability.
+This candidate has undergone our comprehensive quality screening process and has confirmed their immediate availability. Their CV is attached for your review.
 
 Kind regards,`);
 
@@ -58,7 +60,7 @@ Kind regards,`);
 
   return (
     <div className="p-4 space-y-16">
-      {/* HEADER */}
+      {/* ================= HEADER ================= */}
       <div className="space-y-2">
         <h2 className="text-3xl font-semibold text-[#2D468A]">
           Email Submission & Outlook Integration
@@ -73,7 +75,7 @@ Kind regards,`);
         </div>
       </div>
 
-      {/* EMAIL CARD */}
+      {/* ================= EMAIL CARD ================= */}
       <div className="bg-white rounded-xl border border-gray-300 p-8 max-w-7xl">
 
         {/* Top Header */}
@@ -124,13 +126,13 @@ Kind regards,`);
               <input
                 value={draftSubject}
                 onChange={(e) => setDraftSubject(e.target.value)}
-                className="w-full text-black mt-1 border border-gray-400 rounded-lg px-3 py-2 text-sm bg-white focus:ring-[#2D468A]"
+                className="w-full mt-1 border border-gray-400 rounded-lg px-3 py-2 text-sm bg-white text-black focus:ring-2 focus:ring-[#2D468A]"
               />
             ) : (
               <input
                 readOnly
                 value={subject}
-                className="w-full text-black mt-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50"
+                className="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 text-black"
               />
             )}
           </div>
@@ -141,7 +143,7 @@ Kind regards,`);
               value={draftBody}
               onChange={(e) => setDraftBody(e.target.value)}
               rows={16}
-              className="w-full border border-gray-400 rounded-lg p-4 text-sm focus:ring-[#2D468A] text-black"
+              className="w-full border border-gray-400 rounded-lg p-4 text-sm text-black focus:ring-2 focus:ring-[#2D468A]"
             />
           ) : (
             <div className="border border-gray-300 rounded-lg p-4 text-sm text-black leading-relaxed whitespace-pre-line bg-gray-50">
@@ -155,7 +157,18 @@ Kind regards,`);
             Attached: John_Smith_CV_Enhanced.pdf
           </div>
 
-          {/* Actions */}
+          {/* ================= SIGNATURE COMPONENT ================= */}
+          <EmailSignatureCard
+            name="Samuel Crona"
+            title="Investor Communications Designer"
+            email="samuel@walmart.com"
+            website="www.walmart.com"
+            phone="+1 234 568 8897"
+            company="Walmart"
+            avatar="/logo.png"
+          />
+
+          {/* ACTION BUTTONS */}
           <div className="flex flex-col sm:flex-row gap-4 pt-2">
             <button className="flex-1 bg-[#2D468A] text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-[#243a73] cursor-pointer">
               <FiSend />
