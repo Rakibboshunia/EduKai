@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 
 import DynamicSearch from "../components/DynamicSearch";
 import OrganizationCard from "../components/OrganizationCard";
-import AddOrganizationModal from "../components/AddOrganizationModal"; // ✅ ADD
+import AddOrganizationModal from "../components/AddOrganizationModal";
+import Pagination from "../components/Pagination"; // ✅ add
 
 /* ---------------- Dummy Data ---------------- */
 const initialOrganizations = [
@@ -44,49 +45,57 @@ const initialOrganizations = [
     skills: ["AI", "ML", "Python"],
   },
   {
-    id: 1,
-    name: "TechCorp Solutions",
-    email: "info@techcorp.com",
-    industry: "Technology",
-    totalSubmissions: 23,
-    location: "Dhaka",
-    skills: ["JavaScript", "React", "Node.js"],
+    id: 5,
+    name: "CloudNova Ltd",
+    email: "jobs@cloudnova.com",
+    industry: "Cloud Computing",
+    totalSubmissions: 18,
+    location: "Khulna",
+    skills: ["AWS", "Azure", "Docker"],
   },
   {
-    id: 2,
-    name: "Innova Labs",
-    email: "contact@innovalabs.com",
+    id: 6,
+    name: "NextGen Systems",
+    email: "hr@nextgen.io",
     industry: "Software",
-    totalSubmissions: 15,
-    location: "Chittagong",
-    skills: ["Python", "Django", "PostgreSQL"],
+    totalSubmissions: 21,
+    location: "Rajshahi",
+    skills: ["Java", "Spring Boot", "Oracle"],
   },
   {
-    id: 3,
-    name: "BlueWave Tech",
-    email: "hr@bluewave.com",
+    id: 7,
+    name: "GreenTech Innovations",
+    email: "contact@greentech.com",
     industry: "Technology",
-    totalSubmissions: 30,
-    location: "Dhaka",
-    skills: ["Vue", "Laravel", "MySQL"],
+    totalSubmissions: 9,
+    location: "Barisal",
+    skills: ["IoT", "Embedded Systems", "C++"],
   },
   {
-    id: 4,
-    name: "StartupX",
-    email: "careers@startupx.ai",
-    industry: "AI",
-    totalSubmissions: 12,
-    location: "Sylhet",
-    skills: ["AI", "ML", "Python"],
+    id: 8,
+    name: "DataBridge Analytics",
+    email: "careers@databridge.ai",
+    industry: "Data Science",
+    totalSubmissions: 27,
+    location: "Dhaka",
+    skills: ["Data Science", "Power BI", "SQL"],
   },
 ];
 
 export default function Organizations() {
-  /* ---------------- State ---------------- */
+
   const [organizations, setOrganizations] = useState(initialOrganizations);
   const [filteredData, setFilteredData] = useState(initialOrganizations);
   const [industry, setIndustry] = useState("");
   const [openAdd, setOpenAdd] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const PER_PAGE = 4;
+
+  /* ---------------- Reset Page On Filter ---------------- */
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredData]);
 
   /* ---------------- Search Sync ---------------- */
   const handleSearchFilter = (data) => {
@@ -108,26 +117,6 @@ export default function Organizations() {
     setFilteredData(filtered);
   };
 
-  /* ---------------- Edit (Update) ---------------- */
-  const handleUpdate = (updatedOrg) => {
-    const updatedList = organizations.map((org) =>
-      org.id === updatedOrg.id ? updatedOrg : org
-    );
-
-    setOrganizations(updatedList);
-    setFilteredData(updatedList);
-  };
-
-  /* ---------------- Delete ---------------- */
-  const handleDelete = (id) => {
-    const updatedList = organizations.filter(
-      (org) => org.id !== id
-    );
-
-    setOrganizations(updatedList);
-    setFilteredData(updatedList);
-  };
-
   /* ---------------- Add Organization ---------------- */
   const handleAddOrganization = (data) => {
     const newOrg = {
@@ -136,13 +125,28 @@ export default function Organizations() {
       totalSubmissions: 0,
     };
 
-    setOrganizations((prev) => [newOrg, ...prev]);
-    setFilteredData((prev) => [newOrg, ...prev]);
+    const updated = [newOrg, ...organizations];
+    setOrganizations(updated);
+    setFilteredData(updated);
+  };
+
+  /* ---------------- Pagination Logic ---------------- */
+  const totalPages = Math.ceil(filteredData.length / PER_PAGE);
+
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * PER_PAGE;
+    return filteredData.slice(start, start + PER_PAGE);
+  }, [filteredData, currentPage]);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
   };
 
   return (
     <div className="p-4">
-      {/* 🔹 Page Header */}
+
+      {/* 🔹 Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#2D468A]">
@@ -153,10 +157,9 @@ export default function Organizations() {
           </p>
         </div>
 
-        {/* ✅ CHANGE: Link → Button (popup open) */}
         <button
           onClick={() => setOpenAdd(true)}
-          className="bg-[#2D468B] text-white px-5 py-3 rounded-md flex items-center gap-2 hover:bg-[#354e92] cursor-pointer transition hover:shadow-md"
+          className="bg-[#2D468B] text-white px-5 py-3 rounded-md flex items-center gap-2 hover:bg-[#354e92]"
         >
           <FiPlus />
           Add Organization
@@ -175,42 +178,23 @@ export default function Organizations() {
           <select
             value={industry}
             onChange={(e) => handleIndustryFilter(e.target.value)}
-            className="
-              w-full appearance-none
-              bg-white
-              border border-gray-300
-              rounded-lg
-              px-4 py-3
-              text-md text-gray-800
-              shadow-sm
-              cursor-pointer
-              focus:outline-none
-              focus:ring-2 focus:ring-[#2D468B]
-              focus:border-[#2D468B]
-              hover:border-gray-400"
+            className="w-full bg-white border text-black border-gray-300 rounded-lg px-4 py-3"
           >
             <option value="">All Industries</option>
             <option value="Technology">Technology</option>
             <option value="Software">Software</option>
             <option value="AI">AI</option>
           </select>
-
-          {/* Dropdown Arrow */}
-          <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-            ▼
-          </span>
         </div>
       </div>
 
-      {/* 🔹 Organizations Grid */}
+      {/* 🔹 Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredData.length > 0 ? (
-          filteredData.map((org) => (
+        {paginatedData.length > 0 ? (
+          paginatedData.map((org) => (
             <OrganizationCard
               key={org.id}
               {...org}
-              onUpdate={handleUpdate}
-              onDelete={handleDelete}
             />
           ))
         ) : (
@@ -218,7 +202,14 @@ export default function Organizations() {
         )}
       </div>
 
-      {/* ✅ ADD ORGANIZATION POPUP */}
+      {/* 🔹 Pagination */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
+
+      {/* 🔹 Add Modal */}
       <AddOrganizationModal
         open={openAdd}
         onClose={() => setOpenAdd(false)}

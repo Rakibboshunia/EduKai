@@ -7,7 +7,7 @@ import Home from "../pages/Home";
 import Settings from "../pages/Settings";
 import BulkImport from "../pages/BulkImport";
 import Availability from "../pages/Availability";
-import Tracking from "../pages/Tracking";
+// import Tracking from "../pages/Tracking";
 import Organizations from "../pages/Organizations";
 import CvQueue from "../pages/CvQueue";
 import AICVRewriter from "../pages/AICVRewriter";
@@ -45,7 +45,7 @@ const router = createBrowserRouter([
       { path: "cv/automation/platform", element: <BulkImport /> },
       { path: "cv/queue", element: <CvQueue /> },
       { path: "availability", element: <Availability /> },
-      { path: "tracking", element: <Tracking /> },
+      // { path: "tracking", element: <Tracking /> },
       { path: "settings", element: <Settings /> },
       { path: "organizations", element: <Organizations /> },
 
