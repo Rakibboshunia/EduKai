@@ -6,9 +6,12 @@ const AddOrganizationForm = ({
   initialValues = {
     name: "",
     email: "",
+    contactPerson: "",
+    phase: "Active",
     industry: "",
     location: "",
-    skills: "",
+    jobTitle: "",
+    radius: "0 km",
   },
   submitLabel = "Add Organization",
   onSubmit,
@@ -23,21 +26,13 @@ const AddOrganizationForm = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    onSubmit({
-      name: formData.name,
-      email: formData.email,
-      industry: formData.industry,
-      location: formData.location,
-      skills: formData.skills
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-    });
+    onSubmit(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
+
+      {/* Organization Name */}
       <InputField
         label="Organization Name *"
         name="name"
@@ -48,6 +43,7 @@ const AddOrganizationForm = ({
         inputClass="border border-gray-300"
       />
 
+      {/* Email */}
       <InputField
         label="Email Name *"
         name="email"
@@ -58,7 +54,36 @@ const AddOrganizationForm = ({
         inputClass="border border-gray-300"
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Contact Person + Phase */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <InputField
+          label="Contact Person *"
+          name="contactPerson"
+          type="text"
+          placeholder="Enter contact person name"
+          value={formData.contactPerson}
+          onChange={handleChange}
+          inputClass="border border-gray-300"
+        />
+
+        <div>
+          <label className="block mb-1 font-medium">
+            Phase *
+          </label>
+          <select
+            name="phase"
+            value={formData.phase}
+            onChange={handleChange}
+            className="w-full border text-black border-gray-300 rounded-md px-3 py-2 cursor-pointer"
+          >
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Industry + Location */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <InputField
           label="Industry *"
           name="industry"
@@ -80,20 +105,52 @@ const AddOrganizationForm = ({
         />
       </div>
 
-      <InputField
-        label="Skill Requirements (comma separated)"
-        name="skills"
-        type="text"
-        placeholder="e.g. JavaScript, React, Node.js"
-        value={formData.skills}
-        onChange={handleChange}
-        inputClass="border border-gray-300"
-      />
+      {/* Job Title + Radius */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <InputField
+          label="Add job title *"
+          name="jobTitle"
+          type="text"
+          placeholder="Enter job title"
+          value={formData.jobTitle}
+          onChange={handleChange}
+          inputClass="border border-gray-300"
+        />
 
-      <div className="flex items-center gap-4 pt-4">
+        <div>
+          <label className="block mb-1 font-medium">
+            Radius *
+          </label>
+          <select
+            name="radius"
+            value={formData.radius}
+            onChange={handleChange}
+            className="w-full border text-black border-gray-300 rounded-md px-3 py-2 cursor-pointer"
+          >
+            <option value="0 km">0 km</option>
+            <option value="5 km">5 km</option>
+            <option value="10 km">10 km</option>
+            <option value="20 km">20 km</option>
+          </select>
+        </div>
+
+      </div>
+
+      <InputField
+          label="Skills Requirements *"
+          name="Skills"
+          type="text"
+          placeholder="e.g Javascript, React, Vue.js"
+          value={formData.jobTitle}
+          onChange={handleChange}
+          inputClass="border border-gray-300"
+        />
+
+      {/* Buttons */}
+      <div className="flex items-center justify-between pt-4">
         <button
           type="submit"
-          className="bg-[#2D468B] text-white px-6 py-3 rounded-md flex items-center gap-2 hover:bg-[#354e90] cursor-pointer"
+          className="bg-[#2D468B] text-white px-6 py-3 rounded-md flex items-center gap-2 hover:bg-[#354e90] transition cursor-pointer"
         >
           <FiPlus />
           {submitLabel}
@@ -102,7 +159,7 @@ const AddOrganizationForm = ({
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-3 rounded-md border border-gray-300 text-black hover:text-white hover:bg-[#2D468B]  cursor-pointer"
+          className="px-6 py-3 rounded-md border border-gray-300 text-black hover:bg-[#2D468B] hover:text-white transition cursor-pointer"
         >
           Cancel
         </button>
