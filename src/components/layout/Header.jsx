@@ -61,18 +61,16 @@ export default function Header({ onMenuClick }) {
             }}
           >
             <Image
-              src={user.avatar}
+              src={user?.profile_pic_url || "https://i.pravatar.cc/150"}
               alt="User Avatar"
               className="w-9 h-9 rounded-full object-cover"
             />
 
             <div className="hidden sm:block">
               <p className="text-sm text-white font-medium">
-                {user.name}
+                {user?.full_name}
               </p>
-              <p className="text-xs text-white">
-                {user.role}
-              </p>
+              <p className="text-xs text-white">{user?.role}</p>
             </div>
 
             <FaAngleDown
@@ -85,10 +83,7 @@ export default function Header({ onMenuClick }) {
           {/* Dropdown */}
           {openDropdown && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-50">
-              <Link
-                to="/settings"
-                onClick={() => setOpenDropdown(false)}
-              >
+              <Link to="/settings" onClick={() => setOpenDropdown(false)}>
                 <button className="flex w-full items-center gap-3 px-4 py-3 text-sm hover:bg-[#2D468A] hover:text-white">
                   <Icon icon="material-symbols:settings" width="18" />
                   Settings

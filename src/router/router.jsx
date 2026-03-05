@@ -45,7 +45,6 @@ const router = createBrowserRouter([
       { path: "cv/automation/platform", element: <BulkImport /> },
       { path: "cv/queue", element: <CvQueue /> },
       { path: "availability", element: <Availability /> },
-      // { path: "tracking", element: <Tracking /> },
       { path: "settings", element: <Settings /> },
       { path: "organizations", element: <Organizations /> },
 

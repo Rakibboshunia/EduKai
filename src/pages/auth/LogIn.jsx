@@ -5,6 +5,9 @@ import { MdLogin, MdArrowBack } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
+import { loginApi } from "../../api/authApi";
+import useAuth from "../../hooks/useAuth";
+
 const LogIn = () => {
   const navigate = useNavigate();
 
@@ -23,34 +26,43 @@ const LogIn = () => {
   }, []);
 
   /* ================= Login Handler ================= */
-  const handleLogin = (e) => {
-    e.preventDefault();
+  const { loginUser } = useAuth();
 
-    if (!email || !password) {
-      toast.error("Email and password are required!");
-      return;
-    }
+const handleLogin = async (e) => {
+  e.preventDefault();
 
+  if (!email || !password) {
+    toast.error("Email and password are required!");
+    return;
+  }
+
+  try {
     setLoading(true);
 
-    // 🔹 Simulated API call
-    setTimeout(() => {
-      localStorage.setItem("isLoggedIn", "true");
+    const data = await loginApi(email, password);
 
-      if (remember) {
-        localStorage.setItem("rememberEmail", email);
-      } else {
-        localStorage.removeItem("rememberEmail");
-      }
+    loginUser(data.user);
 
-      toast.success("Logged in successfully!");
+    if (remember) {
+      localStorage.setItem("rememberEmail", email);
+    } else {
+      localStorage.removeItem("rememberEmail");
+    }
 
-      // ✅ FIXED ROUTE
-      navigate("/", { replace: true });
+    toast.success(data.message);
 
-      setLoading(false);
-    }, 1000);
-  };
+    navigate("/", { replace: true });
+
+  } catch (error) {
+
+    toast.error(
+      error.response?.data?.message || "Login failed"
+    );
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <main className="bg-white grid justify-center items-center py-16 md:px-11 px-6 rounded-3xl border border-[#E5E7EB] shadow-lg relative">
