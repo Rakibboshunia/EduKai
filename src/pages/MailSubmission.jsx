@@ -27,7 +27,7 @@ const FILTERS = [
   {
     name: "phase",
     label: "Phase",
-    options: ["Active", "Inactive"],
+    options: ["Primary", "Secondary", "Higher"],
   },
   {
     name: "radius",
@@ -47,7 +47,7 @@ const ORGANIZATIONS = [
     industry: "School",
     location: "London",
     job_title: "HOD Science",
-    phase: "Active",
+    phase: "Primary",
     radius: "10 KM",
   },
   {
@@ -58,7 +58,7 @@ const ORGANIZATIONS = [
     industry: "School",
     location: "Manchester",
     job_title: "Maths Teacher",
-    phase: "Active",
+    phase: "Higher",
     radius: "5 KM",
   },
   {
@@ -69,7 +69,7 @@ const ORGANIZATIONS = [
     industry: "School",
     location: "Helsinki",
     job_title: "Science Teacher",
-    phase: "Inactive",
+    phase: "Secondary",
     radius: "25 KM",
   },
   {
@@ -80,7 +80,18 @@ const ORGANIZATIONS = [
     industry: "School",
     location: "New York",
     job_title: "Humanities Teacher",
-    phase: "Active",
+    phase: "Higher",
+    radius: "25 KM",
+  },
+  {
+    id: 4,
+    name: "Global Scholars Institute",
+    email: "hr@globalscholars.org",
+    contact_person: "William Anderson",
+    industry: "School",
+    location: "New York",
+    job_title: "Humanities Teacher",
+    phase: "Primary",
     radius: "25 KM",
   },
 ];

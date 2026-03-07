@@ -7,11 +7,12 @@ const AddOrganizationForm = ({
     name: "",
     email: "",
     contactPerson: "",
-    phase: "Active",
+    phase: "Select",
     industry: "",
     location: "",
     jobTitle: "",
     radius: "0 km",
+    Skills: "",
   },
   submitLabel = "Add Organization",
   onSubmit,
@@ -32,7 +33,6 @@ const AddOrganizationForm = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
 
-      {/* Organization Name */}
       <InputField
         label="Organization Name *"
         name="name"
@@ -43,7 +43,6 @@ const AddOrganizationForm = ({
         inputClass="border border-gray-300"
       />
 
-      {/* Email */}
       <InputField
         label="Email Name *"
         name="email"
@@ -54,7 +53,6 @@ const AddOrganizationForm = ({
         inputClass="border border-gray-300"
       />
 
-      {/* Contact Person + Phase */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <InputField
           label="Contact Person *"
@@ -67,22 +65,24 @@ const AddOrganizationForm = ({
         />
 
         <div>
-          <label className="block mb-1 font-medium">
+          <label className="block mb-1 text-black font-medium">
             Phase *
           </label>
+
           <select
             name="phase"
             value={formData.phase}
             onChange={handleChange}
-            className="w-full border text-black border-gray-300 rounded-md px-3 py-2 cursor-pointer"
+            className="w-full border text-black/60 border-gray-300 rounded-md px-3 py-2 cursor-pointer"
           >
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
+            <option value="Select">Select</option>
+            <option value="Primary">Primary</option>
+            <option value="Secondary">Secondary</option>
+            <option value="Higher">Higher</option>
           </select>
         </div>
       </div>
 
-      {/* Industry + Location */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <InputField
           label="Industry *"
@@ -105,7 +105,6 @@ const AddOrganizationForm = ({
         />
       </div>
 
-      {/* Job Title + Radius */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <InputField
           label="Add job title *"
@@ -118,35 +117,35 @@ const AddOrganizationForm = ({
         />
 
         <div>
-          <label className="block mb-1 font-medium">
+          <label className="block mb-1 text-black font-medium">
             Radius *
           </label>
+
           <select
             name="radius"
             value={formData.radius}
             onChange={handleChange}
-            className="w-full border text-black border-gray-300 rounded-md px-3 py-2 cursor-pointer"
+            className="w-full border text-black/60 border-gray-300 rounded-md px-3 py-2 cursor-pointer"
           >
+            <option value="Select">Select</option>
             <option value="0 km">0 km</option>
             <option value="5 km">5 km</option>
             <option value="10 km">10 km</option>
             <option value="20 km">20 km</option>
           </select>
         </div>
-
       </div>
 
       <InputField
-          label="Skills Requirements *"
-          name="Skills"
-          type="text"
-          placeholder="e.g Javascript, React, Vue.js"
-          value={formData.jobTitle}
-          onChange={handleChange}
-          inputClass="border border-gray-300"
-        />
+        label="Skills Requirements *"
+        name="Skills"
+        type="text"
+        placeholder="e.g Javascript, React, Vue.js"
+        value={formData.Skills}
+        onChange={handleChange}
+        inputClass="border border-gray-300"
+      />
 
-      {/* Buttons */}
       <div className="flex items-center justify-between pt-4">
         <button
           type="submit"

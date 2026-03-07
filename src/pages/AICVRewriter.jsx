@@ -7,7 +7,6 @@ import {
 } from "react-icons/fi";
 import { SiOpenai } from "react-icons/si";
 
-import AnonymizationOption from "../components/AnonymizationOption";
 import CVPreviewCard from "../components/CVPreviewCard";
 
 export default function AICVRewriter() {

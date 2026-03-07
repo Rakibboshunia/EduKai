@@ -16,7 +16,6 @@ const LogIn = () => {
   const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  /* ================= Load Remembered Email ================= */
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberEmail");
     if (savedEmail) {
@@ -25,7 +24,6 @@ const LogIn = () => {
     }
   }, []);
 
-  /* ================= Login Handler ================= */
   const { loginUser } = useAuth();
 
 const handleLogin = async (e) => {
@@ -68,7 +66,6 @@ const handleLogin = async (e) => {
     <main className="bg-white grid justify-center items-center py-16 md:px-11 px-6 rounded-3xl border border-[#E5E7EB] shadow-lg relative">
       <Toaster position="top-center" />
 
-      {/* 🔙 Back Button */}
       <button
         type="button"
         onClick={() => navigate("/")}
@@ -83,12 +80,11 @@ const handleLogin = async (e) => {
         noValidate
         className="gap-5 flex flex-col items-center md:w-[420px] w-full"
       >
-        {/* Logo */}
+
         <h3 className="text-[#2D468A] font-semibold text-4xl">
           Edukai
         </h3>
 
-        {/* Title */}
         <h3 className="text-[32px] text-[#2D468A] font-medium">
           Login to Account
         </h3>
@@ -97,7 +93,6 @@ const handleLogin = async (e) => {
           Please enter your email and password to continue
         </p>
 
-        {/* Email */}
         <InputField
           type="email"
           label="Email Address"
@@ -107,7 +102,6 @@ const handleLogin = async (e) => {
           inputClass="rounded-lg border border-[#2D468A]"
         />
 
-        {/* Password */}
         <Password
           label="Password"
           placeholder="Enter your password"
@@ -116,7 +110,6 @@ const handleLogin = async (e) => {
           inputClass="rounded-lg border border-[#2D468A]"
         />
 
-        {/* Remember + Forgot */}
         <div className="w-full flex items-center justify-between text-sm">
           <label className="flex items-center gap-2 cursor-pointer text-[#333]">
             <input
@@ -136,7 +129,6 @@ const handleLogin = async (e) => {
           </Link>
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
