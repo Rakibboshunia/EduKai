@@ -1,0 +1,34 @@
+import { FiUpload } from "react-icons/fi";
+
+export default function ImportExcelButton({ onFileUpload }) {
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    if (
+      file.type !==
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
+      file.type !== "application/vnd.ms-excel"
+    ) {
+      alert("Please upload a valid Excel file");
+      return;
+    }
+
+    onFileUpload(file);
+  };
+
+  return (
+    <label className="border border-gray-300 px-5 py-3 rounded-xl flex items-center gap-2 cursor-pointer bg-gray-50 hover:bg-[#2D468B] hover:text-white transition-all text-gray-700">
+      <FiUpload />
+      Import From Excel File
+
+      <input
+        type="file"
+        accept=".xlsx,.xls"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+    </label>
+  );
+}

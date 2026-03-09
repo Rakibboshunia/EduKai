@@ -16,7 +16,6 @@ const CVPreviewCard = ({
         ${selected ? "border-[#2D468A] ring-1 ring-[#2D468A]" : "border-gray-200"}
       `}
     >
-      {/* Header */}
       <div className="px-4 py-3">
         <h3 className="text-sm font-semibold text-[#0A0A0A]">
           {title}
@@ -35,7 +34,6 @@ const CVPreviewCard = ({
         )}
       </div>
 
-      {/* ---------- Content (Scrollable CV) ---------- */}
       <div
         style={{ maxHeight }}
         className="
@@ -45,7 +43,6 @@ const CVPreviewCard = ({
         {content}
       </div>
 
-      {/* ---------- Footer (AI page only) ---------- */}
       {footerSlot && (
         <div className="border-t px-4 py-3">
           {footerSlot}

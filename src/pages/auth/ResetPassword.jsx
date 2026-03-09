@@ -7,6 +7,7 @@ import { forgotPasswordApi } from "../../api/authApi";
 const ResetPassword = () => {
 
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -24,25 +25,29 @@ const ResetPassword = () => {
 
       const data = await forgotPasswordApi(email);
 
-      toast.success(data.detail);
+      toast.success(data?.detail || "OTP sent successfully");
 
-      navigate("/auth/verify/otp", {
-        state: { email }
-      });
+      setTimeout(() => {
+        navigate("/auth/verify/otp", {
+          state: { email }
+        });
+      }, 1000);
 
     } catch (error) {
 
       toast.error(
-        error.response?.data?.detail || "Request failed"
+        error?.response?.data?.detail || "Request failed"
       );
 
     } finally {
+
       setLoading(false);
+
     }
   };
 
   return (
-    <main className="bg-white grid justify-center items-center overflow-y-auto hide-scrollbar py-20 md:px-11 px-15 rounded-3xl">
+    <main className="bg-white grid justify-center items-center overflow-y-auto hide-scrollbar py-20 md:px-11 px-6 rounded-3xl">
 
       <Toaster position="top-center" />
 
@@ -59,7 +64,7 @@ const ResetPassword = () => {
           Forgot Password?
         </h3>
 
-        <p className="font-inter text-[#333333] mb-5">
+        <p className="text-[#333333] mb-5 text-center">
           Enter your email to receive an OTP
         </p>
 
@@ -75,10 +80,10 @@ const ResetPassword = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg mt-8 flex items-center justify-center cursor-pointer
+          className={`w-full py-3 rounded-lg mt-8 flex items-center justify-center
           ${
             loading
-              ? "bg-gray-400"
+              ? "bg-gray-400 cursor-not-allowed"
               : "bg-[#2D468A] text-white hover:bg-[#354e90]"
           }`}
         >

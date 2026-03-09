@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { verifyOtpApi } from "../../api/authApi";
@@ -11,8 +11,17 @@ const OTP = () => {
   const email = location.state?.email;
 
   const inputs = useRef([]);
+
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+
+    if (!email) {
+      navigate("/auth/reset/password");
+    }
+
+  }, [email, navigate]);
 
   const handleChange = (e, index) => {
 
@@ -20,11 +29,13 @@ const OTP = () => {
 
     const newOtp = [...otp];
     newOtp[index] = value;
+
     setOtp(newOtp);
 
     if (value && index < 5) {
       inputs.current[index + 1].focus();
     }
+
   };
 
   const handleKeyDown = (e, index) => {
@@ -32,6 +43,7 @@ const OTP = () => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputs.current[index - 1].focus();
     }
+
   };
 
   const handleSubmit = async (e) => {
@@ -49,23 +61,31 @@ const OTP = () => {
 
       setLoading(true);
 
-      const data = await verifyOtpApi(email, otpCode);
+      await verifyOtpApi(email, otpCode);
 
       toast.success("OTP verified");
 
-      navigate("/auth/new/password", {
-        state: { email, otp: otpCode }
-      });
+      setTimeout(() => {
+        navigate("/auth/new/password", {
+          state: {
+            email,
+            otp: otpCode
+          }
+        });
+      }, 1000);
 
     } catch (error) {
 
       toast.error(
-        error.response?.data?.detail || "Invalid OTP"
+        error?.response?.data?.detail || "Invalid OTP"
       );
 
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
   return (
@@ -99,9 +119,9 @@ const OTP = () => {
               type="text"
               maxLength={1}
               ref={(el) => (inputs.current[i] = el)}
+              value={otp[i]}
               onChange={(e) => handleChange(e, i)}
               onKeyDown={(e) => handleKeyDown(e, i)}
-              value={otp[i]}
               className="w-11 h-12 border border-[#2D468A] rounded-[10px] text-center outline-none text-xl font-bold text-[#2D468A]"
             />
           ))}
@@ -111,10 +131,10 @@ const OTP = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg flex items-center justify-center cursor-pointer
+          className={`w-full py-3 rounded-lg flex items-center justify-center
           ${
             loading
-              ? "bg-gray-400"
+              ? "bg-gray-400 cursor-not-allowed"
               : "bg-[#2D468A] text-white hover:bg-[#354e90]"
           }`}
         >

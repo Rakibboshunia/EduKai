@@ -10,6 +10,7 @@ import useAuth from "../../hooks/useAuth";
 
 const LogIn = () => {
   const navigate = useNavigate();
+  const { loginUser } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,49 +19,46 @@ const LogIn = () => {
 
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberEmail");
+
     if (savedEmail) {
       setEmail(savedEmail);
       setRemember(true);
     }
   }, []);
 
-  const { loginUser } = useAuth();
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-const handleLogin = async (e) => {
-  e.preventDefault();
-
-  if (!email || !password) {
-    toast.error("Email and password are required!");
-    return;
-  }
-
-  try {
-    setLoading(true);
-
-    const data = await loginApi(email, password);
-
-    loginUser(data.user);
-
-    if (remember) {
-      localStorage.setItem("rememberEmail", email);
-    } else {
-      localStorage.removeItem("rememberEmail");
+    if (!email || !password) {
+      toast.error("Email and password are required!");
+      return;
     }
 
-    toast.success(data.message);
+    try {
+      setLoading(true);
 
-    navigate("/", { replace: true });
+      const data = await loginApi(email, password);
 
-  } catch (error) {
+      loginUser(data.user);
 
-    toast.error(
-      error.response?.data?.message || "Login failed"
-    );
+      if (remember) {
+        localStorage.setItem("rememberEmail", email);
+      } else {
+        localStorage.removeItem("rememberEmail");
+      }
 
-  } finally {
-    setLoading(false);
-  }
-};
+      toast.success(data.message || "Login successful");
+
+      navigate("/", { replace: true });
+
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Login failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="bg-white grid justify-center items-center py-16 md:px-11 px-6 rounded-3xl border border-[#E5E7EB] shadow-lg relative">
@@ -77,10 +75,8 @@ const handleLogin = async (e) => {
 
       <form
         onSubmit={handleLogin}
-        noValidate
         className="gap-5 flex flex-col items-center md:w-[420px] w-full"
       >
-
         <h3 className="text-[#2D468A] font-semibold text-4xl">
           Edukai
         </h3>
@@ -132,13 +128,12 @@ const handleLogin = async (e) => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg mt-6 flex items-center justify-center gap-2 cursor-pointer
-            ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#2D468A] text-white hover:bg-[#243a73]"
-            }
-          `}
+          className={`w-full py-3 rounded-lg mt-6 flex items-center justify-center gap-2
+          ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#2D468A] text-white hover:bg-[#243a73]"
+          }`}
         >
           <MdLogin />
           {loading ? "Signing in..." : "Sign in"}

@@ -5,14 +5,12 @@ const Breadcrumb = () => {
 
   const pathParts = pathname.split("/").filter(Boolean);
 
-  // ❌ remove role + ids
   let cleanedParts = pathParts.filter(
     (part) =>
       !["admin", "owner"].includes(part.toLowerCase()) &&
       !/^\d+$/.test(part)
   );
 
-  // ❌ remove sop/create & sop/edit
   if (cleanedParts.includes("sop")) {
     cleanedParts = cleanedParts.filter(
       (part) => !["create", "edit"].includes(part)

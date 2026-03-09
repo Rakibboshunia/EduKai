@@ -6,7 +6,6 @@ import { FiX } from "react-icons/fi";
 export default function Sidebar({ isOpen, onClose }) {
   const location = useLocation();
 
-  /* 🔥 Special Group Logic */
   const isAIActive = location.pathname.startsWith("/ai");
 
   const isActivePath = (path) =>
@@ -37,7 +36,7 @@ export default function Sidebar({ isOpen, onClose }) {
       name: "AI Re-writer",
       path: "/ai/re-writer",
       icon: "lineicons:open-ai",
-      isGroup: true, // 🔥 mark as grouped route
+      isGroup: true, 
     },
     {
       name: "Organizations",
@@ -69,13 +68,13 @@ export default function Sidebar({ isOpen, onClose }) {
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-40 p-2 rounded-md bg-[#2D468A] text-white 2xl:hidden"
+          className="absolute top-8 right-4 z-40 p-2 rounded-md bg-[#2D468A] text-white 2xl:hidden cursor-pointer"
         >
-          <FiX size={20} />
+          <FiX size={22} />
         </button>
 
         <div className="flex h-full flex-col">
-          {/* Header */}
+
           <div className="px-6 py-6 flex items-center gap-4">
             <Image src="/logo.png" alt="Company Logo" />
             <div>
@@ -86,12 +85,12 @@ export default function Sidebar({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* Navigation */}
+
           <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
             {navLinks.map((item) => {
               const active =
                 item.isGroup
-                  ? isAIActive // 🔥 grouped route logic
+                  ? isAIActive 
                   : isActivePath(item.path);
 
               return (

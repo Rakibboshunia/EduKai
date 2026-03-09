@@ -28,14 +28,13 @@ export default function Header({ onMenuClick }) {
       {/* ☰ Mobile Menu */}
       <button
         onClick={onMenuClick}
-        className="2xl:hidden p-2 rounded bg-[#2D468A] text-white"
+        className="2xl:hidden p-2 rounded bg-[#2D468A] text-white cursor-pointer"
       >
         <FiMenu size={22} />
       </button>
 
       {/* Right Section */}
       <div className="flex items-center justify-end ml-auto gap-4">
-        {/* 🔔 Notifications */}
         <div className="relative">
           <IoNotifications
             className="w-8 h-8 text-[#2D468A] cursor-pointer"
@@ -82,9 +81,9 @@ export default function Header({ onMenuClick }) {
 
           {/* Dropdown */}
           {openDropdown && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-50">
+            <div className="absolute right-0 mt-2 w-47 bg-white rounded-lg shadow-lg border border-gray-400 z-50">
               <Link to="/settings" onClick={() => setOpenDropdown(false)}>
-                <button className="flex w-full items-center gap-3 px-4 py-3 text-sm hover:bg-[#2D468A] hover:text-white">
+                <button className="flex w-full items-center gap-3 px-4 py-3 text-lg hover:bg-[#2D468A] hover:rounded-lg hover:text-white cursor-pointer">
                   <Icon icon="material-symbols:settings" width="18" />
                   Settings
                 </button>
@@ -92,7 +91,7 @@ export default function Header({ onMenuClick }) {
 
               <button
                 onClick={handleLogout}
-                className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-[#2D468A] hover:text-white"
+                className="flex w-full items-center gap-3 px-4 py-3 text-lg text-red-600 hover:bg-[#2D468A] hover:rounded-lg hover:text-white cursor-pointer"
               >
                 <Icon icon="material-symbols:logout" width="18" />
                 Log Out

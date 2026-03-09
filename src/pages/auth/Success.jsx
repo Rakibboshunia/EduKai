@@ -1,26 +1,37 @@
-import { Link } from 'react-router-dom'
-
+import { Link } from "react-router-dom";
+import { FaCheckCircle } from "react-icons/fa";
 
 const Success = () => {
   return (
-     <main className="bg-white grid justify-center items-center overflow-y-auto hide-scrollbar py-10 md:px-11 px-12  rounded-3xl  ">
-      <form className="gap-5 flex flex-col items-center md:w-md w-full">
+    <main className="bg-white grid justify-center items-center py-16 px-6 rounded-3xl shadow-lg border border-[#E5E7EB]">
 
-        
-      <h3 className='font-inter font-semibold text-[32px] text-[#333333] text-center '>Password Updated Successfully!</h3>
-      <p className='font-inter  text-[#333333] text-center '>Your new password has been saved. <br />You can now continue securely..</p>
+      <div className="flex flex-col items-center text-center gap-6 md:w-[420px] w-full">
 
-     <Link to='/auth/login' className='w-[50%]'>
-     
-      <button className='bg-[#2D468A] text-[#ffffff]  text-xl w-full  py-3 rounded-lg cursor-pointer mt-5'>
-        Log In
-      </button>
-     </Link> 
-      
-      </form>
+        <div className="bg-green-100 p-5 rounded-full">
+          <FaCheckCircle className="text-green-500 text-5xl" />
+        </div>
+
+        <h3 className="font-semibold text-[32px] text-[#2D468A]">
+          Password Updated Successfully!
+        </h3>
+
+        <p className="text-[#555] text-center leading-relaxed">
+          Your new password has been saved successfully.  
+          You can now log in to your account securely.
+        </p>
+
+        <Link to="/auth/login" className="w-full mt-4">
+
+          <button className="w-full bg-[#2D468A] hover:bg-[#243a73] transition duration-200 text-white text-lg py-3 rounded-lg shadow-md">
+            Go to Login
+          </button>
+
+        </Link>
+
+      </div>
 
     </main>
-  )
-}
+  );
+};
 
-export default Success
+export default Success;

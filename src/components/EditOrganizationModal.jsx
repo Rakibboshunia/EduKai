@@ -2,136 +2,184 @@ import { useEffect, useState } from "react";
 import InputField from "./InputField";
 
 const EditOrganizationModal = ({ open, organization, onClose, onSave }) => {
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    contactPerson: "",
     industry: "",
+    phase: "",
+    jobTitle: "",
     location: "",
+    radius: "",
     skills: "",
   });
 
+  /* -------- Load organization data -------- */
   useEffect(() => {
+
     if (organization) {
       setFormData({
         name: organization.name || "",
         email: organization.email || "",
+        contactPerson: organization.contactPerson || "",
         industry: organization.industry || "",
+        phase: organization.phase || "",
+        jobTitle: organization.jobTitle || "",
         location: organization.location || "",
+        radius: organization.radius || "",
         skills: organization.skills?.join(", ") || "",
       });
     }
+
   }, [organization]);
 
   if (!open) return null;
 
+  /* -------- Input Change -------- */
   const handleChange = (e) => {
+
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
   };
 
+  /* -------- Save -------- */
   const handleSubmit = (e) => {
+
     e.preventDefault();
 
     onSave({
       ...organization,
-      name: formData.name,
-      email: formData.email,
-      industry: formData.industry,
-      location: formData.location,
+      ...formData,
       skills: formData.skills
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
     });
+
+    onClose();
+
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white w-full max-w-2xl rounded-lg p-10 shadow-lg">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-5">
+
+      <div className="bg-white w-full max-w-3xl rounded-xl p-8 shadow-lg">
+
+        <div className="flex items-center justify-between mb-6">
+
           <h2 className="text-2xl font-semibold text-[#2D468A]">
             Edit Organization
           </h2>
+
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-800 text-2xl cursor-pointer"
           >
             ✕
           </button>
+
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+
           <InputField
             label="Organization Name"
             name="name"
-            type="text"
-            placeholder="Enter organization name"
             value={formData.name}
             onChange={handleChange}
-            inputClass="border border-gray-300"
           />
 
           <InputField
             label="Email"
             name="email"
             type="email"
-            placeholder="Enter email address"
             value={formData.email}
             onChange={handleChange}
-            inputClass="border border-gray-300"
+          />
+
+          <InputField
+            label="Contact Person"
+            name="contactPerson"
+            value={formData.contactPerson}
+            onChange={handleChange}
           />
 
           <InputField
             label="Industry"
             name="industry"
-            type="text"
-            placeholder="Enter industry"
             value={formData.industry}
             onChange={handleChange}
-            inputClass="border border-gray-300"
+          />
+
+          <InputField
+            label="Phase"
+            name="phase"
+            value={formData.phase}
+            onChange={handleChange}
+          />
+
+          <InputField
+            label="Job Title"
+            name="jobTitle"
+            value={formData.jobTitle}
+            onChange={handleChange}
           />
 
           <InputField
             label="Location"
             name="location"
-            type="text"
-            placeholder="Enter location"
             value={formData.location}
             onChange={handleChange}
-            inputClass="border border-gray-300"
           />
 
           <InputField
-            label="Skills"
-            name="skills"
-            type="text"
-            placeholder="JavaScript, React, Node.js"
-            value={formData.skills}
+            label="Radius"
+            name="radius"
+            value={formData.radius}
             onChange={handleChange}
-            inputClass="border border-gray-300"
           />
 
-          {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="col-span-2">
+
+            <InputField
+              label="Skills (comma separated)"
+              name="skills"
+              value={formData.skills}
+              onChange={handleChange}
+              placeholder="JavaScript, React, Node.js"
+            />
+
+          </div>
+
+          <div className="col-span-2 flex justify-end gap-3 pt-4">
+
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border rounded-md text-gray-600 hover:bg-gray-100 cursor-pointer"
+              className="px-4 py-2 text-black hover:bg-[#40599c] border border-gray-300 rounded-md hover:text-white cursor-pointer transition"
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              className="px-4 py-2 bg-[#2D468B] text-white rounded-md hover:bg-[#354e92] cursor-pointer"
+              className="px-4 py-2 bg-[#2D468B] text-white rounded-md hover:bg-[#40599c] cursor-pointer"
             >
               Save Changes
             </button>
+
           </div>
+
         </form>
+
       </div>
+
     </div>
   );
 };

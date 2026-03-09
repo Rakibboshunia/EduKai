@@ -31,6 +31,8 @@ export default function CVCard({
     createdAt,
   } = data;
 
+  /* ================= STATUS OPTIONS ================= */
+
   const qualityOptions = {
     passed: {
       label: "Quality Passed",
@@ -62,22 +64,30 @@ export default function CVCard({
     },
   };
 
+  /* ================= FINAL STATUS ================= */
+
   const finalStatus =
     status === "failed" && reviewType === "manual"
       ? "manual_review"
       : status;
 
-  /* 🔵 Generate CV */
+  /* ================= BUTTON LOGIC ================= */
+
+  const showGenerateCV = finalStatus === "passed";
+
+  /* ================= HANDLERS ================= */
+
   const handleGenerateCV = () => {
     navigate("/ai/re-writer", {
       state: { candidate: data },
     });
   };
 
-  /* ⚪ View Original CV */
   const handleViewCV = () => {
     setOpenCV(true);
   };
+
+  /* ================= UI ================= */
 
   return (
     <>
@@ -86,7 +96,10 @@ export default function CVCard({
         {/* Header */}
         <div className="flex justify-between items-start pb-2">
           <div className="space-y-2">
-            <h3 className="text-blue-600 font-semibold">{name}</h3>
+
+            <h3 className="text-blue-600 font-semibold">
+              {name}
+            </h3>
 
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <Mail size={16} /> {email}
@@ -99,15 +112,23 @@ export default function CVCard({
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <Briefcase size={16} /> Experience: {experience} years
             </div>
+
           </div>
 
-          <div className="text-xs text-gray-500">{createdAt}</div>
+          <div className="text-xs text-gray-500">
+            {createdAt}
+          </div>
         </div>
 
         {/* Skills */}
         <div className="mt-4">
-          <p className="text-sm text-black mb-2">Skills</p>
+
+          <p className="text-sm text-black mb-2">
+            Skills
+          </p>
+
           <div className="flex gap-2 flex-wrap">
+
             {skills.map((skill) => (
               <span
                 key={skill}
@@ -116,11 +137,14 @@ export default function CVCard({
                 {skill}
               </span>
             ))}
+
           </div>
+
         </div>
 
         {/* Status */}
         <div className="mt-4 flex gap-3 flex-wrap items-center">
+
           <StatusBadge
             value={finalStatus}
             options={qualityOptions}
@@ -134,16 +158,20 @@ export default function CVCard({
               onChange={onAvailabilityChange}
             />
           )}
+
         </div>
 
-        {/* Action Buttons */}
+        {/* Actions */}
         <div className="mt-5 flex justify-end gap-3">
-          <button
-            onClick={handleGenerateCV}
-            className="px-6 py-2 rounded-xl text-sm bg-[#2D468A] text-white hover:bg-[#243a73] cursor-pointer"
-          >
-            Generate CV
-          </button>
+
+          {showGenerateCV && (
+            <button
+              onClick={handleGenerateCV}
+              className="px-6 py-2 rounded-xl text-sm bg-[#2D468A] text-white hover:bg-[#243a73] cursor-pointer"
+            >
+              Generate CV
+            </button>
+          )}
 
           <button
             onClick={handleViewCV}
@@ -151,10 +179,12 @@ export default function CVCard({
           >
             View CV
           </button>
+
         </div>
+
       </div>
 
-      {/* Dummy CV Modal */}
+      {/* CV Viewer Modal */}
       <DummyCVViewer
         open={openCV}
         onClose={() => setOpenCV(false)}

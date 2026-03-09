@@ -152,11 +152,11 @@ export default function Availability() {
 
 
   const columns = [
-    { header: "Date", accessor: "date" },
+    { header: "Date & Time", accessor: "date" },
     { header: "Candidate Name", accessor: "name" },
-    { header: "Email", accessor: "email" },
-    { header: "WhatsApp", accessor: "whatsapp" },
-    { header: "Source", accessor: "source" },
+    { header: "Email Address", accessor: "email" },
+    { header: "What's App", accessor: "whatsapp" },
+    { header: "Data Source", accessor: "source" },
     {
       header: "Status",
       accessor: "status",

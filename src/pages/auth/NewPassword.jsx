@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Password from "../../components/Password";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { resetPasswordApi } from "../../api/authApi";
+import InputField from "../../components/InputField";
 
 const NewPassword = () => {
 
@@ -15,16 +16,29 @@ const NewPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+
+    if (!email) {
+      navigate("/auth/reset/password");
+    }
+
+  }, [email, navigate]);
+
   const handleSubmit = async (e) => {
 
     e.preventDefault();
 
-    if(password !== confirmPassword){
+    if (!password || !confirmPassword) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
 
-    try{
+    try {
 
       setLoading(true);
 
@@ -34,20 +48,22 @@ const NewPassword = () => {
         new_password_confirm: confirmPassword
       });
 
-      toast.success(data.detail);
+      toast.success(data?.detail || "Password reset successful");
 
-      navigate("/auth/success");
+      setTimeout(() => {
+        navigate("/auth/login");
+      }, 1500);
 
-    }
-    catch(error){
+    } catch (error) {
 
       toast.error(
-        error.response?.data?.detail || "Password reset failed"
+        error?.response?.data?.detail || "Password reset failed"
       );
 
-    }
-    finally{
+    } finally {
+
       setLoading(false);
+
     }
 
   };
@@ -55,7 +71,7 @@ const NewPassword = () => {
   return (
     <main className="bg-white grid justify-center items-center py-10 md:px-11 px-12 rounded-3xl">
 
-      <Toaster position="top-center"/>
+      <Toaster position="top-center" />
 
       <form
         onSubmit={handleSubmit}
@@ -67,18 +83,26 @@ const NewPassword = () => {
         </h3>
 
         <h3 className="font-medium text-[32px] text-[#2D468A]">
-          Set a new Password
+          Set a New Password
         </h3>
 
         <p className="text-[#333333] text-center">
-          Ensure it different from previous ones for security
+          Ensure it is different from previous ones for security
         </p>
+
+        <InputField
+          type="email"
+          label="Email Address"
+          value={email || ""}
+          disabled
+          inputClass="rounded-lg border border-[#2D468A]"
+        />
 
         <Password
           label="New Password"
           placeholder="Enter your new password"
           value={password}
-          onChange={(e)=>setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           inputClass="rounded-lg border border-[#2D468A]"
         />
 
@@ -86,17 +110,17 @@ const NewPassword = () => {
           label="Confirm Password"
           placeholder="Confirm your new password"
           value={confirmPassword}
-          onChange={(e)=>setConfirmPassword(e.target.value)}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           inputClass="rounded-lg border border-[#2D468A]"
         />
 
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg mt-10 flex items-center justify-center cursor-pointer
+          className={`w-full py-3 rounded-lg mt-10 flex items-center justify-center
           ${
             loading
-              ? "bg-gray-400"
+              ? "bg-gray-400 cursor-not-allowed"
               : "bg-[#2D468A] text-white hover:bg-[#354e90]"
           }`}
         >
@@ -104,6 +128,7 @@ const NewPassword = () => {
         </button>
 
       </form>
+
     </main>
   );
 };

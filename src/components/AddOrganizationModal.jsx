@@ -5,10 +5,10 @@ const AddOrganizationModal = ({ open, onClose, onSubmit }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg border border-gray-100 p-10 relative">
+      <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg border border-gray-100 p-10 relative cursor-pointer">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold text-[#2D468A]">
+          <h2 className="text-2xl font-semibold text-[#2D468A] ">
             Add New Organization
           </h2>
 

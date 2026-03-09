@@ -23,12 +23,10 @@ const DynamicSearch = ({
       searchKeys.some((key) => {
         const field = item[key];
 
-        // 🔹 Handle array fields (e.g. skills)
         if (Array.isArray(field)) {
           return field.join(" ").toLowerCase().includes(q);
         }
 
-        // 🔹 Handle string / number
         if (field !== undefined && field !== null) {
           return field.toString().toLowerCase().includes(q);
         }
@@ -47,7 +45,6 @@ const DynamicSearch = ({
 
   return (
     <div className="relative w-full md:w-96">
-      {/* Search Icon */}
       <FiSearch
         className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
         size={18}
@@ -61,7 +58,6 @@ const DynamicSearch = ({
         className="w-full pl-10 pr-10 py-3 bg-white/60 text-black border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A] transition"
       />
 
-      {/* Clear button */}
       {query && (
         <button
           onClick={clearSearch}

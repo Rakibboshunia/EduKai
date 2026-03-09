@@ -23,7 +23,6 @@ export default function StatusBadge({
 
   const Icon = current.icon;
 
-  /* ===== close dropdown on outside click ===== */
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
@@ -34,7 +33,6 @@ export default function StatusBadge({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  /* ================= READ ONLY ================= */
   if (readOnly) {
     return (
       <span
@@ -46,7 +44,6 @@ export default function StatusBadge({
     );
   }
 
-  /* ================= DROPDOWN ================= */
   return (
     <div ref={ref} className="relative inline-block text-right">
       <button
@@ -69,7 +66,7 @@ export default function StatusBadge({
               <button
                 key={key}
                 onClick={() => {
-                  if (!value) setInternalValue(key); // uncontrolled
+                  if (!value) setInternalValue(key); 
                   onChange?.(key);
                   setOpen(false);
                 }}

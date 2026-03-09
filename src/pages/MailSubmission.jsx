@@ -27,7 +27,7 @@ const FILTERS = [
   {
     name: "phase",
     label: "Phase",
-    options: ["Primary", "Secondary", "Higher"],
+    options: ["Primary", "Secondary", "Higher Secondary"],
   },
   {
     name: "radius",
@@ -69,7 +69,7 @@ const ORGANIZATIONS = [
     industry: "School",
     location: "Helsinki",
     job_title: "Science Teacher",
-    phase: "Secondary",
+    phase: "Higher Secondary",
     radius: "25 KM",
   },
   {
@@ -80,7 +80,7 @@ const ORGANIZATIONS = [
     industry: "School",
     location: "New York",
     job_title: "Humanities Teacher",
-    phase: "Higher",
+    phase: "Higher Secondary",
     radius: "25 KM",
   },
   {
