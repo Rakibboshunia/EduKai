@@ -89,9 +89,7 @@ const ResetPassword = () => {
         >
           {loading ? "Sending..." : "Send"}
         </button>
-
       </form>
-
     </main>
   );
 };
