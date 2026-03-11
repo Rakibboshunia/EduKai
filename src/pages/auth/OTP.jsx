@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import { verifyOtpApi } from "../../api/authApi";
+import { verifyOtpApi } from "../../api/authApi.js";
 
 const OTP = () => {
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FiChevronDown } from "react-icons/fi";
 import Password from "../../components/Password";
 import toast from "react-hot-toast";
-import { updatePasswordApi } from "../../api/settingsApi";
+import { updatePasswordApi } from "../../api/settingsApi.js";
 
 const PasswordSection = ({ openSection, toggleSection }) => {
 

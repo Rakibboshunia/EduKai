@@ -3,7 +3,7 @@ import { FiEdit2 } from "react-icons/fi";
 import InputField from "../../components/InputField";
 import Dropdown from "../../components/Dropdown";
 import toast from "react-hot-toast";
-import { updateProfileApi } from "../../api/settingsApi";
+import { updateProfileApi } from "../../api/settingsApi.js";
 
 const ProfileSection = ({ user, updateUser }) => {
 
@@ -22,7 +22,6 @@ const ProfileSection = ({ user, updateUser }) => {
     country: user?.country || "",
   });
 
-  // image change
   const handleImageChange = (e) => {
 
     const file = e.target.files[0];
@@ -37,7 +36,6 @@ const ProfileSection = ({ user, updateUser }) => {
 
   };
 
-  // update profile
   const handleProfileUpdate = async () => {
 
     try {
@@ -82,7 +80,6 @@ const ProfileSection = ({ user, updateUser }) => {
 
         <div className="flex items-center gap-4">
 
-          {/* Avatar */}
           <div className="relative">
 
             <img
@@ -133,7 +130,6 @@ const ProfileSection = ({ user, updateUser }) => {
 
       </div>
 
-      {/* Profile Form */}
       <div className="grid grid-cols-12 gap-6">
 
         <InputField
