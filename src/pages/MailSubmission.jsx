@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { FiCheckCircle, FiUser, FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-
 import Pagination from "../components/Pagination";
 import Table from "../components/Table";
 

@@ -10,8 +10,6 @@ export default function CVQueuePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const PER_PAGE = 8;
 
-  /* ================= INITIAL DATA ================= */
-
   const initialCVs = useMemo(
   () => [
     {
@@ -171,8 +169,6 @@ export default function CVQueuePage() {
 
   const [cvs, setCVs] = useState(initialCVs);
 
-  /* ================= STATUS HANDLERS ================= */
-
   const updateStatus = (id, newStatus) => {
     const updated = cvs.map((cv) =>
       cv.id === id ? { ...cv, status: newStatus } : cv,
@@ -186,8 +182,6 @@ export default function CVQueuePage() {
     );
     setCVs(updated);
   };
-
-  /* ================= TABS ================= */
 
   const tabs = useMemo(
     () => [

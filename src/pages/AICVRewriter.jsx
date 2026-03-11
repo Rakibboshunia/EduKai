@@ -6,14 +6,12 @@ import {
   FiDownload,
 } from "react-icons/fi";
 import { SiOpenai } from "react-icons/si";
-
 import CVPreviewCard from "../components/CVPreviewCard";
 
 export default function AICVRewriter() {
-  /* ---------------- Navigation ---------------- */
+
   const navigate = useNavigate();
 
-  /* ---------------- State ---------------- */
   const [selectedCandidate, setSelectedCandidate] = useState("John Smith");
   const [isRewriting, setIsRewriting] = useState(false);
 
@@ -23,7 +21,6 @@ export default function AICVRewriter() {
     removeEmployer: false,
   });
 
-  /* ---------------- Dummy CV Data ---------------- */
   const originalCV = `
 JOHN SMITH
 Senior Software Developer
@@ -62,11 +59,9 @@ EDUCATION
 BSc Computer Science – University of Technology
 `);
 
-  /* ---------------- ChatGPT Dummy Rewrite ---------------- */
   const handleRewriteWithAI = () => {
     setIsRewriting(true);
 
-    // ⏳ Simulate ChatGPT thinking
     setTimeout(() => {
       const firstName = selectedCandidate.split(" ")[0].toUpperCase();
 

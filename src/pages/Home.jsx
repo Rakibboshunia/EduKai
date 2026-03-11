@@ -10,7 +10,6 @@ import { FiSend } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { GoGraph } from "react-icons/go";
 import { CiImport } from "react-icons/ci";
-
 import StatCard from "../components/StatCard";
 
 /* ---------------- Activities Card ---------------- */

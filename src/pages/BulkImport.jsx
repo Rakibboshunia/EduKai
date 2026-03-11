@@ -14,7 +14,6 @@ const BulkImport = () => {
 
   return (
     <div className="p-4">
-      {/* ===== HEADER ===== */}
       <div className="flex items-center justify-between">
         <div>
           <Breadcrumb />

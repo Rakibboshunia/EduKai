@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { FiPlus } from "react-icons/fi";
-
 import DynamicSearch from "../components/DynamicSearch";
 import OrganizationCard from "../components/OrganizationCard";
 import AddOrganizationModal from "../components/AddOrganizationModal";

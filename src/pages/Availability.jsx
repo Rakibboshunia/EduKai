@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { MailCheck, XCircle } from "lucide-react";
-
 import Table from "../components/Table";
 import StatusBadge from "../components/StatusBadge";
 import DynamicSearch from "../components/DynamicSearch";

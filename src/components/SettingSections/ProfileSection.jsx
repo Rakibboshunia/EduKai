@@ -3,7 +3,7 @@ import { FiEdit2 } from "react-icons/fi";
 import InputField from "../../components/InputField";
 import Dropdown from "../../components/Dropdown";
 import toast from "react-hot-toast";
-import { updateProfileApi } from "../../Api/settingsApi";
+import { updateProfileApi } from "../../api/settingsApi";
 
 const ProfileSection = ({ user, updateUser }) => {
 
