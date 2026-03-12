@@ -7,7 +7,6 @@ const UploadPDF = ({ onFileSelect }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState([]);
 
-
   const allowedType = "application/pdf";
 
   const handleFiles = (fileList) => {
@@ -29,7 +28,7 @@ const UploadPDF = ({ onFileSelect }) => {
 
   const handleChange = (e) => {
     handleFiles(e.target.files);
-    e.target.value = ""; 
+    e.target.value = "";
   };
 
   const handleDrop = (e) => {
@@ -54,7 +53,7 @@ const UploadPDF = ({ onFileSelect }) => {
 
         <p className="text-[#4A5565] text-center">
           {files.length > 0
-            ? `${files.length} PDF file(s) selected`
+            ? `${files.length} CV ready to upload`
             : "Drop PDF files here or click to browse"}
         </p>
 
@@ -76,20 +75,12 @@ const UploadPDF = ({ onFileSelect }) => {
         <input
           ref={inputRef}
           type="file"
-          accept=".pdf,application/pdf"   
+          accept=".pdf,application/pdf"
           multiple
           onChange={handleChange}
           className="hidden"
         />
       </div>
-
-      {files.length > 0 && (
-        <ul className="mt-4 text-sm text-gray-600">
-          {files.map((file, index) => (
-            <li key={index}>📄 {file.name}</li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 };

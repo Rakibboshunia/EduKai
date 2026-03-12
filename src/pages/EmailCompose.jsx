@@ -6,8 +6,6 @@ import EmailSignatureCard from "../components/EmailSignatureCard";
 export default function EmailCompose() {
   const navigate = useNavigate();
 
-  /* ================= STATE ================= */
-
   const [isEditing, setIsEditing] = useState(false);
 
   const [subject, setSubject] = useState(
@@ -16,26 +14,26 @@ export default function EmailCompose() {
 
   const [body, setBody] = useState(`Dear Hiring Manager,
 
-I am pleased to present John Smith, an exceptional candidate for your consideration.
+  I am pleased to present John Smith, an exceptional candidate for your consideration.
 
-CANDIDATE OVERVIEW:
-John Smith is a highly skilled Senior Software Developer with 8+ years of progressive experience in enterprise application development. They bring a strong track record of delivering scalable solutions and technical leadership.
+  CANDIDATE OVERVIEW:
+  John Smith is a highly skilled Senior Software Developer with 8+ years of progressive experience in enterprise application development. They bring a strong track record of delivering scalable solutions and technical leadership.
 
-KEY QUALIFICATIONS:
-• 5+ years of software development experience
-• Expert in JavaScript, React, Node.js, Python, and AWS
-• Proven leadership in managing development teams
-• Strong track record of improving application performance
-• Experience with microservices architecture and cloud technologies
+  KEY QUALIFICATIONS:
+  • 5+ years of software development experience
+  • Expert in JavaScript, React, Node.js, Python, and AWS
+  • Proven leadership in managing development teams
+  • Strong track record of improving application performance
+  • Experience with microservices architecture and cloud technologies
 
-ACHIEVEMENTS:
-• Led development of microservices architecture
-• Improved application performance by 40%
-• Successfully mentored junior developers
+  ACHIEVEMENTS:
+  • Led development of microservices architecture
+  • Improved application performance by 40%
+  • Successfully mentored junior developers
 
-This candidate has undergone our comprehensive quality screening process and has confirmed their immediate availability. Their CV is attached for your review.
+  This candidate has undergone our comprehensive quality screening process and has confirmed their immediate availability. Their CV is attached for your review.
 
-Kind regards,`);
+  Kind regards,`);
 
   const [draftSubject, setDraftSubject] = useState(subject);
   const [draftBody, setDraftBody] = useState(body);
@@ -60,7 +58,7 @@ Kind regards,`);
 
   return (
     <div className="p-4 space-y-16">
-      {/* ================= HEADER ================= */}
+
       <div className="space-y-2">
         <h2 className="text-3xl font-semibold text-[#2D468A]">
           Email Submission & Outlook Integration
@@ -75,10 +73,8 @@ Kind regards,`);
         </div>
       </div>
 
-      {/* ================= EMAIL CARD ================= */}
       <div className="bg-white rounded-xl border border-gray-300 p-8 max-w-7xl">
 
-        {/* Top Header */}
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-[#2D468A]">
             Email Composition

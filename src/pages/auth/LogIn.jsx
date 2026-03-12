@@ -27,38 +27,49 @@ const LogIn = () => {
   }, []);
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!email || !password) {
-      toast.error("Email and password are required!");
-      return;
+  if (!email || !password) {
+    toast.error("Email and password are required!");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const data = await loginApi(email, password);
+
+    // ⭐ TOKEN SAVE
+    if (data?.access) {
+      localStorage.setItem("access_token", data.access);
     }
 
-    try {
-      setLoading(true);
-
-      const data = await loginApi(email, password);
-
-      loginUser(data.user);
-
-      if (remember) {
-        localStorage.setItem("rememberEmail", email);
-      } else {
-        localStorage.removeItem("rememberEmail");
-      }
-
-      toast.success(data.message || "Login successful");
-
-      navigate("/", { replace: true });
-
-    } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Login failed"
-      );
-    } finally {
-      setLoading(false);
+    if (data?.refresh) {
+      localStorage.setItem("refresh_token", data.refresh);
     }
-  };
+
+    loginUser(data.user);
+
+    if (remember) {
+      localStorage.setItem("rememberEmail", email);
+    } else {
+      localStorage.removeItem("rememberEmail");
+    }
+
+    toast.success(data.message || "Login successful");
+
+    navigate("/", { replace: true });
+
+  } catch (error) {
+
+    toast.error(
+      error?.response?.data?.message || "Login failed"
+    );
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <main className="bg-white grid justify-center items-center py-16 md:px-11 px-6 rounded-3xl border border-[#E5E7EB] shadow-lg relative">

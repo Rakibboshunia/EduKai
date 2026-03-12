@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosInstance";
+import axiosInstance from "../api/axiosInstance"
 
 export const getProfileApi = async () => {
   const res = await axiosInstance.get("/api/auth/me/");
@@ -29,9 +29,17 @@ export const updateProfileApi = async (data) => {
 };
 
 export const updatePasswordApi = async (data) => {
+
   const res = await axiosInstance.post(
     "/api/auth/password/update/",
-    data
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      }
+    }
   );
+
   return res.data;
+
 };

@@ -50,7 +50,6 @@ export default function Header({ onMenuClick }) {
           />
         </div>
 
-        {/* 👤 Profile */}
         <div className="relative">
           <div
             className="flex items-center gap-3 bg-[#2D468A] px-3 py-2 rounded-lg cursor-pointer"
