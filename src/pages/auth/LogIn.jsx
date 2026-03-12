@@ -5,7 +5,7 @@ import { MdLogin, MdArrowBack } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
-import { loginApi } from "../../Api/authApi";
+import { loginApi } from "../../api/authApi";
 import useAuth from "../../hooks/useAuth";
 
 const LogIn = () => {
