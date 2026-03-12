@@ -1,6 +1,30 @@
 import { FiChevronDown } from "react-icons/fi";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useState } from "react";
 
 const EmailIntegration = ({ openSection, toggleSection }) => {
+
+  const [loadingService, setLoadingService] = useState(null);
+
+  const handleConnect = async (service) => {
+
+    setLoadingService(service);
+
+    try {
+
+      // future API call here
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    } catch (error) {
+
+      console.error(error);
+
+    } finally {
+
+      setLoadingService(null);
+
+    }
+  };
 
   return (
     <div className="bg-white/60 text-black rounded-xl overflow-hidden">
@@ -34,8 +58,19 @@ const EmailIntegration = ({ openSection, toggleSection }) => {
               </p>
             </div>
 
-            <button className="px-4 py-2 bg-[#2D468A] text-white rounded-md cursor-pointer hover:bg-[#3a5ab3] transition">
-              Connect
+            <button
+              onClick={() => handleConnect("outlook")}
+              disabled={loadingService === "outlook"}
+              className="px-4 py-2 bg-[#2D468A] text-white rounded-md cursor-pointer hover:bg-[#3a5ab3] transition flex items-center gap-2"
+            >
+              {loadingService === "outlook" ? (
+                <>
+                  <AiOutlineLoading3Quarters className="animate-spin" />
+                  Connecting...
+                </>
+              ) : (
+                "Connect"
+              )}
             </button>
 
           </div>
@@ -52,8 +87,19 @@ const EmailIntegration = ({ openSection, toggleSection }) => {
               </p>
             </div>
 
-            <button className="px-4 py-2 bg-[#2D468A] text-white rounded-md cursor-pointer hover:bg-[#3a5ab3] transition">
-              Connect
+            <button
+              onClick={() => handleConnect("gmail")}
+              disabled={loadingService === "gmail"}
+              className="px-4 py-2 bg-[#2D468A] text-white rounded-md cursor-pointer hover:bg-[#3a5ab3] transition flex items-center gap-2"
+            >
+              {loadingService === "gmail" ? (
+                <>
+                  <AiOutlineLoading3Quarters className="animate-spin" />
+                  Connecting...
+                </>
+              ) : (
+                "Connect"
+              )}
             </button>
 
           </div>

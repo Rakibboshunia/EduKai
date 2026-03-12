@@ -21,7 +21,7 @@ const QualityCheck = ({
       <div className="mt-6 grid grid-cols-12 gap-6">
 
         <Dropdown
-          label="Minimum Years of Experience"
+          label="Minimum Years of Experience**"
           placeholder="Select Experience"
           options={["1", "2", "3", "4", "5"]}
           value={experience}
@@ -30,7 +30,7 @@ const QualityCheck = ({
         />
 
         <InputField
-          label="Required Skills (comma separated)"
+          label="Required Skills (comma separated)**"
           type="text"
           placeholder="e.g. React, Node.js"
           value={skills}
@@ -39,7 +39,7 @@ const QualityCheck = ({
         />
 
         <InputField
-          label="Current Job Role"
+          label="Job Role**"
           type="text"
           placeholder="e.g. Math Teacher"
           value={jobRole}

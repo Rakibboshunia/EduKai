@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FiEdit2 } from "react-icons/fi";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import InputField from "../../components/InputField";
 import Dropdown from "../../components/Dropdown";
 import toast from "react-hot-toast";
@@ -10,10 +11,12 @@ const ProfileSection = ({ user, updateUser }) => {
   const [isEdit, setIsEdit] = useState(false);
 
   const [previewImage, setPreviewImage] = useState(
-    user?.profile_pic_url || "https://i.pravatar.cc/150"
+    user?.profile_pic_url || ""
   );
 
   const [imageFile, setImageFile] = useState(null);
+
+  const [loading, setLoading] = useState(false);
 
   const [profileData, setProfileData] = useState({
     first_name: user?.first_name || "",
@@ -38,36 +41,43 @@ const ProfileSection = ({ user, updateUser }) => {
 
   const handleProfileUpdate = async () => {
 
-    try {
+  try {
 
-      const payload = {
-        first_name: profileData.first_name,
-        last_name: profileData.last_name,
-        gender: profileData.gender || null,
-        country: profileData.country || null,
-      };
+    setLoading(true);
 
-      if (imageFile) {
-        payload.profile_pic = imageFile;
-      }
+    const payload = {
+      first_name: profileData.first_name,
+      last_name: profileData.last_name,
+      gender: profileData.gender || null,
+      country: profileData.country || null,
+    };
 
-      const res = await updateProfileApi(payload);
-
-      updateUser(res.data);
-
-      toast.success(res.message || "Profile updated successfully");
-
-      setIsEdit(false);
-
-    } catch (error) {
-
-      toast.error(
-        error?.response?.data?.message ||
-        "Profile update failed"
-      );
-
+    if (imageFile) {
+      payload.profile_pic = imageFile;
     }
-  };
+
+    const res = await updateProfileApi(payload);
+
+    updateUser({
+      ...res.data,
+      profile_pic_url: res.data.profile_pic_url + "?t=" + Date.now()
+    });
+
+    toast.success(res.message || "Profile updated successfully");
+
+    setIsEdit(false);
+
+  } catch (error) {
+
+    toast.error(
+      error?.response?.data?.message ||
+      "Profile update failed"
+    );
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="bg-white rounded-xl p-6 space-y-6">
@@ -82,11 +92,13 @@ const ProfileSection = ({ user, updateUser }) => {
 
           <div className="relative">
 
-            <img
-              src={previewImage}
-              alt="avatar"
-              className="w-16 h-16 rounded-full object-cover"
-            />
+            {previewImage && (
+              <img
+                src={previewImage}
+                alt="avatar"
+                className="w-16 h-16 rounded-full object-cover"
+              />
+            )}
 
             {isEdit && (
               <label className="absolute bottom-0 right-0 bg-[#2D468A] p-1.5 rounded-full text-white cursor-pointer">
@@ -204,9 +216,17 @@ const ProfileSection = ({ user, updateUser }) => {
 
           <button
             onClick={handleProfileUpdate}
-            className="px-4 py-2 bg-[#2D468A] hover:bg-[#3a5ab3] text-white cursor-pointer rounded-lg"
+            disabled={loading}
+            className="px-4 py-2 bg-[#2D468A] hover:bg-[#3a5ab3] text-white cursor-pointer rounded-lg flex items-center gap-2"
           >
-            Save Changes
+            {loading ? (
+              <>
+                <AiOutlineLoading3Quarters className="animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
           </button>
 
         </div>

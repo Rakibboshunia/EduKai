@@ -39,15 +39,6 @@ const LogIn = () => {
 
     const data = await loginApi(email, password);
 
-    // ⭐ TOKEN SAVE
-    if (data?.access) {
-      localStorage.setItem("access_token", data.access);
-    }
-
-    if (data?.refresh) {
-      localStorage.setItem("refresh_token", data.refresh);
-    }
-
     loginUser(data.user);
 
     if (remember) {
@@ -61,11 +52,9 @@ const LogIn = () => {
     navigate("/", { replace: true });
 
   } catch (error) {
-
     toast.error(
       error?.response?.data?.message || "Login failed"
     );
-
   } finally {
     setLoading(false);
   }
