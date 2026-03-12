@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import InputField from "../../components/InputField";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import { forgotPasswordApi } from "../../api/authApi.js";
+import { forgotPasswordApi } from "../../Api/authApi";
 
 const ResetPassword = () => {
 
