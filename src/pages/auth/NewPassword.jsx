@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Password from "../../components/Password";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import { resetPasswordApi } from "../../Api/authApi";
+import { resetPasswordApi } from "../../api/authApi";
 import InputField from "../../components/InputField";
 
 const NewPassword = () => {

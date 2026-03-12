@@ -6,12 +6,10 @@ const UploadImage = ({label,branding}) => {
   const [logo, setLogo] = useState(null);
   const [error, setError] = useState("");
 
-  /* ===== HANDLE FILE SELECT ===== */
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // validation
     if (!file.type.startsWith("image/")) {
       setError("Only image files are allowed");
       return;
@@ -25,11 +23,9 @@ const UploadImage = ({label,branding}) => {
     setError("");
     setLogo(URL.createObjectURL(file));
 
-    // 🔌 API hook (later)
-    // uploadLogoToServer(file)
   };
 
-  /* ===== REMOVE LOGO ===== */
+
   const removeLogo = () => {
     setLogo(null);
     fileInputRef.current.value = "";
@@ -37,7 +33,7 @@ const UploadImage = ({label,branding}) => {
 
   return (
      <div className="bg-white p-6 rounded-lg border-2 border-[#E5E7EB] ">
-      {/* HEADER */}
+
       <div className="flex items-center gap-3 mb-6">
         <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#F3E8FF] text-[#7C3AED]">
           🎨
@@ -47,12 +43,10 @@ const UploadImage = ({label,branding}) => {
         </h3>
       </div>
 
-      {/* LOGO LABEL */}
       <p className="text-sm text-[#364153] mb-2">{label}</p>
 
-      {/* CONTENT */}
       <div className="flex items-center gap-6">
-        {/* LOGO PREVIEW */}
+
         <div className="w-24 h-24 border-2  border-[#D1D5DC] rounded-lg flex items-center justify-center overflow-hidden">
           {logo ? (
             <img
@@ -65,7 +59,6 @@ const UploadImage = ({label,branding}) => {
           )}
         </div>
 
-        {/* ACTIONS */}
         <div className="flex flex-col gap-2">
           <input
             ref={fileInputRef}
@@ -96,12 +89,10 @@ const UploadImage = ({label,branding}) => {
         </div>
       </div>
 
-      {/* ERROR */}
       {error && (
         <p className="text-sm text-red-600 mt-3 ">{error}</p>
       )}
 
-      {/* HELPER */}
       <p className="text-xs text-[#6A7282] mt-4">
         Supported formats: JPG, PNG, SVG. Max size 2MB.
       </p>
