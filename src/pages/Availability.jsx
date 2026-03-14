@@ -1,9 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { MailCheck, XCircle } from "lucide-react";
+
 import Table from "../components/Table";
 import StatusBadge from "../components/StatusBadge";
 import DynamicSearch from "../components/DynamicSearch";
-import Pagination from "../components/Pagination";
+
+import {
+  getCandidates,
+  updateCandidateStatus,
+} from "../api/candidateApi";
 
 export default function Availability() {
 
@@ -20,152 +25,63 @@ export default function Availability() {
     },
   };
 
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
 
-  const initialData = useMemo(
-    () => [
-      {
-    id: 1,
-    date: "20 Nov, 2025",
-    name: "John Doe",
-    email: "john.doe@abc.com",
-    jobTitle: "Software Engineer",
-    whatsapp: "+1 555 101 0199",
-    source: "CRM",
-    status: "available",
-  },
-  {
-    id: 2,
-    date: "20 Nov, 2025",
-    name: "Emily Carter",
-    email: "emily.carter@xyz.com",
-    jobTitle: "Product Manager",
-    whatsapp: "+44 7700 900123",
-    source: "Email",
-    status: "not_available",
-  },
-  {
-    id: 3,
-    date: "21 Nov, 2025",
-    name: "Michael Brown",
-    email: "michael.brown@company.io",
-    jobTitle: "Data Analyst",
-    whatsapp: "+1 555 222 3344",
-    source: "WhatsApp",
-    status: "available",
-  },
-  {
-    id: 4,
-    date: "22 Nov, 2025",
-    name: "Sophia Williams",
-    email: "sophia.w@domain.com",
-    jobTitle: "UX Designer",
-    whatsapp: "+44 7911 223344",
-    source: "CRM",
-    status: "available",
-  },
-  {
-    id: 5,
-    date: "23 Nov, 2025",
-    name: "Daniel Johnson",
-    email: "daniel.johnson@mail.com",
-    jobTitle: "Data Scientist",
-    whatsapp: "+1 555 777 8899",
-    source: "Email",
-    status: "not_available",
-  },
-  {
-    id: 6,
-    date: "24 Nov, 2025",
-    name: "Olivia Martinez",
-    email: "olivia.m@techhub.io",
-    jobTitle: "Software Engineer",
-    whatsapp: "+34 612 345 678",
-    source: "WhatsApp",
-    status: "available",
-  },
-  {
-    id: 7,
-    date: "25 Nov, 2025",
-    name: "William Anderson",
-    email: "will.anderson@abc.org",
-    jobTitle: "UX Designer",
-    whatsapp: "+1 555 999 1122",
-    source: "CRM",
-    status: "not_available",
-  },
-  {
-    id: 8,
-    date: "26 Nov, 2025",
-    name: "Ava Thompson",
-    email: "ava.thompson@xyz.net",
-    jobTitle: "Product Manager",
-    whatsapp: "+44 7700 456789",
-    source: "Email",
-    status: "available",
-  },
-  {
-    id: 9,
-    date: "27 Nov, 2025",
-    name: "James Wilson",
-    email: "james.wilson@company.io",
-    jobTitle: "Data Analyst",
-    whatsapp: "+1 555 333 4455",
-    source: "WhatsApp",
-    status: "not_available",
-  },
-  {
-    id: 10,
-    date: "28 Nov, 2025",
-    name: "Mia Clark",
-    email: "mia.clark@startup.ai",
-    jobTitle: "Software Engineer",
-    whatsapp: "+44 7700 998877",
-    source: "CRM",
-    status: "available",
-  },
-  ],
-  []
-  );
+  // Fetch candidates
+  useEffect(() => {
+    fetchCandidates();
+  }, []);
 
+  const fetchCandidates = async () => {
+    try {
 
-  const [data, setData] = useState(initialData);
-  const [filteredData, setFilteredData] = useState(initialData);
-  const [currentPage, setCurrentPage] = useState(1);
+      const res = await getCandidates();
 
-  const PER_PAGE = 8;
+      const formattedData = res.map((item) => ({
+        id: item.id,
+        date: new Date(item.created_at).toLocaleDateString(),
+        name: item.name,
+        email: item.email,
+        jobTitle: "N/A",
+        whatsapp: item.whatsapp_number,
+        source: item.source,
+        status: item.availability_status,
+      }));
 
+      setData(formattedData);
+      setFilteredData(formattedData);
 
-  const handleStatusChange = (id, newStatus) => {
-    const updated = data.map((item) =>
-      item.id === id ? { ...item, status: newStatus } : item
-    );
-
-    setData(updated);
-    setFilteredData(updated);
-
-    console.log("Update availability:", id, newStatus);
+    } catch (error) {
+      console.error("Candidate fetch error:", error);
+    }
   };
 
+  // Update status
+  const handleStatusChange = async (id, newStatus) => {
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filteredData]);
+    try {
 
+      await updateCandidateStatus(id, newStatus);
 
-  const totalPages = Math.ceil(filteredData.length / PER_PAGE);
+      const updated = data.map((item) =>
+        item.id === id ? { ...item, status: newStatus } : item
+      );
 
-  const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * PER_PAGE;
-    return filteredData.slice(start, start + PER_PAGE);
-  }, [filteredData, currentPage]);
+      setData(updated);
+      setFilteredData(updated);
 
+    } catch (error) {
+      console.error("Status update error:", error);
+    }
+  };
 
   const columns = [
     { header: "Date & Time", accessor: "date" },
     { header: "Candidate Name", accessor: "name" },
     { header: "Email Address", accessor: "email" },
     { header: "Job Title", accessor: "jobTitle" },
-    { header: "What's App", accessor: "whatsapp" },
+    { header: "WhatsApp", accessor: "whatsapp" },
     { header: "Data Source", accessor: "source" },
     {
       header: "Status",
@@ -183,18 +99,22 @@ export default function Availability() {
     },
   ];
 
-
   return (
-    <div className="p-4">
-      <h1 className="text-3xl font-semibold mb-4 text-[#2D468A]">
-        Availability Check
-      </h1>
+    <div className="p-4 sm:p-6 lg:p-8 w-full">
 
-      <p className="text-md text-gray-600 mb-8">
-        Track candidate availability via Email, SMS, and WhatsApp.
-      </p>
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#2D468A]">
+          Availability Check
+        </h1>
 
-      <div className="mb-10">
+        <p className="text-sm sm:text-base text-gray-600 mt-2">
+          Track candidate availability via Email, SMS, and WhatsApp.
+        </p>
+      </div>
+
+      {/* Search */}
+      <div className="mb-6">
         <DynamicSearch
           data={data}
           searchKeys={["name", "email", "whatsapp", "source"]}
@@ -202,13 +122,23 @@ export default function Availability() {
         />
       </div>
 
-      <Table columns={columns} data={paginatedData} />
+      {/* Table Container */}
+      <div className="w-full rounded-xl">
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+        {/* Horizontal scroll */}
+        <div className="overflow-x-auto">
+
+          {/* Vertical scroll */}
+          <div className="max-h-[80vh] overflow-y-auto overflow-x-auto">
+
+            <Table columns={columns} data={filteredData} />
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
   );
 }

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Breadcrumb from "../components/Breadcrumb";
 import UploadPDF from "../components/UploadPDF";
 import { CiExport } from "react-icons/ci";
-import ExistingCRM from "../components/ExistingCRM";
 import QualityCheck from "../components/QualityCheck";
 import { uploadCandidates } from "../api/candidateApi";
 import toast, { Toaster } from "react-hot-toast";
@@ -19,16 +18,17 @@ const BulkImport = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const [progress, setProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState("");
 
-    if (!files.length) {
-      toast.error("Please upload at least one PDF");
-      return;
-    }
+  const CHUNK_SIZE = 20;
+  const PARALLEL_UPLOADS = 1;
+
+  const uploadChunk = async (chunk) => {
 
     const formData = new FormData();
 
-    files.forEach((file) => {
+    chunk.forEach((file) => {
       formData.append("files", file);
     });
 
@@ -36,24 +36,53 @@ const BulkImport = () => {
     formData.append("skills", JSON.stringify(skills.split(",")));
     formData.append("job_role", JSON.stringify(jobRole.split(",")));
 
-    console.log("Files:", files);
-    console.log("Experience:", experience);
-    console.log("Skills:", skills);
-    console.log("Job Role:", jobRole);
+    return uploadCandidates(formData);
+  };
+
+  const handleSubmit = async () => {
+
+    if (!files.length) {
+      toast.error("Please upload at least one PDF");
+      return;
+    }
 
     try {
 
       setLoading(true);
+      setProgress(0);
 
-      const res = await uploadCandidates(formData);
+      const chunks = [];
 
-      console.log("API Response:", res);
+      for (let i = 0; i < files.length; i += CHUNK_SIZE) {
+        chunks.push(files.slice(i, i + CHUNK_SIZE));
+      }
 
-      toast.success("CV uploaded successfully");
+      const totalChunks = chunks.length;
+      let uploaded = 0;
+
+      for (let i = 0; i < chunks.length; i += PARALLEL_UPLOADS) {
+
+        const batch = chunks.slice(i, i + PARALLEL_UPLOADS);
+
+        await Promise.all(
+          batch.map(async (chunk) => {
+            await uploadChunk(chunk);
+
+            uploaded++;
+
+            const percent = Math.floor((uploaded / totalChunks) * 100);
+
+            setProgress(percent);
+            setUploadStatus(`Uploading batch ${uploaded} / ${totalChunks}`);
+          })
+        );
+      }
+
+      toast.success(`${files.length} CV uploaded successfully`);
 
     } catch (error) {
 
-      console.error("Upload error:", error.response?.data || error);
+      console.error("Upload error:", error);
 
       toast.error("Upload failed");
 
@@ -62,6 +91,7 @@ const BulkImport = () => {
       setLoading(false);
 
     }
+
   };
 
   return (
@@ -81,30 +111,6 @@ const BulkImport = () => {
 
       </div>
 
-
-      <div className="grid md:grid-cols-1 gap-6 rounded-lg p-1.5 w-full mt-6">
-
-        <button
-          onClick={() => setActiveTab("upload")}
-          className={`md:px-20 px-10 py-6 rounded-md flex items-center flex-col gap-1 text-2xl ${
-            activeTab === "upload"
-              ? "border border-[#2D468A]"
-              : "bg-white/60"
-          }`}
-        >
-
-          <CiExport className="w-10 h-10" />
-
-          Local Upload
-
-          <p className="text-[#686868] text-xs">
-            Upload files from computer
-          </p>
-
-        </button>
-
-      </div>
-
       <div className="mt-6 col-span-12">
 
         {activeTab === "upload" && (
@@ -117,8 +123,6 @@ const BulkImport = () => {
           />
 
         )}
-
-        {activeTab === "crm" && <ExistingCRM />}
 
       </div>
 
@@ -135,7 +139,31 @@ const BulkImport = () => {
 
       </div>
 
-      <div className="pt-4 flex justify-center">
+      {/* Progress Bar */}
+      {loading && (
+        <div className="mt-6 w-full max-w-xl mx-auto">
+
+          <div className="text-center mb-2 text-sm text-gray-600">
+            {uploadStatus}
+          </div>
+
+          <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+
+            <div
+              className="bg-[#2D468A] h-4 transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+
+          </div>
+
+          <div className="text-center text-xs mt-2 text-gray-500">
+            {progress}% completed
+          </div>
+
+        </div>
+      )}
+
+      <div className="pt-6 flex justify-center">
 
         <button
           className="bg-[#2D468A] text-white px-28 py-3 text-xl rounded-md hover:bg-[#354e92] cursor-pointer flex items-center gap-2 transition-all"

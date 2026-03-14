@@ -27,7 +27,6 @@ export default function Header({ onMenuClick }) {
 
   return (
     <header className="bg-[#E3E8F5] flex items-center px-4 sm:px-6 py-3 sm:py-4 relative">
-
       <button
         onClick={onMenuClick}
         className="2xl:hidden p-2 rounded bg-[#2D468A] text-white cursor-pointer"
@@ -36,7 +35,6 @@ export default function Header({ onMenuClick }) {
       </button>
 
       <div className="flex items-center justify-end ml-auto gap-4">
-
         <div className="relative">
           <IoNotifications
             className="w-8 h-8 text-[#2D468A] cursor-pointer"
@@ -60,11 +58,10 @@ export default function Header({ onMenuClick }) {
               setOpenNotifications(false);
             }}
           >
-
             <Image
               src={
                 user?.profile_pic_url
-                  ? `${user.profile_pic_url}?t=${Date.now()}`
+                  ? `${user.profile_pic_url}&t=${Date.now()}`
                   : ""
               }
               alt="User Avatar"
@@ -75,9 +72,7 @@ export default function Header({ onMenuClick }) {
               <p className="text-sm text-white font-medium">
                 {user?.full_name}
               </p>
-              <p className="text-xs text-white">
-                {user?.role}
-              </p>
+              <p className="text-xs text-white">{user?.role}</p>
             </div>
 
             <FaAngleDown
@@ -89,11 +84,7 @@ export default function Header({ onMenuClick }) {
 
           {openDropdown && (
             <div className="absolute right-0 mt-2 w-47 bg-white rounded-lg shadow-lg border border-gray-400 z-50">
-
-              <Link
-                to="/settings"
-                onClick={() => setOpenDropdown(false)}
-              >
+              <Link to="/settings" onClick={() => setOpenDropdown(false)}>
                 <button className="flex w-full items-center gap-3 px-4 py-3 text-lg hover:bg-[#2D468A] hover:rounded-lg hover:text-white cursor-pointer">
                   <Icon icon="material-symbols:settings" width="18" />
                   Settings
@@ -107,11 +98,9 @@ export default function Header({ onMenuClick }) {
                 <Icon icon="material-symbols:logout" width="18" />
                 Log Out
               </button>
-
             </div>
           )}
         </div>
-
       </div>
     </header>
   );

@@ -60,7 +60,7 @@ const ProfileSection = ({ user, updateUser }) => {
 
     updateUser({
       ...res.data,
-      profile_pic_url: res.data.profile_pic_url + "?t=" + Date.now()
+      profile_pic_url: res.data.profile_pic_url + "&t=" + Date.now(),
     });
 
     toast.success(res.message || "Profile updated successfully");
