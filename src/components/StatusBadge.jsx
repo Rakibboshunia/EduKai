@@ -10,6 +10,7 @@ export default function StatusBadge({
 }) {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState(value);
+  const [loading, setLoading] = useState(false);
   const ref = useRef(null);
 
   const currentValue = value ?? internalValue;
@@ -23,12 +24,14 @@ export default function StatusBadge({
 
   const Icon = current.icon;
 
+  // click outside close
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
         setOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
@@ -44,14 +47,40 @@ export default function StatusBadge({
     );
   }
 
+  const handleChange = async (key) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    try {
+      if (!value) setInternalValue(key);
+
+      await onChange?.(key);
+
+    } catch (error) {
+      console.error("Status change failed:", error);
+    }
+
+    setLoading(false);
+    setOpen(false);
+  };
+
   return (
     <div ref={ref} className="relative inline-block text-right">
+
       <button
+        disabled={loading}
         onClick={() => setOpen((p) => !p)}
         className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${current.className}`}
       >
-        <Icon size={14} />
+        {loading ? (
+          <span className="animate-spin">⏳</span>
+        ) : (
+          <Icon size={14} />
+        )}
+
         {current.label}
+
         <ChevronDown size={12} className="ml-1" />
       </button>
 
@@ -60,25 +89,24 @@ export default function StatusBadge({
           className={`absolute right-0 mt-2 ${width} bg-white border border-gray-200 rounded-md shadow-lg z-50`}
         >
           {Object.entries(options).map(([key, item]) => {
+
             const ItemIcon = item.icon;
 
             return (
               <button
                 key={key}
-                onClick={() => {
-                  if (!value) setInternalValue(key); 
-                  onChange?.(key);
-                  setOpen(false);
-                }}
+                onClick={() => handleChange(key)}
                 className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
               >
                 <ItemIcon size={14} />
                 {item.label}
               </button>
             );
+
           })}
         </div>
       )}
+
     </div>
   );
 }

@@ -1,7 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
 export const uploadCandidates = async (formData) => {
-
   const res = await axiosInstance.post(
     "/api/candidates/upload/",
     formData,
@@ -20,13 +19,16 @@ export const getCandidates = async () => {
   return res.data;
 };
 
-export const updateCandidateStatus = async (id, status) => {
+export const updateCandidateStatus = async (id, data) => {
   const res = await axiosInstance.patch(
     `/api/candidates/${id}/update/`,
-    {
-      availability_status: status,
-    }
+    data
   );
 
+  return res.data;
+};
+
+export const getCandidateById = async (id) => {
+  const res = await axiosInstance.get(`/api/candidates/${id}/`);
   return res.data;
 };

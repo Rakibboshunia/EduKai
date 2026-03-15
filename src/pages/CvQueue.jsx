@@ -2,7 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import Tabs from "../components/Tabs";
 import CVCard from "../components/CVCard";
 import Pagination from "../components/Pagination";
-import { getCandidates } from "../api/candidateApi";
+import {
+  getCandidates,
+  updateCandidateStatus,
+} from "../api/candidateApi";
 
 export default function CVQueuePage() {
 
@@ -12,8 +15,6 @@ export default function CVQueuePage() {
 
   const PER_PAGE = 12;
 
-  /* ================= FETCH API ================= */
-
   useEffect(() => {
     fetchCandidates();
   }, []);
@@ -22,6 +23,8 @@ export default function CVQueuePage() {
     try {
 
       const res = await getCandidates();
+
+      console.log("API RESPONSE:", res);
 
       const formatted = res.map((item) => ({
         id: item.id,
@@ -33,7 +36,12 @@ export default function CVQueuePage() {
         status: item.quality_status,
         availability: item.availability_status,
         createdAt: new Date(item.created_at).toLocaleString(),
+
+        originalCV: item.original_cv_url,
+        enhancedCV: item.enhanced_cv_url,
       }));
+
+      console.log("FORMATTED DATA:", formatted);
 
       setCVs(formatted);
 
@@ -42,27 +50,49 @@ export default function CVQueuePage() {
     }
   };
 
-  /* ================= UPDATE STATUS ================= */
+  /* ================= UPDATE QUALITY STATUS ================= */
 
-  const updateStatus = (id, newStatus) => {
+  const updateStatus = async (id, newStatus) => {
 
-    const updated = cvs.map((cv) =>
-      cv.id === id ? { ...cv, status: newStatus } : cv
-    );
+    try {
 
-    setCVs(updated);
+      await updateCandidateStatus(id, {
+        quality_status: newStatus,
+      });
+
+      const updated = cvs.map((cv) =>
+        cv.id === id ? { ...cv, status: newStatus } : cv
+      );
+
+      setCVs(updated);
+
+    } catch (error) {
+      console.error("Status update error:", error);
+    }
+
   };
 
-  const updateAvailability = (id, newAvailability) => {
+  /* ================= UPDATE AVAILABILITY ================= */
 
-    const updated = cvs.map((cv) =>
-      cv.id === id ? { ...cv, availability: newAvailability } : cv
-    );
+  const updateAvailability = async (id, newAvailability) => {
 
-    setCVs(updated);
+    try {
+
+      await updateCandidateStatus(id, {
+        availability_status: newAvailability,
+      });
+
+      const updated = cvs.map((cv) =>
+        cv.id === id ? { ...cv, availability: newAvailability } : cv
+      );
+
+      setCVs(updated);
+
+    } catch (error) {
+      console.error("Availability update error:", error);
+    }
+
   };
-
-  /* ================= TABS ================= */
 
   const tabs = useMemo(
     () => [
@@ -77,16 +107,9 @@ export default function CVQueuePage() {
         label: "Quality Failed",
         count: cvs.filter((c) => c.status === "failed").length,
       },
-      {
-        key: "manual_review",
-        label: "Manual Review",
-        count: cvs.filter((c) => c.status === "manual_review").length,
-      },
     ],
     [cvs]
   );
-
-  /* ================= FILTER ================= */
 
   const filtered = useMemo(() => {
 
@@ -95,8 +118,6 @@ export default function CVQueuePage() {
     return cvs.filter((c) => c.status === activeTab);
 
   }, [activeTab, cvs]);
-
-  /* ================= PAGINATION ================= */
 
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
 
@@ -111,8 +132,6 @@ export default function CVQueuePage() {
     setCurrentPage(page);
   };
 
-  /* ================= RENDER ================= */
-
   return (
     <div className="p-4 sm:p-6 space-y-8 min-h-screen">
 
@@ -126,12 +145,10 @@ export default function CVQueuePage() {
         </p>
       </div>
 
-      {/* Tabs */}
       <div className="overflow-x-auto">
         <Tabs tabs={tabs} active={activeTab} onChange={setActiveTab} />
       </div>
 
-      {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
         {paginatedData.length > 0 ? (
@@ -159,7 +176,6 @@ export default function CVQueuePage() {
 
       </div>
 
-      {/* Pagination */}
       <Pagination
         totalPages={totalPages}
         currentPage={currentPage}

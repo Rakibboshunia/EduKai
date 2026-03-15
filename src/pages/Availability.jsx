@@ -60,21 +60,24 @@ export default function Availability() {
   // Update status
   const handleStatusChange = async (id, newStatus) => {
 
-    try {
+  try {
 
-      await updateCandidateStatus(id, newStatus);
+    await updateCandidateStatus(id, {
+      availability_status: newStatus,
+    });
 
-      const updated = data.map((item) =>
-        item.id === id ? { ...item, status: newStatus } : item
-      );
+    const updated = data.map((item) =>
+      item.id === id ? { ...item, status: newStatus } : item
+    );
 
-      setData(updated);
-      setFilteredData(updated);
+    setData(updated);
+    setFilteredData(updated);
 
-    } catch (error) {
-      console.error("Status update error:", error);
-    }
-  };
+  } catch (error) {
+    console.error("Status update error:", error);
+  }
+
+};
 
   const columns = [
     { header: "Date & Time", accessor: "date" },
