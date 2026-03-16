@@ -27,7 +27,7 @@ const EmailIntegration = ({ openSection, toggleSection }) => {
   };
 
   return (
-    <div className="bg-white/60 text-black rounded-xl overflow-hidden">
+    <div className=" text-black rounded-xl overflow-hidden">
 
       <button
         onClick={() => toggleSection("email")}

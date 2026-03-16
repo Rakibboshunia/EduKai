@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Breadcrumb from "../components/Breadcrumb";
 import UploadPDF from "../components/UploadPDF";
-import { CiExport } from "react-icons/ci";
 import QualityCheck from "../components/QualityCheck";
 import { uploadCandidates } from "../api/candidateApi";
 import toast, { Toaster } from "react-hot-toast";
@@ -17,7 +16,6 @@ const BulkImport = () => {
   const [jobRole, setJobRole] = useState("");
 
   const [loading, setLoading] = useState(false);
-
   const [progress, setProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState("");
 
@@ -28,13 +26,30 @@ const BulkImport = () => {
 
     const formData = new FormData();
 
+    // files
     chunk.forEach((file) => {
       formData.append("files", file);
     });
 
-    formData.append("experience", experience);
-    formData.append("skills", JSON.stringify(skills.split(",")));
-    formData.append("job_role", JSON.stringify(jobRole.split(",")));
+    formData.append("experience", experience || "");
+
+    formData.append(
+      "skills",
+      JSON.stringify(
+        skills
+          ? skills.split(",").map((s) => s.trim())
+          : []
+      )
+    );
+
+    formData.append(
+      "job_role",
+      JSON.stringify(
+        jobRole
+          ? jobRole.split(",").map((r) => r.trim())
+          : []
+      )
+    );
 
     return uploadCandidates(formData);
   };
@@ -66,6 +81,7 @@ const BulkImport = () => {
 
         await Promise.all(
           batch.map(async (chunk) => {
+
             await uploadChunk(chunk);
 
             uploaded++;
@@ -74,8 +90,10 @@ const BulkImport = () => {
 
             setProgress(percent);
             setUploadStatus(`Uploading batch ${uploaded} / ${totalChunks}`);
+
           })
         );
+
       }
 
       toast.success(`${files.length} CV uploaded successfully`);
@@ -83,7 +101,6 @@ const BulkImport = () => {
     } catch (error) {
 
       console.error("Upload error:", error);
-
       toast.error("Upload failed");
 
     } finally {
@@ -139,8 +156,8 @@ const BulkImport = () => {
 
       </div>
 
-      {/* Progress Bar */}
       {loading && (
+
         <div className="mt-6 w-full max-w-xl mx-auto">
 
           <div className="text-center mb-2 text-sm text-gray-600">
@@ -161,6 +178,7 @@ const BulkImport = () => {
           </div>
 
         </div>
+
       )}
 
       <div className="pt-6 flex justify-center">
@@ -170,6 +188,7 @@ const BulkImport = () => {
           onClick={handleSubmit}
           disabled={loading}
         >
+
           {loading ? (
             <>
               <AiOutlineLoading3Quarters className="animate-spin" />
@@ -178,6 +197,7 @@ const BulkImport = () => {
           ) : (
             "Submit CV"
           )}
+
         </button>
 
       </div>

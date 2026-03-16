@@ -3,6 +3,7 @@ import { FaFilePdf } from "react-icons/fa";
 import { HiOutlineDocumentDownload } from "react-icons/hi";
 
 const UploadPDF = ({ onFileSelect }) => {
+
   const inputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState([]);
@@ -10,6 +11,7 @@ const UploadPDF = ({ onFileSelect }) => {
   const allowedType = "application/pdf";
 
   const handleFiles = (fileList) => {
+
     const selectedFiles = Array.from(fileList);
 
     const validFiles = selectedFiles.filter(
@@ -22,8 +24,11 @@ const UploadPDF = ({ onFileSelect }) => {
       alert("Only PDF files are allowed.");
     }
 
-    setFiles(validFiles);
-    onFileSelect?.(validFiles);
+    const newFiles = [...files, ...validFiles];
+
+    setFiles(newFiles);
+    onFileSelect?.(newFiles);
+
   };
 
   const handleChange = (e) => {
@@ -39,6 +44,7 @@ const UploadPDF = ({ onFileSelect }) => {
 
   return (
     <div className="bg-white/60 rounded-xl p-10">
+
       <div
         onDragOver={(e) => {
           e.preventDefault();
@@ -49,6 +55,7 @@ const UploadPDF = ({ onFileSelect }) => {
         className={`border-2 border-dashed rounded-lg p-10 flex flex-col items-center justify-center gap-2 transition bg-[#F9FAFB]
         ${isDragging ? "border-[#2D468A] bg-blue-50" : "border-[#A0A0A0]"}`}
       >
+
         <FaFilePdf className="w-12 h-12 text-[#A0A0A0]" />
 
         <p className="text-[#4A5565] text-center">
@@ -80,7 +87,9 @@ const UploadPDF = ({ onFileSelect }) => {
           onChange={handleChange}
           className="hidden"
         />
+
       </div>
+
     </div>
   );
 };

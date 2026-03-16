@@ -19,6 +19,7 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import NewPassword from "../pages/auth/NewPassword";
 import Success from "../pages/auth/Success";
 import OTP from "../pages/auth/OTP";
+import Contact from "../pages/Contact";
 
 const router = createBrowserRouter([
   /* ================= AUTH ================= */
@@ -47,6 +48,7 @@ const router = createBrowserRouter([
       { path: "availability", element: <Availability /> },
       { path: "settings", element: <Settings /> },
       { path: "organizations", element: <Organizations /> },
+      { path: "contact", element: <Contact /> },
 
       /* ================= AI SECTION ================= */
       {

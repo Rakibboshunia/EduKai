@@ -5,8 +5,8 @@ import {
   Briefcase,
   CheckCircle,
   XCircle,
-  AlertCircle,
 } from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
 import { getCandidateById } from "../api/candidateApi";
 
@@ -25,7 +25,6 @@ export default function CVCard({
     experience,
     skills = [],
     status,
-    reviewType,
     availability,
     createdAt,
   } = data;
@@ -56,12 +55,7 @@ export default function CVCard({
     },
   };
 
-  const finalStatus =
-    status === "failed" && reviewType === "manual"
-      ? "manual_review"
-      : status;
-
-  const showGenerateCV = finalStatus === "passed";
+  const showGenerateCV = status === "passed";
 
   const handleGenerateCV = () => {
     navigate("/ai/re-writer", {
@@ -80,9 +74,7 @@ export default function CVCard({
         return;
       }
 
-      const fixedUrl = res.original_cv_url.replace("https://", "http://");
-
-      window.open(fixedUrl, "_blank");
+      window.open(res.original_cv_url, "_blank");
 
     } catch (error) {
       console.error("CV fetch error:", error);
@@ -145,7 +137,7 @@ export default function CVCard({
       <div className="mt-4 flex gap-3 flex-wrap items-center">
 
         <StatusBadge
-          value={finalStatus}
+          value={status}
           options={qualityOptions}
           onChange={onStatusChange}
         />
@@ -165,7 +157,7 @@ export default function CVCard({
         {showGenerateCV && (
           <button
             onClick={handleGenerateCV}
-            className="px-6 py-2 rounded-xl text-sm bg-[#2D468A] text-white cursor-pointer hover:bg-[#1B2A5B] transition-colors"
+            className="px-2 py-1 rounded-xl text-sm bg-[#2D468A] text-white hover:bg-[#1B2A5B] cursor-pointer transition-all"
           >
             Generate CV
           </button>
@@ -173,7 +165,7 @@ export default function CVCard({
 
         <button
           onClick={handleViewCV}
-          className="px-6 py-2 border rounded-xl text-sm text-gray-600 hover:bg-[#2D468A] hover:text-white cursor-pointer transition-colors"
+          className="px-2 py-1 border rounded-xl text-sm text-gray-600 hover:bg-[#2D468A] hover:text-white cursor-pointer transition-all"
         >
           View CV
         </button>

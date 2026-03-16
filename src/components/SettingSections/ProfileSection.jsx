@@ -1,22 +1,23 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import { FiEdit2 } from "react-icons/fi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import InputField from "../../components/InputField";
-import Dropdown from "../../components/Dropdown";
 import toast from "react-hot-toast";
-import { updateProfileApi } from "../../api/settingsApi.js";
+import { updateProfileApi } from "../../api/settingsApi";
+import { AuthContext } from "../../provider/AuthProvider";
 
-const ProfileSection = ({ user, updateUser }) => {
+const ProfileSection = () => {
+
+  const { user, updateUser } = useContext(AuthContext);
 
   const [isEdit, setIsEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [previewImage, setPreviewImage] = useState(
     user?.profile_pic_url || ""
   );
 
   const [imageFile, setImageFile] = useState(null);
-
-  const [loading, setLoading] = useState(false);
 
   const [profileData, setProfileData] = useState({
     first_name: user?.first_name || "",
@@ -25,84 +26,92 @@ const ProfileSection = ({ user, updateUser }) => {
     country: user?.country || "",
   });
 
+  /* sync image if user changes */
+
+  useEffect(() => {
+    setPreviewImage(user?.profile_pic_url || "");
+  }, [user]);
+
+  /* IMAGE CHANGE */
+
   const handleImageChange = (e) => {
 
     const file = e.target.files[0];
-
     if (!file) return;
 
     setImageFile(file);
 
     const preview = URL.createObjectURL(file);
-
     setPreviewImage(preview);
 
   };
 
+  /* PROFILE UPDATE */
+
   const handleProfileUpdate = async () => {
 
-  try {
+    try {
 
-    setLoading(true);
+      setLoading(true);
 
-    const payload = {
-      first_name: profileData.first_name,
-      last_name: profileData.last_name,
-      gender: profileData.gender || null,
-      country: profileData.country || null,
-    };
+      const payload = {
+        first_name: profileData.first_name,
+        last_name: profileData.last_name,
+        gender: profileData.gender || null,
+        country: profileData.country || null,
+      };
 
-    if (imageFile) {
-      payload.profile_pic = imageFile;
-    }
+      if (imageFile) {
+        payload.profile_pic = imageFile;
+      }
 
-    const res = await updateProfileApi(payload);
+      const res = await updateProfileApi(payload);
 
-    updateUser({
-      ...res.data,
-      profile_pic_url: res.data.profile_pic_url + "&t=" + Date.now(),
-    });
-
-    toast.success(res.message || "Profile updated successfully");
-
-    setIsEdit(false);
-
-  } catch (error) {
-
-    toast.error(
-      error?.response?.data?.message ||
-      "Profile update failed"
-    );
-
-  } finally {
-    setLoading(false);
-  }
+      const updatedUser = {
+  ...user,
+  ...res.data,
+  profile_pic_url: res.data.profile_pic_url
+    ? `${res.data.profile_pic_url}?t=${Date.now()}`
+    : user?.profile_pic_url || "/avatar.png",
 };
 
-  return (
-    <div className="bg-white rounded-xl p-6 space-y-6">
+updateUser(updatedUser);
 
-      <h3 className="font-semibold text-lg text-black">
-        Profile Information
-      </h3>
+      toast.success(res.message || "Profile updated successfully");
+
+      setIsEdit(false);
+
+    } catch (error) {
+
+      toast.error(
+        error?.response?.data?.message ||
+        "Profile update failed"
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
+  return (
+    <div className=" rounded-xl p-6 space-y-6">
+      <h3 className="font-semibold text-lg text-black">Profile Information</h3>
 
       <div className="flex justify-between items-center">
-
         <div className="flex items-center gap-4">
-
           <div className="relative">
-
-            {previewImage && (
-              <img
-                src={previewImage}
-                alt="avatar"
-                className="w-16 h-16 rounded-full object-cover"
-              />
-            )}
+            <img
+              src={previewImage || "/avatar.png"}
+              alt="avatar"
+              className="w-16 h-16 text-black rounded-full object-cover"
+              loading="lazy"
+            />
 
             {isEdit && (
               <label className="absolute bottom-0 right-0 bg-[#2D468A] p-1.5 rounded-full text-white cursor-pointer">
-
                 <FiEdit2 size={14} />
 
                 <input
@@ -111,24 +120,15 @@ const ProfileSection = ({ user, updateUser }) => {
                   className="hidden"
                   onChange={handleImageChange}
                 />
-
               </label>
             )}
-
           </div>
 
           <div>
+            <h4 className="font-semibold text-black">{user?.full_name}</h4>
 
-            <h4 className="font-semibold text-black">
-              {user?.full_name}
-            </h4>
-
-            <p className="text-sm text-gray-500">
-              {user?.email}
-            </p>
-
+            <p className="text-sm text-gray-500">{user?.email}</p>
           </div>
-
         </div>
 
         {!isEdit && (
@@ -139,11 +139,9 @@ const ProfileSection = ({ user, updateUser }) => {
             Edit
           </button>
         )}
-
       </div>
 
       <div className="grid grid-cols-12 gap-6">
-
         <InputField
           label="First Name"
           value={profileData.first_name}
@@ -151,7 +149,7 @@ const ProfileSection = ({ user, updateUser }) => {
           onChange={(e) =>
             setProfileData({
               ...profileData,
-              first_name: e.target.value
+              first_name: e.target.value,
             })
           }
           disabled={!isEdit}
@@ -165,51 +163,47 @@ const ProfileSection = ({ user, updateUser }) => {
           onChange={(e) =>
             setProfileData({
               ...profileData,
-              last_name: e.target.value
+              last_name: e.target.value,
             })
           }
           disabled={!isEdit}
           className="col-span-12 md:col-span-6"
         />
 
-        <Dropdown
+        <InputField
           label="Gender"
           value={profileData.gender}
-          placeholder="Select"
-          onChange={(value) =>
+          placeholder="Enter gender"
+          onChange={(e) =>
             setProfileData({
               ...profileData,
-              gender: value
+              gender: e.target.value,
             })
           }
-          options={["Male", "Female", "Other"]}
           disabled={!isEdit}
           className="col-span-12 md:col-span-6"
         />
 
-        <Dropdown
+        <InputField
           label="Country"
           value={profileData.country}
-          placeholder="Select"
-          onChange={(value) =>
+          placeholder="Enter country"
+          onChange={(e) =>
             setProfileData({
               ...profileData,
-              country: value
+              country: e.target.value,
             })
           }
-          options={["USA", "UK", "Canada"]}
           disabled={!isEdit}
           className="col-span-12 md:col-span-6"
         />
-
       </div>
 
       {isEdit && (
         <div className="flex justify-end gap-3">
-
           <button
             onClick={() => setIsEdit(false)}
-            className="px-6 py-2 text-black border border-gray-300 rounded-lg hover:bg-[#2D468A] hover:text-white transition cursor-pointer"
+            className="px-6 py-2 border rounded-lg"
           >
             Cancel
           </button>
@@ -217,7 +211,7 @@ const ProfileSection = ({ user, updateUser }) => {
           <button
             onClick={handleProfileUpdate}
             disabled={loading}
-            className="px-4 py-2 bg-[#2D468A] hover:bg-[#3a5ab3] text-white cursor-pointer rounded-lg flex items-center gap-2"
+            className="px-4 py-2 bg-[#2D468A] text-white rounded-lg flex items-center gap-2"
           >
             {loading ? (
               <>
@@ -228,10 +222,8 @@ const ProfileSection = ({ user, updateUser }) => {
               "Save Changes"
             )}
           </button>
-
         </div>
       )}
-
     </div>
   );
 };

@@ -26,7 +26,7 @@ const FILTERS = [
   {
     name: "phase",
     label: "Phase",
-    options: ["Primary", "Secondary", "Higher Secondary"],
+    options: ["Nursery", "Primary", "Secondary", "Higher Secondary"],
   },
   {
     name: "radius",

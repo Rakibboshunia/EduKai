@@ -32,7 +32,7 @@ const Settings = () => {
         </div>
 
         {/* Profile Section */}
-        <div className="bg-white rounded-2xl shadow-sm p-6">
+        <div className="bg-white/80 rounded-2xl shadow-sm p-6">
           <ProfileSection
             user={user}
             updateUser={updateUser}
@@ -40,7 +40,7 @@ const Settings = () => {
         </div>
 
         {/* Email Integration */}
-        <div className="bg-white rounded-2xl shadow-sm">
+        <div className="bg-white/80 rounded-2xl shadow-sm">
           <EmailIntegration
             openSection={openSection}
             toggleSection={toggleSection}
@@ -48,7 +48,7 @@ const Settings = () => {
         </div>
 
         {/* Password Section */}
-        <div className="bg-white rounded-2xl shadow-sm">
+        <div className="bg-white/80 rounded-2xl shadow-sm">
           <PasswordSection
             openSection={openSection}
             toggleSection={toggleSection}

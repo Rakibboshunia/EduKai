@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Tabs from "../components/Tabs";
 import CVCard from "../components/CVCard";
 import Pagination from "../components/Pagination";
+
 import {
   getCandidates,
   updateCandidateStatus,
@@ -24,24 +25,19 @@ export default function CVQueuePage() {
 
       const res = await getCandidates();
 
-      console.log("API RESPONSE:", res);
-
       const formatted = res.map((item) => ({
         id: item.id,
-        name: item.name,
-        email: item.email,
-        phone: item.whatsapp_number,
-        experience: item.years_of_experience,
+        name: item.name || "Unknown",
+        email: item.email || "No email",
+        phone: item.whatsapp_number || "No phone",
+        experience: item.years_of_experience || 0,
         skills: item.skills || [],
         status: item.quality_status,
         availability: item.availability_status,
         createdAt: new Date(item.created_at).toLocaleString(),
-
         originalCV: item.original_cv_url,
         enhancedCV: item.enhanced_cv_url,
       }));
-
-      console.log("FORMATTED DATA:", formatted);
 
       setCVs(formatted);
 
@@ -50,7 +46,7 @@ export default function CVQueuePage() {
     }
   };
 
-  /* ================= UPDATE QUALITY STATUS ================= */
+  /* UPDATE QUALITY STATUS */
 
   const updateStatus = async (id, newStatus) => {
 
@@ -72,7 +68,7 @@ export default function CVQueuePage() {
 
   };
 
-  /* ================= UPDATE AVAILABILITY ================= */
+  /* UPDATE AVAILABILITY */
 
   const updateAvailability = async (id, newAvailability) => {
 
@@ -83,7 +79,9 @@ export default function CVQueuePage() {
       });
 
       const updated = cvs.map((cv) =>
-        cv.id === id ? { ...cv, availability: newAvailability } : cv
+        cv.id === id
+          ? { ...cv, availability: newAvailability }
+          : cv
       );
 
       setCVs(updated);

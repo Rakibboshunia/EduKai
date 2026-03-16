@@ -41,10 +41,10 @@ export default function Availability() {
       const formattedData = res.map((item) => ({
         id: item.id,
         date: new Date(item.created_at).toLocaleDateString(),
-        name: item.name,
-        email: item.email,
-        jobTitle: "N/A",
-        whatsapp: item.whatsapp_number,
+        name: item.name || "N/A",
+        email: item.email || "N/A",
+        jobTitle: item.job_titles?.join(", ") || "N/A",
+        whatsapp: item.whatsapp_number || "N/A",
         source: item.source,
         status: item.availability_status,
       }));

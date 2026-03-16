@@ -61,7 +61,7 @@ const PasswordSection = ({ openSection, toggleSection }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden">
+    <div className=" rounded-xl overflow-hidden">
 
       <button
         onClick={() => toggleSection("password")}

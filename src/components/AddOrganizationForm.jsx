@@ -14,7 +14,7 @@ const AddOrganizationForm = ({
     radius: "0 km",
     Skills: "",
   },
-  submitLabel = "Add Organization",
+  submitLabel = "Add Contact",
   onSubmit,
   onCancel,
 }) => {
@@ -34,10 +34,10 @@ const AddOrganizationForm = ({
     <form onSubmit={handleSubmit} className="space-y-5">
 
       <InputField
-        label="Organization Name *"
+        label="Contact Name *"
         name="name"
         type="text"
-        placeholder="Enter organization name"
+        placeholder="Enter contact name"
         value={formData.name}
         onChange={handleChange}
         inputClass="border border-gray-300"
@@ -47,7 +47,7 @@ const AddOrganizationForm = ({
         label="Email Name *"
         name="email"
         type="email"
-        placeholder="Enter organization email"
+        placeholder="Enter contact email"
         value={formData.email}
         onChange={handleChange}
         inputClass="border border-gray-300"

@@ -20,13 +20,13 @@ const QualityCheck = ({
 
       <div className="mt-6 grid grid-cols-12 gap-6">
 
-        <Dropdown
+        <InputField
           label="Minimum Years of Experience**"
           placeholder="Select Experience"
           options={["1", "2", "3", "4", "5"]}
           value={experience}
           onChange={(e) => setExperience(e.target.value)}
-          className="col-span-12 md:col-span-6"
+          className="col-span-12 md:col-span-6 text-black"
         />
 
         <InputField

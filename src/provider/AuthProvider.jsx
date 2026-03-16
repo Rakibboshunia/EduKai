@@ -6,7 +6,6 @@ const AuthProvider = ({ children }) => {
 
   const [user, setUser] = useState(null);
 
-  // Load user from localStorage when app starts
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
 
@@ -16,30 +15,42 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   const loginUser = (userData) => {
+
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
+
   };
 
   const logOutUser = () => {
+
     setUser(null);
     localStorage.removeItem("user");
+
   };
 
   const updateUser = (updatedData) => {
-    const newUser = { ...user, ...updatedData };
-    setUser(newUser);
-    localStorage.setItem("user", JSON.stringify(newUser));
-  };
 
-  const authInfo = {
-    user,
-    loginUser,
-    logOutUser,
-    updateUser
+    setUser((prev) => {
+
+      const newUser = { ...prev, ...updatedData };
+
+      localStorage.setItem("user", JSON.stringify(newUser));
+
+      return newUser;
+
+    });
+
   };
 
   return (
-    <AuthContext.Provider value={authInfo}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loginUser,
+        logOutUser,
+        updateUser
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

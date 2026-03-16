@@ -1,11 +1,19 @@
-import React from 'react'
+import React from "react";
 
-const Image = ({src,alt,className}) => {
+const Image = ({ src, alt, className, ...props }) => {
   return (
-    <div>
-      <img className={`${className}`} src={src} alt={alt} />
-    </div>
-  )
-}
+    <img
+      src={src || "/avatar.png"}
+      alt={alt || "image"}
+      className={className}
+      loading="lazy"
+      {...props}
+      onError={(e) => {
+        e.currentTarget.onerror = null;
+        e.currentTarget.src = "/avatar.png";
+      }}
+    />
+  );
+};
 
-export default Image
+export default Image;

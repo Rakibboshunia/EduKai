@@ -43,11 +43,11 @@ export default function Sidebar({ isOpen, onClose }) {
       path: "/organizations",
       icon: "ph:building-office",
     },
-    // {
-    //   name: "Tracking",
-    //   path: "/tracking",
-    //   icon: "ant-design:reload-time-outline",
-    // },
+    {
+      name: "Contact",
+      path: "/contact",
+      icon: "ant-design:reload-time-outline",
+    },
   ];
 
   return (
