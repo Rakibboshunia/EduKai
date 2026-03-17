@@ -1,3 +1,4 @@
+import React from "react";
 import { FiMenu } from "react-icons/fi";
 import { IoNotifications } from "react-icons/io5";
 import { FaAngleDown } from "react-icons/fa";
@@ -51,7 +52,6 @@ function Header({ onMenuClick }) {
 
   return (
     <header className="bg-[#E3E8F5] flex items-center px-4 sm:px-6 py-3 sm:py-4">
-
       {/* ================= MENU BUTTON ================= */}
 
       <button
@@ -62,11 +62,9 @@ function Header({ onMenuClick }) {
       </button>
 
       <div className="flex items-center justify-end ml-auto gap-4">
-
         {/* ================= NOTIFICATION ================= */}
 
         <div className="relative">
-
           <IoNotifications
             className="w-8 h-8 text-[#2D468A] cursor-pointer"
             onClick={toggleNotifications}
@@ -76,43 +74,36 @@ function Header({ onMenuClick }) {
             open={openNotifications}
             onClose={handleCloseNotifications}
           />
-
         </div>
 
         {/* ================= USER PROFILE ================= */}
 
         <div className="relative">
-
           <div
             className="flex items-center gap-3 bg-[#2D468A] px-3 py-2 rounded-lg cursor-pointer"
             onClick={toggleDropdown}
           >
-
             {/* USER IMAGE */}
 
-            {/* <img
+            <img
               src={user?.profile_pic_url || "/avatar.png"}
               alt="User Avatar"
               className="w-9 h-9 rounded-full object-cover"
               loading="lazy"
               onError={(e) => {
-                e.currentTarget.onerror = null;
+                if (e.currentTarget.src.includes("avatar.png")) return;
                 e.currentTarget.src = "/avatar.png";
               }}
-            /> */}
+            />
 
             {/* USER INFO */}
 
             <div className="hidden sm:block">
-
               <p className="text-sm text-white font-medium">
                 {user?.full_name}
               </p>
 
-              <p className="text-xs text-white">
-                {user?.role}
-              </p>
-
+              <p className="text-xs text-white">{user?.role}</p>
             </div>
 
             {/* ARROW */}
@@ -122,44 +113,30 @@ function Header({ onMenuClick }) {
                 openDropdown ? "rotate-180" : ""
               }`}
             />
-
           </div>
 
           {/* ================= DROPDOWN ================= */}
 
           {openDropdown && (
-
             <div className="absolute right-0 mt-2 w-47 bg-white rounded-lg shadow-lg border z-50">
-
               <Link to="/settings">
-
                 <button className="flex w-full items-center gap-3 px-4 py-3 hover:bg-[#2D468A] hover:text-white">
-
                   <Icon icon="material-symbols:settings" width="18" />
                   Settings
-
                 </button>
-
               </Link>
 
               <button
                 onClick={handleLogout}
                 className="flex w-full items-center gap-3 px-4 py-3 text-red-600 hover:bg-[#2D468A] hover:text-white"
               >
-
                 <Icon icon="material-symbols:logout" width="18" />
                 Log Out
-
               </button>
-
             </div>
-
           )}
-
         </div>
-
       </div>
-
     </header>
   );
 }

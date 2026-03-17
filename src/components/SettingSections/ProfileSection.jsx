@@ -68,14 +68,13 @@ const ProfileSection = () => {
       const res = await updateProfileApi(payload);
 
       const updatedUser = {
-  ...user,
-  ...res.data,
-  profile_pic_url: res.data.profile_pic_url
-    ? `${res.data.profile_pic_url}?t=${Date.now()}`
-    : user?.profile_pic_url || "/avatar.png",
-};
+        ...user,
+        ...res.data,
+        profile_pic_url:
+          res.data.profile_pic_url || user?.profile_pic_url || "/avatar.png",
+      };
 
-updateUser(updatedUser);
+      updateUser(updatedUser);
 
       toast.success(res.message || "Profile updated successfully");
 
