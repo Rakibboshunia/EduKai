@@ -22,7 +22,7 @@ const Success = () => {
 
         <Link to="/auth/login" className="w-full mt-4">
 
-          <button className="w-full bg-[#2D468A] hover:bg-[#243a73] transition duration-200 text-white text-lg py-3 rounded-lg shadow-md">
+          <button className="w-full bg-[#2D468A] hover:bg-[#243a73] transition duration-200 text-white text-lg py-3 rounded-lg shadow-md cursor-pointer">
             Go to Login
           </button>
 

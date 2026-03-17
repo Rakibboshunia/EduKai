@@ -12,7 +12,7 @@ import { GoGraph } from "react-icons/go";
 import { CiImport } from "react-icons/ci";
 import StatCard from "../components/StatCard";
 
-/* ---------------- Activities Card ---------------- */
+
 const ActivitiesCard = ({
   title,
   name,
@@ -41,9 +41,7 @@ const ActivitiesCard = ({
   );
 };
 
-/* ---------------- Home Page ---------------- */
 const Home = () => {
-  /* 🔹 Stats Data */
   const stats = [
     {
       title: "Total CV Import",
@@ -83,7 +81,6 @@ const Home = () => {
     },
   ];
 
-  /* 🔹 Activities Data */
   const activities = [
     {
       title: "CV Quality Check Passed",

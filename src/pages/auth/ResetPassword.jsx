@@ -80,7 +80,7 @@ const ResetPassword = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg mt-8 flex items-center justify-center
+          className={`w-full py-3 rounded-lg mt-8 flex items-center justify-center cursor-pointer transition
           ${
             loading
               ? "bg-gray-400 cursor-not-allowed"

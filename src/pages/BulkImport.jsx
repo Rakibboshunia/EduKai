@@ -26,7 +26,6 @@ const BulkImport = () => {
 
     const formData = new FormData();
 
-    // files
     chunk.forEach((file) => {
       formData.append("files", file);
     });

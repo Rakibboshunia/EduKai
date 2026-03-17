@@ -28,36 +28,39 @@ export default function Availability() {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
 
-  // Fetch candidates
   useEffect(() => {
     fetchCandidates();
   }, []);
 
   const fetchCandidates = async () => {
-    try {
+  try {
+    const res = await getCandidates();
+    const list = Array.isArray(res) ? res : res.data;
 
-      const res = await getCandidates();
+    const formattedData = list.map((item) => ({
+      id: item.id,
+      date: item.created_at
+        ? new Date(item.created_at).toLocaleDateString()
+        : "N/A",
+      name: item.name || "N/A",
+      email: item.email || "N/A",
+      jobTitle: Array.isArray(item.job_titles)
+        ? item.job_titles.join(", ")
+        : item.job_titles || "N/A",
+      whatsapp: item.whatsapp_number || "N/A",
+      source: item.source || "N/A",
+      status: item.availability_status || "not_available",
+    }));
 
-      const formattedData = res.map((item) => ({
-        id: item.id,
-        date: new Date(item.created_at).toLocaleDateString(),
-        name: item.name || "N/A",
-        email: item.email || "N/A",
-        jobTitle: item.job_titles?.join(", ") || "N/A",
-        whatsapp: item.whatsapp_number || "N/A",
-        source: item.source,
-        status: item.availability_status,
-      }));
+    setData(formattedData);
+    setFilteredData(formattedData);
 
-      setData(formattedData);
-      setFilteredData(formattedData);
+  } catch (error) {
+    console.error("Candidate fetch error:", error);
+  }
+};
 
-    } catch (error) {
-      console.error("Candidate fetch error:", error);
-    }
-  };
 
-  // Update status
   const handleStatusChange = async (id, newStatus) => {
 
   try {
@@ -105,7 +108,6 @@ export default function Availability() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 w-full">
 
-      {/* Header */}
       <div className="mb-6">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#2D468A]">
           Availability Check
@@ -116,7 +118,6 @@ export default function Availability() {
         </p>
       </div>
 
-      {/* Search */}
       <div className="mb-6">
         <DynamicSearch
           data={data}
@@ -125,13 +126,10 @@ export default function Availability() {
         />
       </div>
 
-      {/* Table Container */}
       <div className="w-full rounded-xl">
 
-        {/* Horizontal scroll */}
         <div className="overflow-x-auto">
 
-          {/* Vertical scroll */}
           <div className="max-h-[80vh] overflow-y-auto overflow-x-auto">
 
             <Table columns={columns} data={filteredData} />

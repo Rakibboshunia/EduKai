@@ -2,12 +2,12 @@ import { createBrowserRouter } from "react-router-dom";
 
 import DashboardLayout from "../layout/DashboardLayout";
 import AuthLayout from "../layout/AuthLayout";
+import PrivateRoute from "../components/PrivateRoute";
 
 import Home from "../pages/Home";
 import Settings from "../pages/Settings";
 import BulkImport from "../pages/BulkImport";
 import Availability from "../pages/Availability";
-// import Tracking from "../pages/Tracking";
 import Organizations from "../pages/Organizations";
 import CvQueue from "../pages/CvQueue";
 import AICVRewriter from "../pages/AICVRewriter";
@@ -36,10 +36,14 @@ const router = createBrowserRouter([
     ],
   },
 
-  /* ================= DASHBOARD ================= */
+  /* ================= DASHBOARD (PROTECTED) ================= */
   {
     path: "/",
-    element: <DashboardLayout />,
+    element: (
+      <PrivateRoute>
+        <DashboardLayout />
+      </PrivateRoute>
+    ),
     children: [
       { index: true, element: <Home /> },
 
@@ -50,7 +54,6 @@ const router = createBrowserRouter([
       { path: "organizations", element: <Organizations /> },
       { path: "contact", element: <Contact /> },
 
-      /* ================= AI SECTION ================= */
       {
         path: "ai",
         children: [

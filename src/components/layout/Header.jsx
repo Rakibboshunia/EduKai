@@ -90,7 +90,7 @@ function Header({ onMenuClick }) {
 
             {/* USER IMAGE */}
 
-            <img
+            {/* <img
               src={user?.profile_pic_url || "/avatar.png"}
               alt="User Avatar"
               className="w-9 h-9 rounded-full object-cover"
@@ -99,7 +99,7 @@ function Header({ onMenuClick }) {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = "/avatar.png";
               }}
-            />
+            /> */}
 
             {/* USER INFO */}
 

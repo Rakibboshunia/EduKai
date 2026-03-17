@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiSearch, FiX } from "react-icons/fi";
 
 const DynamicSearch = ({
@@ -7,17 +7,26 @@ const DynamicSearch = ({
   onFilter,
   placeholder = "Search...",
 }) => {
+
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  const handleSearch = (value) => {
-    setQuery(value);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
 
-    if (!value.trim()) {
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  useEffect(() => {
+
+    if (!debouncedQuery.trim()) {
       onFilter(data);
       return;
     }
 
-    const q = value.toLowerCase();
+    const q = debouncedQuery.trim().toLowerCase();
 
     const filtered = data.filter((item) =>
       searchKeys.some((key) => {
@@ -28,7 +37,7 @@ const DynamicSearch = ({
         }
 
         if (field !== undefined && field !== null) {
-          return field.toString().toLowerCase().includes(q);
+          return String(field).toLowerCase().includes(q);
         }
 
         return false;
@@ -36,7 +45,8 @@ const DynamicSearch = ({
     );
 
     onFilter(filtered);
-  };
+
+  }, [debouncedQuery, data]);
 
   const clearSearch = () => {
     setQuery("");
@@ -45,17 +55,15 @@ const DynamicSearch = ({
 
   return (
     <div className="relative w-full md:w-96">
-      <FiSearch
-        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-        size={18}
-      />
+
+      <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
 
       <input
         type="text"
         value={query}
-        onChange={(e) => handleSearch(e.target.value)}
+        onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-10 pr-10 py-3 bg-white/60 text-black border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A] transition"
+        className="w-full pl-10 pr-10 py-3 bg-white/60 text-black border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
       />
 
       {query && (
@@ -63,9 +71,10 @@ const DynamicSearch = ({
           onClick={clearSearch}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
         >
-          <FiX size={16} />
+          <FiX />
         </button>
       )}
+
     </div>
   );
 };

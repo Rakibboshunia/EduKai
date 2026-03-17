@@ -159,7 +159,6 @@ export default function Contact() {
   return (
     <div className="p-4 md:p-6">
 
-      {/* Header */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-10">
 
         <div>
@@ -223,7 +222,6 @@ export default function Contact() {
 
       </div>
 
-      {/* Organization Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
         {paginatedData.length > 0 ? (
@@ -249,7 +247,6 @@ export default function Contact() {
 
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
 
         <div className="mt-10 flex justify-center">
@@ -264,7 +261,6 @@ export default function Contact() {
 
       )}
 
-      {/* Edit Modal */}
       <EditOrganizationModal
         open={openEdit}
         organization={selectedOrg}
@@ -272,7 +268,6 @@ export default function Contact() {
         onSave={handleUpdateOrganization}
       />
 
-      {/* Delete Modal */}
       <ConfirmDeleteModal
         open={deleteId !== null}
         title="Delete Organization"
@@ -281,7 +276,6 @@ export default function Contact() {
         onConfirm={confirmDelete}
       />
 
-      {/* Add Modal */}
       <AddOrganizationModal
         open={openAdd}
         onClose={() => setOpenAdd(false)}
