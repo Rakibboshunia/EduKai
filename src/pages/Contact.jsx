@@ -1,287 +1,248 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import DynamicSearch from "../components/DynamicSearch";
-import OrganizationCard from "../components/OrganizationCard";
 import AddOrganizationModal from "../components/AddOrganizationModal";
-import EditOrganizationModal from "../components/EditOrganizationModal";
+import EditContactModal from "../components/EditContactModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
-import Pagination from "../components/Pagination";
 import ImportExcelButton from "../components/ImportExcelButton";
 
-/* ---------------- Dummy Data ---------------- */
-const initialOrganizations = [
-  {
-    id: 1,
-    name: "TechCorp Solutions",
-    email: "info@techcorp.com",
-    contactPerson: "Anik",
-    industry: "Technology",
-    phase: "Primary",
-    jobTitle: "Teacher",
-    location: "Dhaka",
-    radius: "5 KM",
-    totalSubmissions: 23,
-    skills: ["JavaScript", "React", "Node.js"],
-  },
-  {
-    id: 2,
-    name: "Innova Labs",
-    email: "contact@innovalabs.com",
-    contactPerson: "Rahim",
-    industry: "Software",
-    phase: "Secondary",
-    jobTitle: "Software Engineer",
-    location: "Chittagong",
-    radius: "10 KM",
-    totalSubmissions: 15,
-    skills: ["Python", "Django", "PostgreSQL"],
-  },
-];
+import {
+  getContacts,
+  createContact,
+  updateContact,
+  deleteContact,
+} from "../api/contactApi";
+import ContactCard from "../components/ContactCard";
 
 export default function Contact() {
+  const [contacts, setContacts] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchData, setSearchData] = useState([]);
 
-  const [organizations, setOrganizations] = useState(initialOrganizations);
-  const [filteredData, setFilteredData] = useState(initialOrganizations);
+  const [next, setNext] = useState(null);
+  const [previous, setPrevious] = useState(null);
 
-  const [industry, setIndustry] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [openAdd, setOpenAdd] = useState(false);
-
   const [openEdit, setOpenEdit] = useState(false);
-  const [selectedOrg, setSelectedOrg] = useState(null);
-
+  const [selectedContact, setSelectedContact] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const PER_PAGE = 6;
+  const DEFAULT_ORG_ID = "0dcb5159-1c3d-4200-9588-c13ffcc8db37";
 
-  /* ---------------- Reset Page On Filter ---------------- */
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filteredData]);
+  /* ================= FETCH ================= */
+  const fetchContacts = async (url) => {
+    try {
+      const data = await getContacts(url);
+      const results = data?.results || [];
 
-  /* ---------------- Search ---------------- */
-  const handleSearchFilter = (data) => {
-    setFilteredData(data);
-  };
+      setContacts(results);
+      setSearchData(results);
+      setFilteredData(results);
 
-  /* ---------------- Industry Filter ---------------- */
-  const handleIndustryFilter = (value) => {
+      setNext(data?.pagination?.next);
+      setPrevious(data?.pagination?.previous);
 
-    setIndustry(value);
+      setPage(data?.pagination?.page || 1);
+      setTotalPages(data?.pagination?.total_pages || 1);
 
-    if (!value) {
-      setFilteredData(organizations);
-      return;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      console.error(err);
     }
-
-    const filtered = organizations.filter(
-      (org) => org.industry === value
-    );
-
-    setFilteredData(filtered);
-
   };
 
-  /* ---------------- Add Organization ---------------- */
-  const handleAddOrganization = (data) => {
+  useEffect(() => {
+    fetchContacts();
+  }, []);
 
-    const newOrg = {
-      id: Date.now(),
-      ...data,
-      totalSubmissions: 0,
-    };
-
-    const updated = [newOrg, ...organizations];
-
-    setOrganizations(updated);
-    setFilteredData(updated);
-
+  /* ================= SEARCH ================= */
+  const handleSearchFilter = (data) => {
+    setSearchData(data);
   };
 
-  /* ---------------- Open Edit Modal ---------------- */
+  useEffect(() => {
+    setFilteredData(searchData);
+  }, [searchData]);
+
+  /* ================= ADD ================= */
+  const handleAddContact = async (formData) => {
+    try {
+      await createContact(DEFAULT_ORG_ID, {
+        contact_person: formData.contact_person,
+        job_title: formData.job_title || null,
+        work_email: formData.work_email,
+      });
+
+      fetchContacts();
+      setOpenAdd(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  /* ================= EDIT ================= */
   const handleEdit = (id) => {
-
-    const org = organizations.find((o) => o.id === id);
-
-    setSelectedOrg(org);
+    const contact = contacts.find((c) => c.id === id);
+    setSelectedContact(contact);
     setOpenEdit(true);
-
   };
 
-  /* ---------------- Update Organization ---------------- */
-  const handleUpdateOrganization = (updatedOrg) => {
+  const handleUpdateContact = async (data) => {
+    try {
+      await updateContact(data.id, {
+        contact_person: data.contact_person,
+        job_title: data.job_title || null,
+        work_email: data.work_email,
+      });
 
-    const updated = organizations.map((org) =>
-      org.id === updatedOrg.id ? updatedOrg : org
-    );
-
-    setOrganizations(updated);
-    setFilteredData(updated);
-
+      fetchContacts();
+      setOpenEdit(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  /* ---------------- Delete Organization ---------------- */
+  /* ================= DELETE ================= */
   const handleDelete = (id) => {
     setDeleteId(id);
   };
 
-  const confirmDelete = () => {
-
-    const updated = organizations.filter(
-      (org) => org.id !== deleteId
-    );
-
-    setOrganizations(updated);
-    setFilteredData(updated);
-    setDeleteId(null);
-
+  const confirmDelete = async () => {
+    try {
+      await deleteContact(deleteId);
+      setDeleteId(null);
+      fetchContacts();
+    } catch (err) {
+      alert("Delete failed");
+    }
   };
 
-  /* ---------------- Pagination ---------------- */
-  const totalPages = Math.ceil(filteredData.length / PER_PAGE);
+  /* ================= PAGINATION ================= */
+  const getVisiblePages = () => {
+    let start = Math.max(page - 2, 1);
+    let end = Math.min(start + 4, totalPages);
 
-  const paginatedData = useMemo(() => {
+    if (end - start < 4) {
+      start = Math.max(end - 4, 1);
+    }
 
-    const start = (currentPage - 1) * PER_PAGE;
-
-    return filteredData.slice(start, start + PER_PAGE);
-
-  }, [filteredData, currentPage]);
-
-  const handlePageChange = (page) => {
-
-    if (page < 1 || page > totalPages) return;
-
-    setCurrentPage(page);
-
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   };
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="p-3 sm:p-5 md:p-6">
 
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-10">
-
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-[#2D468A]">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#2D468A]">
             Contacts Management
           </h1>
-
           <p className="text-sm text-gray-600 mt-1">
             Manage recipient contacts and track relationships.
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           <button
             onClick={() => setOpenAdd(true)}
-            className="bg-[#2D468B] text-white px-5 py-3 rounded-xl flex items-center gap-2 hover:bg-[#354e92] cursor-pointer transition-all w-full sm:w-auto justify-center"
+            className="bg-[#2D468B] text-white px-4 sm:px-5 py-2 sm:py-3 rounded-lg flex items-center gap-2 text-sm sm:text-base"
           >
-            <FiPlus />
-            Add Contact
+            <FiPlus /> Add Contact
           </button>
 
-          <ImportExcelButton
-            onFileUpload={(file) => {
-              console.log("Uploaded Excel:", file);
-            }}
-          />
-
+          <ImportExcelButton />
         </div>
-
       </div>
 
-      <div className="bg-white/70 backdrop-blur p-5 rounded-xl shadow-sm border mb-10 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+      {/* Search */}
+      <div className="bg-white/70 p-4 sm:p-5 rounded-xl border mb-8">
+        <DynamicSearch
+          data={contacts}
+          searchKeys={["contact_person", "work_email", "job_title"]}
+          onFilter={handleSearchFilter}
+        />
+      </div>
 
-        <div className="w-full md:w-1/2">
-
-          <DynamicSearch
-            data={organizations}
-            searchKeys={["name", "email", "industry", "location"]}
-            onFilter={handleSearchFilter}
+      {/* Cards Grid */}
+      <div className="grid gap-4 sm:gap-5 md:gap-6 
+        grid-cols-1 
+        sm:grid-cols-2 
+        md:grid-cols-3 
+        lg:grid-cols-4 
+        xl:grid-cols-5"
+      >
+        {filteredData.map((contact) => (
+          <ContactCard
+            key={contact.id}
+            data={contact}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
+        ))}
+      </div>
 
-        </div>
+      {/* Pagination */}
+      <div className="mt-10 flex justify-center items-center gap-2 flex-wrap">
+        
+        <button
+          disabled={!previous}
+          onClick={() => fetchContacts(previous)}
+          className="px-3 sm:px-4 py-2 rounded-lg border text-sm sm:text-base hover:bg-[#2D468A] hover:text-white disabled:opacity-40"
+        >
+          Prev
+        </button>
 
-        <div className="w-full md:w-60">
-
-          <select
-            value={industry}
-            onChange={(e) => handleIndustryFilter(e.target.value)}
-            className="w-full text-black bg-white border border-gray-300 rounded-lg px-4 py-3"
+        {getVisiblePages().map((p) => (
+          <button
+            key={p}
+            onClick={() =>
+              fetchContacts(`/api/organizations/contacts/?page=${p}`)
+            }
+            className={`px-3 sm:px-4 py-2 rounded-lg border text-sm sm:text-base ${
+              page === p
+                ? "bg-[#2D468A] text-white"
+                : "hover:bg-gray-100"
+            }`}
           >
+            {p}
+          </button>
+        ))}
 
-            <option value="">All Industries</option>
-            <option value="Technology">Technology</option>
-            <option value="Software">Software</option>
-            <option value="AI">AI</option>
-
-          </select>
-
-        </div>
-
+        <button
+          disabled={!next}
+          onClick={() => fetchContacts(next)}
+          className="px-3 sm:px-4 py-2 rounded-lg border text-sm sm:text-base hover:bg-[#2D468A] hover:text-white disabled:opacity-40"
+        >
+          Next
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {/* Modals */}
+      <AddOrganizationModal
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+        onSubmit={handleAddContact}
+        type="contact"
+      />
 
-        {paginatedData.length > 0 ? (
-
-          paginatedData.map((org) => (
-
-            <OrganizationCard
-              key={org.id}
-              {...org}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-
-          ))
-
-        ) : (
-
-          <div className="col-span-full text-center py-20 text-gray-500">
-            No organizations found.
-          </div>
-
-        )}
-
-      </div>
-
-      {totalPages > 1 && (
-
-        <div className="mt-10 flex justify-center">
-
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-
-        </div>
-
-      )}
-
-      <EditOrganizationModal
+      <EditContactModal
         open={openEdit}
-        organization={selectedOrg}
+        contact={selectedContact}
         onClose={() => setOpenEdit(false)}
-        onSave={handleUpdateOrganization}
+        onSave={handleUpdateContact}
       />
 
       <ConfirmDeleteModal
         open={deleteId !== null}
-        title="Delete Organization"
-        description="Are you sure you want to delete this organization? This action cannot be undone."
+        title="Delete Contact"
+        description="Are you sure?"
         onCancel={() => setDeleteId(null)}
         onConfirm={confirmDelete}
       />
-
-      <AddOrganizationModal
-        open={openAdd}
-        onClose={() => setOpenAdd(false)}
-        onSubmit={handleAddOrganization}
-      />
-
     </div>
   );
 }

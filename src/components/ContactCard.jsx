@@ -1,7 +1,6 @@
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
-/* ---------- Info Row ---------- */
 const InfoRow = ({ label, value }) => {
   if (
     value === null ||
@@ -20,27 +19,28 @@ const InfoRow = ({ label, value }) => {
   );
 };
 
-/* ---------- Label Map ---------- */
 const labelMap = {
-  urn: "URN",
-  phase: "Phase",
-  gender: "Gender",
-  telephone: "Telephone",
-  street: "Street",
-  address_line_1: "Address Line 1",
-  address_line_2: "Address Line 2",
-  town: "Town",
-  county: "County",
-  postcode: "Postcode",
+  contact_person: "Contact Person",
+  job_title: "Job Title",
+  work_email: "Work Email",
 };
 
-/* ---------- Card ---------- */
-const OrganizationCard = ({ data = {}, onEdit, onDelete }) => {
+const ContactCard = ({
+  data = {},
+  onEdit,
+  onDelete,
+}) => {
+
+  const title = data.contact_person;
+  const subtitle = data.work_email;
+
+  const fieldsToShow = [
+    "job_title",
+  ];
 
   return (
     <div className="bg-white/70 backdrop-blur rounded-2xl shadow-md border p-4 sm:p-6 hover:border-gray-300 transition">
 
-      {/* Header */}
       <div className="flex justify-between gap-4">
         <div className="flex gap-3 min-w-0">
           <div className="w-10 h-10 flex items-center justify-center rounded-md bg-[#EEF2FF]">
@@ -49,17 +49,17 @@ const OrganizationCard = ({ data = {}, onEdit, onDelete }) => {
 
           <div className="min-w-0">
             <h3 className="font-semibold text-gray-900 truncate">
-              {data.name || "N/A"}
+              {title || "N/A"}
             </h3>
 
-            <p className="text-xs text-gray-500 truncate">
-              {data.local_authority || ""} 
-              {data.town ? ` • ${data.town}` : ""}
-            </p>
+            {subtitle && (
+              <p className="text-xs text-gray-500 truncate">
+                {subtitle}
+              </p>
+            )}
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => onEdit && onEdit(data.id)}
@@ -77,25 +77,16 @@ const OrganizationCard = ({ data = {}, onEdit, onDelete }) => {
         </div>
       </div>
 
-      {/* Body */}
       <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6 text-sm">
 
-        <InfoRow label="URN" value={data.urn} />
-        <InfoRow label="Phase" value={data.phase} />
-        <InfoRow label="Gender" value={data.gender} />
-        <InfoRow label="Telephone" value={data.telephone} />
-
-        <InfoRow label="Street" value={data.street} />
-        <InfoRow label="Address Line 1" value={data.address_line_1} />
-        <InfoRow label="Address Line 2" value={data.address_line_2} />
-
-        <InfoRow label="Town" value={data.town} />
-        <InfoRow label="County" value={data.county} />
-        <InfoRow label="Postcode" value={data.postcode} />
+        <InfoRow
+          label={labelMap.job_title}
+          value={data.job_title}
+        />
 
       </div>
     </div>
   );
 };
 
-export default OrganizationCard;
+export default ContactCard;

@@ -35,7 +35,12 @@ export default function Availability() {
   const fetchCandidates = async () => {
   try {
     const res = await getCandidates();
-    const list = Array.isArray(res) ? res : res.data;
+    console.log("candidates:", res);
+
+    // ✅ FIX
+    const list = Array.isArray(res?.results)
+      ? res.results
+      : [];
 
     const formattedData = list.map((item) => ({
       id: item.id,

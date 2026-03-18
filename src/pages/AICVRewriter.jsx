@@ -169,7 +169,7 @@ BSc Computer Science – University of Technology
       </div>
 
       <div className="bg-white/60 p-4 rounded-lg border mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -185,7 +185,7 @@ BSc Computer Science – University of Technology
             />
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
               <FiBriefcase className="text-gray-400" />
               Job Title
@@ -197,7 +197,7 @@ BSc Computer Science – University of Technology
               readOnly
               className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-700"
             />
-          </div>
+          </div> */}
 
         </div>
       </div>

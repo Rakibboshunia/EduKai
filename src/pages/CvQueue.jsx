@@ -25,38 +25,43 @@ export default function CVQueuePage() {
   }, []);
 
   const fetchCandidates = async () => {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const res = await getCandidates();
-      const list = Array.isArray(res) ? res : res.data;
+    const res = await getCandidates();
+    console.log("CV Queue:", res);
 
-      const formatted = list.map((item) => ({
-        id: item.id,
-        name: item.name || "Unknown",
-        email: item.email || "No email",
-        phone: item.whatsapp_number || "No phone",
-        experience: Number(item.years_of_experience) || 0,
-        skills: Array.isArray(item.skills)
-          ? item.skills
-          : item.skills?.split(",") || [],
-        status: item.quality_status || "failed",
-        availability: item.availability_status || "not_available",
-        createdAt: item.created_at
-          ? new Date(item.created_at).toLocaleString()
-          : "N/A",
-      }));
+    // ✅ FIXED
+    const list = Array.isArray(res?.results)
+      ? res.results
+      : [];
 
-      setCVs(formatted);
-      setSearchData(formatted);
+    const formatted = list.map((item) => ({
+      id: item.id,
+      name: item.name || "Unknown",
+      email: item.email || "No email",
+      phone: item.whatsapp_number || "No phone",
+      experience: Number(item.years_of_experience) || 0,
+      skills: Array.isArray(item.skills)
+        ? item.skills
+        : item.skills?.split(",") || [],
+      status: item.quality_status || "failed",
+      availability: item.availability_status || "not_available",
+      createdAt: item.created_at
+        ? new Date(item.created_at).toLocaleString()
+        : "N/A",
+    }));
 
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to load CVs");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setCVs(formatted);
+    setSearchData(formatted);
+
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to load CVs");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const updateStatus = async (id, newStatus) => {
     try {

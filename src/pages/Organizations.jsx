@@ -1,236 +1,252 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import DynamicSearch from "../components/DynamicSearch";
 import OrganizationCard from "../components/OrganizationCard";
 import AddOrganizationModal from "../components/AddOrganizationModal";
 import EditOrganizationModal from "../components/EditOrganizationModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
-import Pagination from "../components/Pagination";
 import ImportExcelButton from "../components/ImportExcelButton";
 
-/* ---------------- Dummy Data ---------------- */
-const initialOrganizations = [
-  {
-    id: 1,
-    name: "TechCorp Solutions",
-    email: "info@techcorp.com",
-    contactPerson: "Anik",
-    industry: "Technology",
-    phase: "Primary",
-    jobTitle: "Teacher",
-    location: "Dhaka",
-    radius: "5 KM",
-    totalSubmissions: 23,
-    skills: ["JavaScript", "React", "Node.js"],
-  },
-  {
-    id: 2,
-    name: "Innova Labs",
-    email: "contact@innovalabs.com",
-    contactPerson: "Rahim",
-    industry: "Software",
-    phase: "Secondary",
-    jobTitle: "Software Engineer",
-    location: "Chittagong",
-    radius: "10 KM",
-    totalSubmissions: 15,
-    skills: ["Python", "Django", "PostgreSQL"],
-  },
-];
+import {
+  getOrganizations,
+  createOrganization,
+  updateOrganization,
+  deleteOrganization,
+  importOrganizations,
+} from "../api/organizationApi";
 
 export default function Organizations() {
-  const [organizations, setOrganizations] = useState(initialOrganizations);
-  const [filteredData, setFilteredData] = useState(initialOrganizations);
+  const [organizations, setOrganizations] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchData, setSearchData] = useState([]);
 
   const [industry, setIndustry] = useState("");
-  const [searchData, setSearchData] = useState(initialOrganizations);
+
+  const [next, setNext] = useState(null);
+  const [previous, setPrevious] = useState(null);
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const [openAdd, setOpenAdd] = useState(false);
-
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState(null);
-
   const [deleteId, setDeleteId] = useState(null);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const PER_PAGE = 6;
+  /* ================= FETCH ================= */
+  const fetchOrganizations = async (url) => {
+    try {
+      const data = await getOrganizations(url);
+      const results = data?.results || [];
 
-  /* ---------------- Reset Page ---------------- */
+      setOrganizations(results);
+      setSearchData(results);
+      setFilteredData(results);
+
+      setNext(data?.pagination?.next);
+      setPrevious(data?.pagination?.previous);
+
+      setPage(data?.pagination?.page || 1);
+      setTotalPages(data?.pagination?.total_pages || 1);
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+  };
+
   useEffect(() => {
-    setCurrentPage(1);
-  }, [filteredData]);
+    fetchOrganizations();
+  }, []);
 
-  /* ---------------- Search ---------------- */
+  /* ================= SEARCH ================= */
   const handleSearchFilter = (data) => {
     setSearchData(data);
   };
 
-  /* ---------------- Combine Search + Filter ---------------- */
+  /* ================= FILTER ================= */
   useEffect(() => {
     let result = [...searchData];
 
     if (industry) {
       result = result.filter(
-        (org) => org.industry?.toLowerCase() === industry.toLowerCase(),
+        (org) =>
+          org.phase?.toLowerCase() === industry.toLowerCase()
       );
     }
 
     setFilteredData(result);
   }, [searchData, industry]);
 
-  /* ---------------- Industry Filter ---------------- */
-  const handleIndustryFilter = (value) => {
-    setIndustry(value);
+  /* ================= ADD ================= */
+  const handleAddOrganization = async (formData) => {
+    try {
+      await createOrganization(formData);
+      fetchOrganizations();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  /* ---------------- Add Organization ---------------- */
-  const handleAddOrganization = (data) => {
-    const newOrg = {
-      id: Date.now(),
-      ...data,
-      totalSubmissions: 0,
-    };
-
-    const updated = [newOrg, ...organizations];
-
-    setOrganizations(updated);
-    setSearchData(updated); // 🔥 important
-  };
-
-  /* ---------------- Open Edit Modal ---------------- */
+  /* ================= EDIT ================= */
   const handleEdit = (id) => {
     const org = organizations.find((o) => o.id === id);
-    if (!org) return;
-
     setSelectedOrg(org);
     setOpenEdit(true);
   };
 
-  /* ---------------- Update Organization ---------------- */
-  const handleUpdateOrganization = (updatedOrg) => {
-    const updated = organizations.map((org) =>
-      org.id === updatedOrg.id ? updatedOrg : org,
-    );
-
-    setOrganizations(updated);
-    setSearchData(updated);
+  const handleUpdateOrganization = async (updatedOrg) => {
+    try {
+      await updateOrganization(updatedOrg.id, updatedOrg);
+      fetchOrganizations();
+      setOpenEdit(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  /* ---------------- Delete Organization ---------------- */
+  /* ================= DELETE ================= */
   const handleDelete = (id) => {
     setDeleteId(id);
   };
 
-  const confirmDelete = () => {
-    const updated = organizations.filter((org) => org.id !== deleteId);
-
-    setOrganizations(updated);
-    setSearchData(updated);
-    setDeleteId(null);
+  const confirmDelete = async () => {
+    try {
+      await deleteOrganization(deleteId);
+      setDeleteId(null);
+      fetchOrganizations();
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
   };
 
-  /* ---------------- Pagination ---------------- */
-  const totalPages = Math.ceil(filteredData.length / PER_PAGE);
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages || 1);
+  /* ================= IMPORT ================= */
+  const handleImport = async (file) => {
+    try {
+      await importOrganizations(file);
+      fetchOrganizations();
+    } catch (err) {
+      console.error("Import error:", err);
     }
-  }, [totalPages]);
+  };
 
-  const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * PER_PAGE;
+  /* ================= PAGINATION ================= */
+  const getVisiblePages = () => {
+    let start = Math.max(page - 2, 1);
+    let end = Math.min(start + 4, totalPages);
 
-    return filteredData.slice(start, start + PER_PAGE);
-  }, [filteredData, currentPage]);
+    if (end - start < 4) {
+      start = Math.max(end - 4, 1);
+    }
 
-  const handlePageChange = (page) => {
-    if (page < 1 || page > totalPages) return;
-
-    setCurrentPage(page);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   };
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="p-3 sm:p-5 md:p-6">
+
       {/* Header */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-10">
+      <div className="flex flex-col lg:flex-row justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-[#2D468A]">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#2D468A]">
             Organization & Client Management
           </h1>
-
           <p className="text-sm text-gray-600 mt-1">
             Manage recipient organizations and track relationships.
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           <button
             onClick={() => setOpenAdd(true)}
-            className="bg-[#2D468B] text-white px-5 py-3 rounded-xl flex items-center gap-2 hover:bg-[#354e92]"
+            className="bg-[#2D468B] text-white px-4 sm:px-5 py-2 sm:py-3 rounded-lg flex items-center gap-2 text-sm sm:text-base"
           >
-            <FiPlus />
-            Add Organization
+            <FiPlus /> Add Organization
           </button>
 
-          <ImportExcelButton
-            onFileUpload={(file) => {
-              console.log("Uploaded Excel:", file);
-            }}
-          />
+          <ImportExcelButton onFileUpload={handleImport} />
         </div>
       </div>
 
       {/* Search + Filter */}
-      <div className="bg-white/70 backdrop-blur p-5 rounded-xl shadow-sm border mb-10 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
-        <div className="w-full md:w-1/2">
-          <DynamicSearch
-            data={organizations}
-            searchKeys={["name", "email", "industry", "location"]}
-            onFilter={handleSearchFilter}
-          />
-        </div>
+      <div className="bg-white/70 p-4 sm:p-5 rounded-xl border mb-8 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+        <DynamicSearch
+          data={organizations}
+          searchKeys={["name", "local_authority", "town"]}
+          onFilter={handleSearchFilter}
+        />
 
-        <div className="w-full md:w-60">
-          <select
-            value={industry}
-            onChange={(e) => handleIndustryFilter(e.target.value)}
-            className="w-full text-black bg-white border border-gray-300 rounded-lg px-4 py-3"
+        {/* <select
+          value={industry}
+          onChange={(e) => setIndustry(e.target.value)}
+          className="w-full md:w-60 border rounded-lg px-4 py-2 sm:py-3 text-sm sm:text-base"
+        >
+          <option value="">All Phase</option>
+          <option value="primary">Primary</option>
+          <option value="secondary">Secondary</option>
+        </select> */}
+      </div>
+
+      {/* Cards */}
+      <div className="
+        grid gap-4 sm:gap-5 md:gap-6
+        grid-cols-1 
+        sm:grid-cols-2 
+        md:grid-cols-3 
+        lg:grid-cols-4 
+      ">
+        {filteredData.map((org) => (
+          <OrganizationCard
+            key={org.id}
+            data={org}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-10 flex justify-center items-center gap-2 flex-wrap">
+        
+        <button
+          disabled={!previous}
+          onClick={() => fetchOrganizations(previous)}
+          className="px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base hover:bg-[#2D468A] hover:text-white disabled:opacity-40"
+        >
+          Prev
+        </button>
+
+        {getVisiblePages().map((p) => (
+          <button
+            key={p}
+            onClick={() =>
+              fetchOrganizations(`/api/organizations/?page=${p}`)
+            }
+            className={`px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base ${
+              page === p
+                ? "bg-[#2D468A] text-white"
+                : "hover:bg-gray-100"
+            }`}
           >
-            <option value="">All Industries</option>
-            <option value="Technology">Technology</option>
-            <option value="Software">Software</option>
-            <option value="AI">AI</option>
-          </select>
-        </div>
+            {p}
+          </button>
+        ))}
+
+        <button
+          disabled={!next}
+          onClick={() => fetchOrganizations(next)}
+          className="px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base hover:bg-[#2D468A] hover:text-white disabled:opacity-40"
+        >
+          Next
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {paginatedData.length > 0 ? (
-          paginatedData.map((org) => (
-            <OrganizationCard
-              key={org.id}
-              {...org}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          ))
-        ) : (
-          <div className="col-span-full text-center py-20 text-gray-500">
-            No organizations found.
-          </div>
-        )}
-      </div>
-
-      {totalPages > 1 && (
-        <div className="mt-10 flex justify-center">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </div>
-      )}
+      {/* Modals */}
+      <AddOrganizationModal
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+        onSubmit={handleAddOrganization}
+      />
 
       <EditOrganizationModal
         open={openEdit}
@@ -242,15 +258,9 @@ export default function Organizations() {
       <ConfirmDeleteModal
         open={deleteId !== null}
         title="Delete Organization"
-        description="Are you sure you want to delete this organization? This action cannot be undone."
+        description="Are you sure?"
         onCancel={() => setDeleteId(null)}
         onConfirm={confirmDelete}
-      />
-
-      <AddOrganizationModal
-        open={openAdd}
-        onClose={() => setOpenAdd(false)}
-        onSubmit={handleAddOrganization}
       />
     </div>
   );
