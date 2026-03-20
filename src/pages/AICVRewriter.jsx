@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   FiUser,
   FiSend,
@@ -7,20 +7,27 @@ import {
   FiBriefcase,
   FiEdit,
   FiSave,
+  FiMail,
+  FiPhone,
 } from "react-icons/fi";
 import { SiOpenai } from "react-icons/si";
 import toast from "react-hot-toast";
 
 import CVPreviewCard from "../components/CVPreviewCard";
+import { rewriteCandidateCV, getCandidateById } from "../api/candidateApi";
 
 export default function AICVRewriter() {
 
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [candidate, setCandidate] = useState({
-    name: "John Smith",
-    job_title: "Senior Software Developer",
-  });
+  const [candidate, setCandidate] = useState(
+    location.state?.candidate || {
+      id: null,
+      name: "John Smith",
+      job_title: "Senior Software Developer",
+    }
+  );
 
   const [isRewriting, setIsRewriting] = useState(false);
 
@@ -29,29 +36,30 @@ export default function AICVRewriter() {
     removeEmployer: false,
   });
 
-  const [originalCV, setOriginalCV] = useState(`
-JOHN SMITH
-Senior Software Developer
-
-Email: john.smith@email.com | Phone: +44 7700 900123
-
-PROFESSIONAL SUMMARY
-Experienced software developer with 5+ years of expertise in building scalable applications.
-Proven track record at TechCorp International delivering high-quality solutions.
-
-WORK EXPERIENCE
-Senior Developer – TechCorp International (2021–Present)
-- Led development of microservices architecture
-- Improved application performance by 40%
-
-EDUCATION
-BSc Computer Science – University of Technology
-`);
+  const [originalCV, setOriginalCV] = useState("Loading original CV...");
 
   const [aiCV, setAiCV] = useState("");
 
   const [editMode, setEditMode] = useState(false);
   const [tempCV, setTempCV] = useState("");
+
+  useEffect(() => {
+    if (candidate.id) {
+      getCandidateById(candidate.id)
+        .then((res) => {
+          console.log("Candidate full data:", res);
+          // Attempting to use likely keys for the parsed CV text
+          const cvText = res.parsed_cv || res.parsed_text || res.cv_text || res.original_text || res.resume_text || res.text || JSON.stringify(res, null, 2);
+          setOriginalCV(typeof cvText === 'string' ? cvText : JSON.stringify(cvText, null, 2));
+        })
+        .catch((err) => {
+          console.error("Failed to load original CV text", err);
+          setOriginalCV("Error loading original CV.");
+        });
+    } else {
+      setOriginalCV("No candidate ID provided.");
+    }
+  }, [candidate.id]);
 
   const handleRewriteWithAI = async () => {
 
@@ -59,46 +67,24 @@ BSc Computer Science – University of Technology
       toast.error("Candidate name missing");
       return;
     }
+    
+    if (!candidate.id) {
+      toast.error("Candidate ID missing. No real candidate selected.");
+      return;
+    }
 
     try {
 
       setIsRewriting(true);
 
-      await new Promise((res) => setTimeout(res, 1200));
+      const response = await rewriteCandidateCV(candidate.id, {
+        removeSurname: options.removeSurname,
+        removeEmployer: options.removeEmployer,
+      });
 
-      const firstName = candidate.name
-        ? candidate.name.split(" ")[0].toUpperCase()
-        : "UNKNOWN";
-
-      const fullName = candidate.name?.toUpperCase() || "UNKNOWN";
-
-      const displayName = options.removeSurname
-        ? firstName
-        : fullName;
-
-      const rewrittenCV = `
-${displayName}
-${candidate.job_title}
-
-Email: anonymized@email.com | Phone: +44 7700 900123
-
-PROFESSIONAL SUMMARY
-AI-enhanced CV focusing on clarity, impact, and recruiter-friendly structure.
-
-WORK EXPERIENCE
-Senior Developer – ${
-        options.removeEmployer
-          ? "Leading Technology Company"
-          : "TechCorp International"
-      } (2021–Present)
-
-- Architected scalable systems
-- Improved performance and maintainability
-- Collaborated with cross-functional teams
-
-EDUCATION
-BSc Computer Science – University of Technology
-`;
+      const rewrittenCV = typeof response === 'object' && response !== null
+        ? (response.rewritten_cv || response.cv || response.data || response.message || JSON.stringify(response))
+        : String(response || "No content returned");
 
       setAiCV(rewrittenCV);
       setTempCV(rewrittenCV); 
@@ -153,6 +139,77 @@ BSc Computer Science – University of Technology
     a.click();
 
     URL.revokeObjectURL(url);
+  };
+
+  const renderCandidateDetails = (cand) => {
+    if (cand.original_cv_url) {
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center">
+          <iframe 
+            src={`${cand.original_cv_url}#toolbar=0&navpanes=0`} 
+            title="Original CV PDF View" 
+            className="w-full rounded-md border border-gray-200" 
+            style={{ minHeight: '550px' }}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="w-full flex flex-col gap-4 text-left">
+        <div className="border-b pb-4 mb-2">
+          <h2 className="text-xl font-bold text-[#2D468A]">{cand.name || "Unknown Candidate"}</h2>
+          {cand.job_title && <p className="text-gray-600 font-medium mt-1">{cand.job_title}</p>}
+        </div>
+        
+        <div className="grid grid-cols-1 gap-3 text-sm text-gray-700">
+          {cand.email && (
+             <p className="flex items-center gap-2"><FiMail className="text-gray-500" /> {cand.email}</p>
+          )}
+          {cand.phone && (
+             <p className="flex items-center gap-2"><FiPhone className="text-gray-500" /> {cand.phone}</p>
+          )}
+          {cand.experience !== undefined && cand.experience !== null && (
+             <p className="flex items-center gap-2"><FiBriefcase className="text-gray-500" /> {cand.experience} years experience</p>
+          )}
+        </div>
+        
+        {cand.skills && cand.skills.length > 0 && (
+          <div className="mt-4">
+            <h3 className="font-semibold text-gray-800 mb-2">Skills</h3>
+            <div className="flex flex-wrap gap-2">
+              {cand.skills.map((s, i) => (
+                <span key={i} className="px-3 py-1 bg-[#E8EDFB] text-[#2D468A] rounded-full text-xs font-medium">{s}</span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* PDF Link is no longer needed below since we embed it directly, but we can keep a fallback button if iframe fails */}
+        {cand.original_cv_url && (
+          <div className="mt-4 pt-4 border-t">
+            <a href={cand.original_cv_url} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline text-sm font-medium">
+              View Original PDF Document
+            </a>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderOriginalCVContent = () => {
+    if (!originalCV) return "Loading original CV...";
+    if (typeof originalCV === "string") {
+      try {
+        const parsed = JSON.parse(originalCV);
+        if (typeof parsed === "object" && parsed !== null) {
+          return renderCandidateDetails(parsed);
+        }
+      } catch(e) {
+        return originalCV;
+      }
+    }
+    return renderCandidateDetails(originalCV);
   };
 
   return (
@@ -225,7 +282,7 @@ BSc Computer Science – University of Technology
           <CVPreviewCard
             title="Original CV"
             status="Before AI processing"
-            content={originalCV}
+            content={renderOriginalCVContent()}
           />
 
           <div className="relative">
@@ -284,7 +341,7 @@ BSc Computer Science – University of Technology
         <div className="flex flex-col sm:flex-row gap-4 pt-6 sm:pt-8">
 
           <button
-            onClick={() => navigate("/ai/mail-submission")}
+            onClick={() => navigate("/ai/mail-submission", { state: { candidate } })}
             className="flex-1 bg-[#2D468B] text-white px-6 py-3 rounded-md hover:bg-[#354e92] flex items-center justify-center gap-2 transition cursor-pointer"
           >
             <FiSend />

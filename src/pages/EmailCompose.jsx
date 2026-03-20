@@ -1,40 +1,39 @@
 import { useState } from "react";
 import { FiEdit2, FiPaperclip, FiSend, FiSave, FiX } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import EmailSignatureCard from "../components/EmailSignatureCard";
+import { sendToContacts } from "../api/candidateApi";
 
 export default function EmailCompose() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const candidate = location.state?.candidate || {};
+  const contactIds = location.state?.organizations || [];
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
-  const [subject, setSubject] = useState(
-    "Candidate Submission - John Smith for Senior Software Developer"
-  );
+  const defaultSubject = `Candidate Submission - ${candidate.name || "John Smith"} for ${candidate.job_title || "Senior Software Developer"}`;
+  const [subject, setSubject] = useState(defaultSubject);
 
-  const [body, setBody] = useState(`Dear Hiring Manager,
+  const defaultBody = `Dear Hiring Manager,
 
-I am pleased to present John Smith, an exceptional candidate for your consideration.
+I am pleased to present ${candidate.name || "John Smith"}, an exceptional candidate for your consideration.
 
 CANDIDATE OVERVIEW:
-John Smith is a highly skilled Senior Software Developer with 8+ years of progressive experience in enterprise application development. They bring a strong track record of delivering scalable solutions and technical leadership.
+${candidate.name || "John Smith"} is a highly skilled ${candidate.job_title || "Professional"} with progressive experience in their field. They bring a strong track record of delivering positive outcomes.
 
 KEY QUALIFICATIONS:
-• 5+ years of software development experience
-• Expert in JavaScript, React, Node.js, Python, and AWS
-• Proven leadership in managing development teams
-• Strong track record of improving application performance
-• Experience with microservices architecture and cloud technologies
-
-ACHIEVEMENTS:
-• Led development of microservices architecture
-• Improved application performance by 40%
-• Successfully mentored junior developers
+• 5+ years of relevant experience
+• Strong track record of improving performance
+• Adaptive and collaborative
 
 This candidate has undergone our comprehensive quality screening process and has confirmed their immediate availability. Their CV is attached for your review.
 
-Kind regards,`);
+Kind regards,`;
+
+  const [body, setBody] = useState(defaultBody);
 
   const [draftSubject, setDraftSubject] = useState(subject);
   const [draftBody, setDraftBody] = useState(body);
@@ -65,13 +64,45 @@ Kind regards,`);
   };
 
   const handleSend = async () => {
+    if (!candidate.id) {
+      toast.error("Candidate ID missing.");
+      return;
+    }
+    if (contactIds.length === 0) {
+      toast.error("No contacts selected.");
+      return;
+    }
+
     try {
-      // future API call here
+      setIsSending(true);
+      await sendToContacts(candidate.id, {
+        contact_ids: contactIds,
+        subject: subject,
+        body: body,
+      });
       toast.success("Email sent successfully");
+      navigate("/ai/mail-submission");
     } catch {
       toast.error("Failed to send email");
+    } finally {
+      setIsSending(false);
     }
   };
+
+  if (!candidate.id) {
+    return (
+      <div className="p-10 flex flex-col items-center justify-center h-[50vh] text-center">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">No Candidate Selected</h2>
+        <p className="text-gray-600 mb-6">Please start the process by selecting a candidate from the CV Queue or AI Re-writer.</p>
+        <button
+          onClick={() => navigate("/ai/ai-rewriter")}
+          className="bg-[#2D468A] text-white px-6 py-2 border rounded-lg hover:bg-[#243a73] cursor-pointer transition-colors"
+        >
+          Go to AI Re-writer
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 space-y-16">
@@ -163,7 +194,7 @@ Kind regards,`);
 
           <div className="flex items-center gap-2 text-sm text-[#2D468A] bg-blue-50 border border-blue-200 px-3 py-2 rounded-md w-fit">
             <FiPaperclip />
-            Attached: John_Smith_CV_Enhanced.pdf
+            Attached: {(candidate.name ? candidate.name.replace(/\s+/g, '_') : "John_Smith")}_CV_Enhanced.pdf
           </div>
 
           <EmailSignatureCard
@@ -179,10 +210,11 @@ Kind regards,`);
           <div className="flex flex-col sm:flex-row gap-4 pt-2">
             <button
               onClick={handleSend}
-              className="flex-1 bg-[#2D468A] text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-[#243a73] cursor-pointer"
+              disabled={isSending}
+              className={`flex-1 text-white py-3 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer ${isSending ? 'bg-gray-400' : 'bg-[#2D468A] hover:bg-[#243a73]'}`}
             >
               <FiSend />
-              Send Via Outlook to 1 Organization
+              {isSending ? "Sending..." : `Send Via Outlook to ${contactIds.length} Contact(s)`}
             </button>
 
             <button className="px-6 py-3 text-black border border-gray-300 rounded-lg text-sm hover:bg-gray-200 transition-all cursor-pointer">

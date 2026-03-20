@@ -17,6 +17,30 @@ import {
   getRecentActivities,
 } from "../api/dashboardApi";
 
+const formatTimeAgo = (dateString) => {
+  if (!dateString) return "Just now";
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.floor((now - date) / 1000);
+
+  let interval = Math.floor(seconds / 31536000);
+  if (interval >= 1) return interval + (interval === 1 ? " year ago" : " years ago");
+  
+  interval = Math.floor(seconds / 2592000);
+  if (interval >= 1) return interval + (interval === 1 ? " month ago" : " months ago");
+  
+  interval = Math.floor(seconds / 86400);
+  if (interval >= 1) return interval + (interval === 1 ? " day ago" : " days ago");
+  
+  interval = Math.floor(seconds / 3600);
+  if (interval >= 1) return interval + (interval === 1 ? " hour ago" : " hours ago");
+  
+  interval = Math.floor(seconds / 60);
+  if (interval >= 1) return interval + (interval === 1 ? " min ago" : " mins ago");
+  
+  return "Just now";
+};
+
 const ActivitiesCard = ({
   title,
   name,
@@ -102,7 +126,7 @@ const Home = () => {
           activityList.map((item) => ({
             title: item.title || item.message,
             name: item.user_name || "Unknown",
-            time: item.time_ago || "Just now",
+            time: item.time_ago || formatTimeAgo(item.created_at),
             dotColor:
               item.severity === "error" ? "bg-[#FB2C36]" : "bg-[#00C950]",
           })),

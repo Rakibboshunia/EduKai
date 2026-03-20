@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { FiCheckCircle, FiUser, FiSearch } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getNearbyContacts } from "../api/candidateApi";
 import Pagination from "../components/Pagination";
 import Table from "../components/Table";
 
@@ -151,40 +152,60 @@ const ORGANIZATIONS = [
 
 export default function MailSubmission() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const candidate = location.state?.candidate || {};
 
   const [filters, setFilters] = useState({});
   const [orgSearch, setOrgSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [organizations, setOrganizations] = useState(ORGANIZATIONS);
 
   const PER_PAGE = 10;
+
+  useEffect(() => {
+    if (candidate.id) {
+      const params = {};
+      const rad = parseInt(filters.radius);
+      if (!isNaN(rad)) params.radius_km = rad;
+      if (filters.phase && filters.phase !== "All") params.phase = filters.phase;
+      if (filters.city && filters.city !== "All") params.town = filters.city;
+      if (filters.job && filters.job !== "All") params.job_title = filters.job;
+
+      getNearbyContacts(candidate.id, params)
+        .then((res) => {
+          const fetchedData = res.results || res || [];
+          if (Array.isArray(fetchedData)) {
+            setOrganizations(fetchedData);
+          } else {
+            setOrganizations([]);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [candidate.id, filters.radius, filters.phase, filters.city, filters.job]);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [filters, orgSearch]);
 
-
   const filteredOrganizations = useMemo(() => {
-    return ORGANIZATIONS.filter((org) => {
-      if (filters.city && org.location !== filters.city) return false;
-      if (filters.job && org.job_title !== filters.job) return false;
-      if (filters.phase && org.phase !== filters.phase) return false;
-      if (filters.radius && org.radius !== filters.radius) return false;
-
+    return organizations.filter((org) => {
       if (orgSearch) {
         const search = orgSearch.toLowerCase();
 
         const match =
-          org.job_title.toLowerCase().includes(search) ||
-          org.contact_person.toLowerCase().includes(search) ||
-          org.location.toLowerCase().includes(search);
+          (org.job_title && org.job_title.toLowerCase().includes(search)) ||
+          (org.contact_person && org.contact_person.toLowerCase().includes(search)) ||
+          (org.location && org.location.toLowerCase().includes(search)) ||
+          (org.name && org.name.toLowerCase().includes(search));
 
         if (!match) return false;
       }
 
       return true;
     });
-  }, [filters, orgSearch]);
+  }, [organizations, orgSearch]);
 
 
   const totalPages = Math.ceil(filteredOrganizations.length / PER_PAGE);
@@ -330,7 +351,7 @@ export default function MailSubmission() {
           disabled={selectedIds.length === 0}
           onClick={() =>
             navigate("/ai/mail-submission/compose", {
-              state: { organizations: selectedIds },
+              state: { organizations: selectedIds, candidate },
             })
           }
           className={`w-full py-3 rounded-lg font-medium text-sm cursor-pointer transition
