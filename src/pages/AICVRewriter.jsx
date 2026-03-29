@@ -14,7 +14,11 @@ import { SiOpenai } from "react-icons/si";
 import toast from "react-hot-toast";
 
 import CVPreviewCard from "../components/CVPreviewCard";
-import { rewriteCandidateCV, getCandidateById } from "../api/candidateApi";
+import {
+  rewriteCandidateCV,
+  getCandidateById,
+  getRewriteStatus, 
+} from "../api/candidateApi";
 
 export default function AICVRewriter() {
 
@@ -37,23 +41,32 @@ export default function AICVRewriter() {
   });
 
   const [originalCV, setOriginalCV] = useState("Loading original CV...");
-
   const [aiCV, setAiCV] = useState("");
 
   const [editMode, setEditMode] = useState(false);
   const [tempCV, setTempCV] = useState("");
 
+  /* ================= LOAD ORIGINAL CV ================= */
   useEffect(() => {
     if (candidate.id) {
       getCandidateById(candidate.id)
         .then((res) => {
-          console.log("Candidate full data:", res);
-          // Attempting to use likely keys for the parsed CV text
-          const cvText = res.parsed_cv || res.parsed_text || res.cv_text || res.original_text || res.resume_text || res.text || JSON.stringify(res, null, 2);
-          setOriginalCV(typeof cvText === 'string' ? cvText : JSON.stringify(cvText, null, 2));
+          const cvText =
+            res.parsed_cv ||
+            res.parsed_text ||
+            res.cv_text ||
+            res.original_text ||
+            res.resume_text ||
+            res.text ||
+            JSON.stringify(res, null, 2);
+
+          setOriginalCV(
+            typeof cvText === "string"
+              ? cvText
+              : JSON.stringify(cvText, null, 2)
+          );
         })
-        .catch((err) => {
-          console.error("Failed to load original CV text", err);
+        .catch(() => {
           setOriginalCV("Error loading original CV.");
         });
     } else {
@@ -61,6 +74,7 @@ export default function AICVRewriter() {
     }
   }, [candidate.id]);
 
+  /* ================= REWRITE WITH AI (FIXED ONLY) ================= */
   const handleRewriteWithAI = async () => {
 
     if (!candidate.name) {
@@ -74,23 +88,74 @@ export default function AICVRewriter() {
     }
 
     try {
-
       setIsRewriting(true);
 
-      const response = await rewriteCandidateCV(candidate.id, {
+      // 🔥 STEP 1: start rewrite
+      const startRes = await rewriteCandidateCV(candidate.id, {
         removeSurname: options.removeSurname,
         removeEmployer: options.removeEmployer,
       });
 
-      const rewrittenCV = typeof response === 'object' && response !== null
-        ? (response.rewritten_cv || response.cv || response.data || response.message || JSON.stringify(response))
-        : String(response || "No content returned");
+      if (startRes.rewrite_status !== "processing") {
+        toast.error("Rewrite failed to start");
+        return;
+      }
 
-      setAiCV(rewrittenCV);
-      setTempCV(rewrittenCV); 
+      toast.success("AI rewriting started...");
 
-      toast.success("CV rewritten successfully");
+      // 🔥 STEP 2: polling
+      let retries = 0;
+      let finalData = null;
 
+      while (retries < 15) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        const statusRes = await getRewriteStatus(candidate.id);
+
+        if (statusRes.rewrite_status === "completed") {
+          finalData = statusRes;
+          break;
+        }
+
+        retries++;
+      }
+
+      if (!finalData) {
+        toast.error("AI rewrite timeout");
+        return;
+      }
+
+      // 🔥 STEP 3: extract CV
+      const enhancedUrl = finalData?.candidate?.enhanced_cv_url;
+
+      if (enhancedUrl) {
+        setAiCV({ type: "pdf", url: enhancedUrl });
+        setTempCV(""); // optional
+      } else {
+        const aiContent =
+          finalData?.candidate?.ai_enhanced_cv_content ||
+          finalData?.candidate?.parsed_cv ||
+          finalData?.candidate?.cv_text ||
+          JSON.stringify(finalData, null, 2);
+
+        const finalText =
+          typeof aiContent === "string"
+            ? aiContent
+            : JSON.stringify(aiContent, null, 2);
+
+        setAiCV({ type: "text", content: finalText });
+        setTempCV(finalText);
+      }
+
+      const finalText =
+        typeof aiContent === "string"
+          ? aiContent
+          : JSON.stringify(aiContent, null, 2);
+
+      setAiCV(finalText);
+      setTempCV(finalText);
+
+      toast.success("CV rewritten successfully ✅");
     } catch (error) {
 
       console.error(error);
@@ -124,13 +189,18 @@ export default function AICVRewriter() {
   };
 
   const handleDownload = () => {
+  if (!aiCV) {
+    toast.error("No AI CV to download");
+    return;
+  }
 
-    if (!aiCV) {
-      toast.error("No AI CV to download");
-      return;
-    }
-
-    const blob = new Blob([aiCV], { type: "text/plain" });
+  if (aiCV.type === "pdf") {
+    const a = document.createElement("a");
+    a.href = aiCV.url;
+    a.download = "AI_CV.pdf";
+    a.click();
+  } else {
+    const blob = new Blob([aiCV.content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
@@ -139,7 +209,8 @@ export default function AICVRewriter() {
     a.click();
 
     URL.revokeObjectURL(url);
-  };
+  }
+};
 
   const renderCandidateDetails = (cand) => {
     if (cand.original_cv_url) {
@@ -184,15 +255,6 @@ export default function AICVRewriter() {
             </div>
           </div>
         )}
-
-        {/* PDF Link is no longer needed below since we embed it directly, but we can keep a fallback button if iframe fails */}
-        {cand.original_cv_url && (
-          <div className="mt-4 pt-4 border-t">
-            <a href={cand.original_cv_url} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline text-sm font-medium">
-              View Original PDF Document
-            </a>
-          </div>
-        )}
       </div>
     );
   };
@@ -214,7 +276,6 @@ export default function AICVRewriter() {
 
   return (
     <div className="p-4 sm:p-6">
-
       <div className="mb-6">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#2D468A]">
           AI CV Rewriter & Anonymization
@@ -227,7 +288,6 @@ export default function AICVRewriter() {
 
       <div className="bg-white/60 p-4 rounded-lg border mb-6">
         <div className="grid grid-cols-1 gap-4">
-
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
               <FiUser className="text-gray-400" />
@@ -241,26 +301,10 @@ export default function AICVRewriter() {
               className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-700"
             />
           </div>
-
-          {/* <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-              <FiBriefcase className="text-gray-400" />
-              Job Title
-            </label>
-
-            <input
-              type="text"
-              value={candidate.job_title}
-              readOnly
-              className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-700"
-            />
-          </div> */}
-
         </div>
       </div>
 
       <div className="bg-white/60 p-4 sm:p-6 md:p-8 mb-8 rounded-lg shadow-sm">
-
         <div className="inline-block border border-gray-100 rounded-xl p-3 bg-white">
           <button
             onClick={handleRewriteWithAI}
@@ -278,7 +322,6 @@ export default function AICVRewriter() {
         </div>
 
         <div className="grid text-black grid-cols-1 lg:grid-cols-2 gap-6 mb-6 pt-6 sm:pt-8">
-
           <CVPreviewCard
             title="Original CV"
             status="Before AI processing"
@@ -286,19 +329,25 @@ export default function AICVRewriter() {
           />
 
           <div className="relative">
-
             <CVPreviewCard
               title="AI-Enhanced CV"
               status="Processed by ChatGPT"
               content={
-                editMode
-                  ? tempCV
-                  : aiCV || "Click 'Rewrite with AI' to generate"
+                aiCV?.type === "pdf" ? (
+                  <iframe
+                    src={`${aiCV.url}#toolbar=0&navpanes=0`}
+                    className="w-full rounded-md border"
+                    style={{ minHeight: "550px" }}
+                  />
+                ) : editMode ? (
+                  tempCV
+                ) : (
+                  aiCV?.content || "Click 'Rewrite with AI' to generate"
+                )
               }
             />
 
             <div className="absolute top-3 right-3 flex gap-2 z-20">
-
               {!editMode ? (
                 <button
                   onClick={handleEdit}
@@ -323,7 +372,6 @@ export default function AICVRewriter() {
                   </button>
                 </>
               )}
-
             </div>
 
             {editMode && (
@@ -333,15 +381,14 @@ export default function AICVRewriter() {
                 className="absolute inset-0 w-full h-full p-4 border rounded-lg bg-white text-sm z-10"
               />
             )}
-
           </div>
-
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 pt-6 sm:pt-8">
-
           <button
-            onClick={() => navigate("/ai/mail-submission", { state: { candidate } })}
+            onClick={() =>
+              navigate("/ai/mail-submission", { state: { candidate } })
+            }
             className="flex-1 bg-[#2D468B] text-white px-6 py-3 rounded-md hover:bg-[#354e92] flex items-center justify-center gap-2 transition cursor-pointer"
           >
             <FiSend />
@@ -355,11 +402,8 @@ export default function AICVRewriter() {
             <FiDownload />
             Download CV
           </button>
-
         </div>
-
       </div>
-
     </div>
   );
 }

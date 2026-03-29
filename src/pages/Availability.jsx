@@ -53,7 +53,6 @@ export default function Availability() {
         ? item.job_titles.join(", ")
         : item.job_titles || "N/A",
       whatsapp: item.whatsapp_number || "N/A",
-      source: item.source || "N/A",
       status: item.availability_status || "not_available",
     }));
 
@@ -93,7 +92,6 @@ export default function Availability() {
     { header: "Email Address", accessor: "email" },
     { header: "Job Title", accessor: "jobTitle" },
     { header: "WhatsApp", accessor: "whatsapp" },
-    { header: "Data Source", accessor: "source" },
     {
       header: "Status",
       accessor: "status",
@@ -126,7 +124,7 @@ export default function Availability() {
       <div className="mb-6">
         <DynamicSearch
           data={data}
-          searchKeys={["name", "email", "whatsapp", "source"]}
+          searchKeys={["name", "email", "whatsapp", "jobTitle"]}
           onFilter={setFilteredData}
         />
       </div>

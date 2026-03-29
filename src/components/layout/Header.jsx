@@ -32,16 +32,16 @@ function Header({ onMenuClick }) {
 
   /* ================= CLOSE NOTIFICATIONS ================= */
 
-  const handleCloseNotifications = useCallback(() => {
-    setOpenNotifications(false);
-  }, []);
+  // const handleCloseNotifications = useCallback(() => {
+  //   setOpenNotifications(false);
+  // }, []);
 
   /* ================= TOGGLE NOTIFICATIONS ================= */
 
-  const toggleNotifications = useCallback(() => {
-    setOpenNotifications((prev) => !prev);
-    setOpenDropdown(false);
-  }, []);
+  // const toggleNotifications = useCallback(() => {
+  //   setOpenNotifications((prev) => !prev);
+  //   setOpenDropdown(false);
+  // }, []);
 
   /* ================= TOGGLE USER DROPDOWN ================= */
 
@@ -64,7 +64,7 @@ function Header({ onMenuClick }) {
       <div className="flex items-center justify-end ml-auto gap-4">
         {/* ================= NOTIFICATION ================= */}
 
-        <div className="relative">
+        {/* <div className="relative">
           <IoNotifications
             className="w-8 h-8 text-[#2D468A] cursor-pointer"
             onClick={toggleNotifications}
@@ -74,7 +74,7 @@ function Header({ onMenuClick }) {
             open={openNotifications}
             onClose={handleCloseNotifications}
           />
-        </div>
+        </div> */}
 
         {/* ================= USER PROFILE ================= */}
 

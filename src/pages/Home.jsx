@@ -81,44 +81,43 @@ const Home = () => {
         console.log("activity:", activity);
 
         setStats([
-          {
-            title: "Total CV Import",
-            value: dashboard.total_cv || 0,
-            icon: IoDocumentTextOutline,
-            iconBg: "bg-[#2B7FFF]",
-          },
-          {
-            title: "Quality Passed",
-            value: dashboard.passed || 0,
-            icon: FaRegCircleCheck,
-            iconBg: "bg-[#00C950]",
-          },
-          {
-            title: "Quality Failed",
-            value: dashboard.failed || 0,
-            icon: MdOutlineCancel,
-            iconBg: "bg-[#FB2C36]",
-          },
-          {
-            title: "Pending Review",
-            value: dashboard.pending || 0,
-            icon: FaClockRotateLeft,
-            iconBg: "bg-[#F0B100]",
-          },
-          {
-            title: "CV Submitted",
-            value: dashboard.submitted || 0,
-            icon: FiSend,
-            iconBg: "bg-[#AD46FF]",
-          },
-          {
-            title: "Success Rate",
-            value: `${dashboard.success_rate || 0}%`,
-            icon: GoGraph,
-            iconBg: "bg-[#2B7FFF]",
-          },
-        ]);
-
+  {
+    title: "Total CV Import",
+    value: dashboard?.summary?.total_candidates || 0,
+    icon: IoDocumentTextOutline,
+    iconBg: "bg-[#2B7FFF]",
+  },
+  {
+    title: "Quality Passed",
+    value: dashboard?.quality?.passed || 0,
+    icon: FaRegCircleCheck,
+    iconBg: "bg-[#00C950]",
+  },
+  {
+    title: "Quality Failed",
+    value: dashboard?.quality?.failed || 0,
+    icon: MdOutlineCancel,
+    iconBg: "bg-[#FB2C36]",
+  },
+  {
+    title: "Pending Review",
+    value: dashboard?.quality?.pending || 0,
+    icon: FaClockRotateLeft,
+    iconBg: "bg-[#F0B100]",
+  },
+  {
+    title: "CV Submitted",
+    value: dashboard?.summary?.total_processed || 0,
+    icon: FiSend,
+    iconBg: "bg-[#AD46FF]",
+  },
+  {
+    title: "Success Rate",
+    value: `${dashboard?.summary?.success_rate || 0}%`,
+    icon: GoGraph,
+    iconBg: "bg-[#2B7FFF]",
+  },
+]);
         // ✅ FIXED HERE
         const activityList = activity?.results || [];
 

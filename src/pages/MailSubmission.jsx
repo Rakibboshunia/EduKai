@@ -5,7 +5,6 @@ import { getNearbyContacts } from "../api/candidateApi";
 import Pagination from "../components/Pagination";
 import Table from "../components/Table";
 
-
 const FILTERS = [
   {
     name: "city",
@@ -31,124 +30,9 @@ const FILTERS = [
   {
     name: "radius",
     label: "Radius",
-    options: ["5 KM", "10 KM", "15 KM", "20 KM", "25 KM", "30 KM", "50 KM"],
+    options: ["5", "10", "15", "20", "25", "30", "50"], // ✅ FIXED (only number)
   },
 ];
-
-
-const ORGANIZATIONS = [
-  {
-    id: 1,
-    name: "Greenfield Academy",
-    email: "hr@greenfieldacademy.uk",
-    contact_person: "Sarah Mitchell",
-    industry: "School",
-    location: "London",
-    job_title: "HOD Science",
-    phase: "Primary",
-    radius: "10 KM",
-  },
-  {
-    id: 2,
-    name: "Bright Future School",
-    email: "careers@brightfuture.edu",
-    contact_person: "James Walker",
-    industry: "School",
-    location: "Manchester",
-    job_title: "Maths Teacher",
-    phase: "Higher Secondary", 
-    radius: "5 KM",
-  },
-  {
-    id: 3,
-    name: "Nordic Learning Center",
-    email: "jobs@nordiclearning.fi",
-    contact_person: "Emma Laine",
-    industry: "School",
-    location: "Helsinki",
-    job_title: "Science Teacher",
-    phase: "Higher Secondary",
-    radius: "25 KM",
-  },
-  {
-    id: 4,
-    name: "Global Scholars Institute",
-    email: "hr@globalscholars.org",
-    contact_person: "William Anderson",
-    industry: "School",
-    location: "New York",
-    job_title: "Humanities Teacher",
-    phase: "Higher Secondary",
-    radius: "15 KM",
-  },
-  {
-    id: 5, 
-    name: "Global Scholars Institute",
-    email: "hr@globalscholars.org",
-    contact_person: "William Anderson",
-    industry: "School",
-    location: "New York",
-    job_title: "Humanities Teacher",
-    phase: "Primary",
-    radius: "30 KM",
-  },
-  {
-    id: 6,
-    name: "Greenfield Academy",
-    email: "hr@greenfieldacademy.uk",
-    contact_person: "Sarah Mitchell",
-    industry: "School",
-    location: "London",
-    job_title: "HOD Science",
-    phase: "Primary",
-    radius: "10 KM",
-  },
-  {
-    id: 7,
-    name: "Bright Future School",
-    email: "careers@brightfuture.edu",
-    contact_person: "James Walker",
-    industry: "School",
-    location: "Manchester",
-    job_title: "Maths Teacher",
-    phase: "Higher Secondary", 
-    radius: "5 KM",
-  },
-  {
-    id: 8,
-    name: "Nordic Learning Center",
-    email: "jobs@nordiclearning.fi",
-    contact_person: "Emma Laine",
-    industry: "School",
-    location: "Helsinki",
-    job_title: "Science Teacher",
-    phase: "Higher Secondary",
-    radius: "50 KM",
-  },
-  {
-    id: 9,
-    name: "Global Scholars Institute",
-    email: "hr@globalscholars.org",
-    contact_person: "William Anderson",
-    industry: "School",
-    location: "New York",
-    job_title: "Humanities Teacher",
-    phase: "Higher Secondary",
-    radius: "15 KM",
-  },
-  {
-    id: 10, 
-    name: "Global Scholars Institute",
-    email: "hr@globalscholars.org",
-    contact_person: "William Anderson",
-    industry: "School",
-    location: "New York",
-    job_title: "Humanities Teacher",
-    phase: "Primary",
-    radius: "20 KM",
-  },
-];
-
 
 export default function MailSubmission() {
   const navigate = useNavigate();
@@ -159,45 +43,73 @@ export default function MailSubmission() {
   const [orgSearch, setOrgSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [organizations, setOrganizations] = useState(ORGANIZATIONS);
+
+  const [organizations, setOrganizations] = useState([]);
 
   const PER_PAGE = 10;
 
+  /* ================= API CALL ================= */
   useEffect(() => {
     if (candidate.id) {
       const params = {};
+
+      // ✅ radius
       const rad = parseInt(filters.radius);
       if (!isNaN(rad)) params.radius_km = rad;
-      if (filters.phase && filters.phase !== "All") params.phase = filters.phase;
-      if (filters.city && filters.city !== "All") params.town = filters.city;
-      if (filters.job && filters.job !== "All") params.job_title = filters.job;
+
+      // ✅ phase
+      if (filters.phase && filters.phase !== "All") {
+        params.phase = filters.phase;
+      }
+
+      // ✅ city → backend uses town
+      if (filters.city && filters.city !== "All") {
+        params.town = filters.city;
+      }
+
+      // ✅ job_title
+      if (filters.job && filters.job !== "All") {
+        params.job_title = filters.job;
+      }
+
+      console.log("API PARAMS:", params);
 
       getNearbyContacts(candidate.id, params)
         .then((res) => {
-          const fetchedData = res.results || res || [];
-          if (Array.isArray(fetchedData)) {
-            setOrganizations(fetchedData);
-          } else {
-            setOrganizations([]);
-          }
-        })
-        .catch(console.error);
-    }
-  }, [candidate.id, filters.radius, filters.phase, filters.city, filters.job]);
+          console.log("API contacts:", res);
 
+          // ✅ SAFE handling
+          const fetchedData = Array.isArray(res?.results)
+            ? res.results
+            : [];
+
+          setOrganizations(fetchedData);
+        })
+        .catch((err) => {
+          console.error("API error:", err);
+          setOrganizations([]);
+        });
+    }
+  }, [candidate.id, filters]);
+
+  /* ================= RESET PAGE ================= */
   useEffect(() => {
     setCurrentPage(1);
   }, [filters, orgSearch]);
 
+  /* ================= SEARCH FILTER ================= */
   const filteredOrganizations = useMemo(() => {
     return organizations.filter((org) => {
       if (orgSearch) {
         const search = orgSearch.toLowerCase();
 
         const match =
-          (org.job_title && org.job_title.toLowerCase().includes(search)) ||
-          (org.contact_person && org.contact_person.toLowerCase().includes(search)) ||
-          (org.location && org.location.toLowerCase().includes(search)) ||
+          (org.job_title &&
+            org.job_title.toLowerCase().includes(search)) ||
+          (org.contact_person &&
+            org.contact_person.toLowerCase().includes(search)) ||
+          (org.location &&
+            org.location.toLowerCase().includes(search)) ||
           (org.name && org.name.toLowerCase().includes(search));
 
         if (!match) return false;
@@ -207,7 +119,7 @@ export default function MailSubmission() {
     });
   }, [organizations, orgSearch]);
 
-
+  /* ================= PAGINATION ================= */
   const totalPages = Math.ceil(filteredOrganizations.length / PER_PAGE);
 
   const paginatedOrganizations = filteredOrganizations.slice(
@@ -215,7 +127,7 @@ export default function MailSubmission() {
     currentPage * PER_PAGE
   );
 
-
+  /* ================= SELECT ================= */
   const toggleSelect = (id) => {
     setSelectedIds((prev) =>
       prev.includes(id)
@@ -230,12 +142,15 @@ export default function MailSubmission() {
     const allSelected = pageIds.every((id) => selectedIds.includes(id));
 
     if (allSelected) {
-      setSelectedIds((prev) => prev.filter((id) => !pageIds.includes(id)));
+      setSelectedIds((prev) =>
+        prev.filter((id) => !pageIds.includes(id))
+      );
     } else {
       setSelectedIds((prev) => [...new Set([...prev, ...pageIds])]);
     }
   };
 
+  /* ================= TABLE ================= */
   const columns = [
     {
       header: "Select",
@@ -258,6 +173,7 @@ export default function MailSubmission() {
     { header: "Phase", accessor: "phase" },
   ];
 
+  /* ================= UI ================= */
   return (
     <div className="p-6 space-y-8">
 
@@ -278,6 +194,7 @@ export default function MailSubmission() {
 
       <div className="bg-white p-8 rounded-xl border border-gray-200 space-y-6">
 
+        {/* Search */}
         <div>
           <label className="text-sm font-medium text-[#2D468A] mb-2 block">
             Search Organizations
@@ -290,11 +207,12 @@ export default function MailSubmission() {
               placeholder="Search by Job Title, Contact Person, or Location..."
               value={orgSearch}
               onChange={(e) => setOrgSearch(e.target.value)}
-              className="w-full text-black border border-gray-300 rounded-md pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-[#2D468A] focus:outline-none"
+              className="w-full text-black border border-gray-300 rounded-md pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-[#2D468A]"
             />
           </div>
         </div>
 
+        {/* Filters */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {FILTERS.map((filter) => (
             <div key={filter.name}>
@@ -315,7 +233,7 @@ export default function MailSubmission() {
                 <option value="">All</option>
                 {filter.options.map((opt) => (
                   <option key={opt} value={opt}>
-                    {opt}
+                    {filter.name === "radius" ? `${opt} KM` : opt}
                   </option>
                 ))}
               </select>
@@ -323,6 +241,7 @@ export default function MailSubmission() {
           ))}
         </div>
 
+        {/* Select All */}
         <label className="flex items-center gap-2 text-sm text-[#2D468A]">
           <input
             type="checkbox"
@@ -337,6 +256,7 @@ export default function MailSubmission() {
           Select All (This Page)
         </label>
 
+        {/* Table */}
         <div className="overflow-x-auto">
           <Table columns={columns} data={paginatedOrganizations} />
         </div>
@@ -347,14 +267,15 @@ export default function MailSubmission() {
           onPageChange={setCurrentPage}
         />
 
+        {/* Next Button */}
         <button
           disabled={selectedIds.length === 0}
           onClick={() =>
             navigate("/ai/mail-submission/compose", {
-              state: { organizations: selectedIds, candidate },
+              state: { contactIds: selectedIds, candidate },
             })
           }
-          className={`w-full py-3 rounded-lg font-medium text-sm cursor-pointer transition
+          className={`w-full py-3 rounded-lg font-medium text-sm transition
             ${
               selectedIds.length
                 ? "bg-[#2D468A] text-white hover:bg-[#243a73]"

@@ -19,7 +19,7 @@ export default function ImportExcelButton({ onFileUpload }) {
   };
 
   return (
-    <label className="border border-gray-300 px-5 py-3 rounded-xl flex items-center gap-2 cursor-pointer bg-gray-50 hover:bg-[#2D468B] hover:text-white transition-all text-gray-700">
+    <label className="border border-gray-300 px-2 py-2 rounded-xl flex items-center gap-2 cursor-pointer bg-gray-50 hover:bg-[#2D468B] hover:text-white transition-all text-gray-700">
       <FiUpload />
       Import From Excel File
 

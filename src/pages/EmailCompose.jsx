@@ -3,13 +3,13 @@ import { FiEdit2, FiPaperclip, FiSend, FiSave, FiX } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import EmailSignatureCard from "../components/EmailSignatureCard";
-import { sendToContacts } from "../api/candidateApi";
+import { sendToContacts, getSendStatus } from "../api/candidateApi";
 
 export default function EmailCompose() {
   const navigate = useNavigate();
   const location = useLocation();
   const candidate = location.state?.candidate || {};
-  const contactIds = location.state?.organizations || [];
+  const contactIds = location.state?.contactIds || [];
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -64,30 +64,75 @@ Kind regards,`;
   };
 
   const handleSend = async () => {
-    if (!candidate.id) {
-      toast.error("Candidate ID missing.");
-      return;
-    }
-    if (contactIds.length === 0) {
-      toast.error("No contacts selected.");
+  if (!candidate.id) {
+    toast.error("Candidate ID missing.");
+    return;
+  }
+
+  if (contactIds.length === 0) {
+    toast.error("No contacts selected.");
+    return;
+  }
+
+  try {
+    setIsSending(true);
+
+    // 🔥 STEP 1: send request
+    const res = await sendToContacts(candidate.id, {
+      contact_ids: contactIds,
+      subject: subject,
+      body: body,
+    });
+
+    const taskId = res?.task_id;
+
+    if (!taskId) {
+      toast.error("Failed to start email sending");
       return;
     }
 
-    try {
-      setIsSending(true);
-      await sendToContacts(candidate.id, {
-        contact_ids: contactIds,
-        subject: subject,
-        body: body,
-      });
-      toast.success("Email sent successfully");
-      navigate("/ai/mail-submission");
-    } catch {
-      toast.error("Failed to send email");
-    } finally {
-      setIsSending(false);
+    toast.success("Sending emails started...");
+
+    // 🔥 STEP 2: polling
+    let retries = 0;
+    let done = false;
+
+    while (retries < 15) {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      const statusRes = await getSendStatus(taskId);
+
+      console.log("Email status:", statusRes);
+
+      if (statusRes.status === "completed") {
+        done = true;
+        break;
+      }
+
+      if (statusRes.status === "failed") {
+        toast.error("Email sending failed");
+        return;
+      }
+
+      retries++;
     }
-  };
+
+    if (!done) {
+      toast.error("Email sending timeout");
+      return;
+    }
+
+    toast.success("Emails sent successfully ✅");
+
+    navigate("/ai/mail-submission");
+
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to send email");
+  } finally {
+    setIsSending(false);
+  }
+};
 
   if (!candidate.id) {
     return (
