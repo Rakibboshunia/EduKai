@@ -1,23 +1,30 @@
 import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
+
 import DynamicSearch from "../components/DynamicSearch";
 import AddOrganizationModal from "../components/AddOrganizationModal";
 import EditContactModal from "../components/EditContactModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import ImportExcelButton from "../components/ImportExcelButton";
+import ContactCard from "../components/ContactCard";
 
 import {
   getContacts,
   createContact,
   updateContact,
   deleteContact,
+  importContacts,
 } from "../api/contactApi";
-import ContactCard from "../components/ContactCard";
+
+import { getOrganizations } from "../api/organizationApi";
 
 export default function Contact() {
   const [contacts, setContacts] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchData, setSearchData] = useState([]);
+
+  const [organizations, setOrganizations] = useState([]);
+  const [selectedOrg, setSelectedOrg] = useState("");
 
   const [next, setNext] = useState(null);
   const [previous, setPrevious] = useState(null);
@@ -30,9 +37,7 @@ export default function Contact() {
   const [selectedContact, setSelectedContact] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
 
-  const DEFAULT_ORG_ID = "0dcb5159-1c3d-4200-9588-c13ffcc8db37";
-
-  /* ================= FETCH ================= */
+  /* ================= FETCH CONTACTS ================= */
   const fetchContacts = async (url) => {
     try {
       const data = await getContacts(url);
@@ -54,9 +59,43 @@ export default function Contact() {
     }
   };
 
+  /* ================= FETCH ORGANIZATIONS ================= */
+  const fetchOrganizations = async () => {
+    try {
+      const res = await getOrganizations();
+      const data = res?.results || [];
+
+      setOrganizations(data);
+
+      // default select first org
+      if (data.length > 0) {
+        setSelectedOrg(data[0].id);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchContacts();
+    fetchOrganizations();
   }, []);
+
+  /* ================= IMPORT ================= */
+  const handleImportContacts = async (file) => {
+    try {
+      if (!selectedOrg) {
+        alert("Please select organization first");
+        return;
+      }
+
+      await importContacts(file, selectedOrg);
+      fetchContacts();
+    } catch (err) {
+      console.error(err);
+      alert("Import failed!");
+    }
+  };
 
   /* ================= SEARCH ================= */
   const handleSearchFilter = (data) => {
@@ -70,7 +109,12 @@ export default function Contact() {
   /* ================= ADD ================= */
   const handleAddContact = async (formData) => {
     try {
-      await createContact(DEFAULT_ORG_ID, {
+      if (!selectedOrg) {
+        alert("Please select organization first");
+        return;
+      }
+
+      await createContact(selectedOrg, {
         contact_person: formData.contact_person,
         job_title: formData.job_title || null,
         work_email: formData.work_email,
@@ -147,6 +191,7 @@ export default function Contact() {
         </div>
 
         <div className="flex flex-wrap gap-2 sm:gap-3">
+
           <button
             onClick={() => setOpenAdd(true)}
             className="bg-[#2D468B] text-white px-4 sm:px-5 py-2 sm:py-3 rounded-lg flex items-center gap-2 text-sm sm:text-base"
@@ -154,7 +199,7 @@ export default function Contact() {
             <FiPlus /> Add Contact
           </button>
 
-          <ImportExcelButton />
+          <ImportExcelButton onFileUpload={handleImportContacts} />
         </div>
       </div>
 
@@ -167,14 +212,8 @@ export default function Contact() {
         />
       </div>
 
-      {/* Cards Grid */}
-      <div className="grid gap-4 sm:gap-5 md:gap-6 
-        grid-cols-1 
-        sm:grid-cols-2 
-        md:grid-cols-3 
-        lg:grid-cols-4 
-        xl:grid-cols-5"
-      >
+      {/* Cards */}
+      <div className="grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {filteredData.map((contact) => (
           <ContactCard
             key={contact.id}
@@ -187,11 +226,10 @@ export default function Contact() {
 
       {/* Pagination */}
       <div className="mt-10 flex justify-center items-center gap-2 flex-wrap">
-        
         <button
           disabled={!previous}
           onClick={() => fetchContacts(previous)}
-          className="px-3 sm:px-4 py-2 rounded-lg border text-sm sm:text-base hover:bg-[#2D468A] hover:text-white disabled:opacity-40"
+          className="px-3 py-2 border rounded-lg hover:bg-[#2D468A] hover:text-white disabled:opacity-40"
         >
           Prev
         </button>
@@ -202,7 +240,7 @@ export default function Contact() {
             onClick={() =>
               fetchContacts(`/api/organizations/contacts/?page=${p}`)
             }
-            className={`px-3 sm:px-4 py-2 rounded-lg border text-sm sm:text-base ${
+            className={`px-3 py-2 border rounded-lg ${
               page === p
                 ? "bg-[#2D468A] text-white"
                 : "hover:bg-gray-100"
@@ -215,7 +253,7 @@ export default function Contact() {
         <button
           disabled={!next}
           onClick={() => fetchContacts(next)}
-          className="px-3 sm:px-4 py-2 rounded-lg border text-sm sm:text-base hover:bg-[#2D468A] hover:text-white disabled:opacity-40"
+          className="px-3 py-2 border rounded-lg hover:bg-[#2D468A] hover:text-white disabled:opacity-40"
         >
           Next
         </button>

@@ -29,33 +29,48 @@ const AddOrganizationForm = ({
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(formData);
+  e.preventDefault();
+
+  const payload = {
+    urn: formData.urn,
+    name: formData.name,
+    local_authority: formData.local_authority,
+    phase: formData.phase.toLowerCase(), 
+    gender: formData.gender.toLowerCase(),
+    telephone: formData.telephone,
+    street: formData.street || null,
+    address_line_1: formData.address_line_1 || null,
+    address_line_2: formData.address_line_2 || null,
+    town: formData.town,
+    county: formData.county || null,
+    postcode: formData.postcode,
   };
+
+  onSubmit(payload);
+};
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-      <InputField
-        label="URN *"
-        name="urn"
-        type="text"
-        placeholder="Enter URN"
-        value={formData.urn}
-        onChange={handleChange}
-        inputClass="border border-gray-300"
-      />
+        <InputField
+          label="URN *"
+          name="urn"
+          type="text"
+          placeholder="Enter URN"
+          value={formData.urn}
+          onChange={handleChange}
+          inputClass="border border-gray-300"
+        />
 
-      <InputField
-        label="Organization Name *"
-        name="name"
-        type="text"
-        placeholder="Enter organization name"
-        value={formData.name}
-        onChange={handleChange}
-        inputClass="border border-gray-300"
-      />
+        <InputField
+          label="Organization Name *"
+          name="name"
+          type="text"
+          placeholder="Enter organization name"
+          value={formData.name}
+          onChange={handleChange}
+          inputClass="border border-gray-300"
+        />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -69,27 +84,41 @@ const AddOrganizationForm = ({
           inputClass="border border-gray-300"
         />
 
-        <InputField
-          label="Phase *"
-          name="phase"
-          type="text"
-          placeholder="Enter phase"
-          value={formData.phase}
-          onChange={handleChange}
-          inputClass="border border-gray-300"
-        />
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-black">Phase *</label>
+
+          <select
+            name="phase"
+            value={formData.phase}
+            onChange={handleChange}
+            className="w-full h-[42px] px-3 border border-gray-300 rounded-md text-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#2D468B]"
+          >
+            <option value="">Select Phase</option>
+            <option value="nursery">Nursery</option>
+            <option value="primary">Primary</option>
+            <option value="secondary">Secondary</option>
+            <option value="16_plus">16 Plus</option>
+            <option value="not_applicable">Not Applicable</option>
+          </select>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <InputField
-          label="Gender *"
-          name="gender"
-          type="text"
-          placeholder="Enter gender"
-          value={formData.gender}
-          onChange={handleChange}
-          inputClass="border border-gray-300"
-        />
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-black">Gender *</label>
+
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            className="w-full h-[42px] px-3 border border-gray-300 rounded-md text-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#2D468B]"
+          >
+            <option value="">Select Gender</option>
+            <option value="mixed">Mixed</option>
+            <option value="boys">Boys</option>
+            <option value="girls">Girls</option>
+          </select>
+        </div>
 
         <InputField
           label="Telephone *"
@@ -103,25 +132,25 @@ const AddOrganizationForm = ({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-      <InputField
-        label="Street *"
-        name="street"
-        type="text"
-        placeholder="Enter street"
-        value={formData.street}
-        onChange={handleChange}
-        inputClass="border border-gray-300"
-      />
-      
-      <InputField
-        label="Postcode *"
-        name="postcode"
-        type="text"
-        placeholder="Enter postcode"
-        value={formData.postcode}
-        onChange={handleChange}
-        inputClass="border border-gray-300"
-      />
+        <InputField
+          label="Street *"
+          name="street"
+          type="text"
+          placeholder="Enter street"
+          value={formData.street}
+          onChange={handleChange}
+          inputClass="border border-gray-300"
+        />
+
+        <InputField
+          label="Postcode *"
+          name="postcode"
+          type="text"
+          placeholder="Enter postcode"
+          value={formData.postcode}
+          onChange={handleChange}
+          inputClass="border border-gray-300"
+        />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

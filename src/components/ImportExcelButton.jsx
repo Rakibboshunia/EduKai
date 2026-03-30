@@ -6,6 +6,7 @@ export default function ImportExcelButton({ onFileUpload }) {
 
     if (!file) return;
 
+    // ✅ file type validation
     if (
       file.type !==
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
@@ -15,7 +16,18 @@ export default function ImportExcelButton({ onFileUpload }) {
       return;
     }
 
+    // ✅ SAFETY CHECK (VERY IMPORTANT)
+    if (typeof onFileUpload !== "function") {
+      console.error("onFileUpload is not a function");
+      alert("Upload handler not configured");
+      return;
+    }
+
+    // ✅ call parent function
     onFileUpload(file);
+
+    // ✅ reset input (same file re-upload fix)
+    e.target.value = null;
   };
 
   return (

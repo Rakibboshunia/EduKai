@@ -30,7 +30,7 @@ export const importOrganizations = async (file) => {
   formData.append("file", file);
 
   const res = await axiosInstance.post(
-    "/api/organizations/import/",
+    "/api/organizations/import/contacts/", // ✅ FIXED
     formData,
     {
       headers: {

@@ -30,7 +30,7 @@ const FILTERS = [
   {
     name: "radius",
     label: "Radius",
-    options: ["5", "10", "15", "20", "25", "30", "50"], // ✅ FIXED (only number)
+    options: ["5", "10", "15", "20", "25", "30", "50"], 
   },
 ];
 

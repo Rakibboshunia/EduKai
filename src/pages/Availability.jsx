@@ -37,7 +37,6 @@ export default function Availability() {
     const res = await getCandidates();
     console.log("candidates:", res);
 
-    // ✅ FIX
     const list = Array.isArray(res?.results)
       ? res.results
       : [];

@@ -31,7 +31,7 @@ export default function CVQueuePage() {
     const res = await getCandidates();
     console.log("CV Queue:", res);
 
-    // ✅ FIXED
+
     const list = Array.isArray(res?.results)
       ? res.results
       : [];

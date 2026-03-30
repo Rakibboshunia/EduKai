@@ -3,13 +3,13 @@ import axiosInstance from "./axiosInstance";
 /* ================= GET CONTACTS ================= */
 export const getContacts = async (url = "/api/organizations/contacts/") => {
   const res = await axiosInstance.get(url);
-  return res.data; // ✅ full response
+  return res.data;
 };
 
-/* ================= CREATE ================= */
+/* ================= CREATE CONTACT (FINAL FIX) ================= */
 export const createContact = async (orgId, payload) => {
   const res = await axiosInstance.post(
-    `/api/organizations/${orgId}/contacts/`,
+    `/api/organizations/${orgId}/contacts/`, // ✅ CORRECT ENDPOINT
     payload
   );
   return res.data;
@@ -32,19 +32,15 @@ export const deleteContact = async (contactId) => {
   return res.data;
 };
 
-/* ---------------- IMPORT (Excel) ---------------- */
-export const importContacts = async (file) => {
+/* ================= IMPORT ================= */
+export const importContacts = async (file, orgId) => {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("organization", orgId); // 🔥 required
 
   const res = await axiosInstance.post(
     "/api/organizations/import/contacts/",
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
+    formData
   );
 
   return res.data;
