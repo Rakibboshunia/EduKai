@@ -23,6 +23,8 @@ export default function Contact() {
   const [filteredData, setFilteredData] = useState([]);
   const [searchData, setSearchData] = useState([]);
 
+  const [industry, setIndustry] = useState("");
+
   const [organizations, setOrganizations] = useState([]);
   const [selectedOrg, setSelectedOrg] = useState("");
 
@@ -204,12 +206,30 @@ export default function Contact() {
       </div>
 
       {/* Search */}
-      <div className="bg-white/70 p-4 sm:p-5 rounded-xl border mb-8">
-        <DynamicSearch
-          data={contacts}
-          searchKeys={["contact_person", "work_email", "job_title"]}
-          onFilter={handleSearchFilter}
-        />
+      <div className="bg-white/70 p-4 sm:p-5 rounded-xl border mb-8 flex flex-col md:flex-row gap-4">
+
+        <div className="w-full md:w-1/2">
+          <DynamicSearch
+            data={organizations}
+            searchKeys={["name", "local_authority", "town"]}
+            onFilter={handleSearchFilter}
+          />
+        </div>
+
+        <div className="w-full md:w-1/2">
+          <select
+            value={industry}
+            onChange={(e) => setIndustry(e.target.value)}
+            className="w-full rounded-lg px-4 py-2 sm:py-3 text-sm sm:text-base bg-white/60 text-black border border-[#2D468A] focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+          >
+            <option value="">Select Job Title</option>
+            <option value="nursery">Nursery</option>
+            <option value="primary">Primary</option>
+            <option value="secondary">Secondary</option>
+            <option value="16plus">16 plus</option>
+            <option value="not_applicable">Not Applicable</option>
+          </select>
+        </div>
       </div>
 
       {/* Cards */}

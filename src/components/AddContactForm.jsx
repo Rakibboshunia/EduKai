@@ -1,12 +1,15 @@
+"use client";
 import { useState } from "react";
 import InputField from "./InputField";
 import { FiPlus } from "react-icons/fi";
+import OrganizationSelect from "./OrganizationSelect";
 
 const AddContactForm = ({
   initialValues = {
     contact_person: "",
     job_title: "",
     work_email: "",
+    organization: "",
   },
   submitLabel = "Add Contact",
   onSubmit,
@@ -14,24 +17,37 @@ const AddContactForm = ({
 }) => {
   const [formData, setFormData] = useState(initialValues);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleSubmit = (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!formData.contact_person || !formData.work_email) {
-    alert("Contact Person & Email required");
-    return;
-  }
+    if (!formData.contact_person || !formData.work_email) {
+      alert("Contact Person & Email required");
+      return;
+    }
 
-  onSubmit(formData);
-};
+    onSubmit(formData);
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+
+      {/* 🔥 Organization Select */}
+      <div>
+        <label className="block text-black mb-1 text-sm font-medium">
+          Organization Name*
+        </label>
+
+        <OrganizationSelect
+          value={formData.organization}
+          className=" text-black "
+          onChange={(selected) =>
+            setFormData((prev) => ({
+              ...prev,
+              organization: selected ? selected.value : "",
+            }))
+          }
+        />
+      </div>
 
       <InputField
         label="Contact Person *"
@@ -39,7 +55,9 @@ const AddContactForm = ({
         type="text"
         placeholder="Enter contact person name"
         value={formData.contact_person}
-        onChange={handleChange}
+        onChange={(e) =>
+          setFormData({ ...formData, contact_person: e.target.value })
+        }
         inputClass="border border-gray-300"
       />
 
@@ -49,7 +67,9 @@ const AddContactForm = ({
         type="email"
         placeholder="Enter work email"
         value={formData.work_email}
-        onChange={handleChange}
+        onChange={(e) =>
+          setFormData({ ...formData, work_email: e.target.value })
+        }
         inputClass="border border-gray-300"
       />
 
@@ -59,14 +79,16 @@ const AddContactForm = ({
         type="text"
         placeholder="Enter job title"
         value={formData.job_title}
-        onChange={handleChange}
+        onChange={(e) =>
+          setFormData({ ...formData, job_title: e.target.value })
+        }
         inputClass="border border-gray-300"
       />
 
       <div className="flex items-center justify-between pt-4">
         <button
           type="submit"
-          className="bg-[#2D468B] text-white px-6 py-3 rounded-md flex items-center gap-2 hover:bg-[#354e90] transition cursor-pointer"
+          className="bg-[#2D468B] text-white px-6 py-3 rounded-md flex items-center gap-2 hover:bg-[#354e90] transition"
         >
           <FiPlus />
           {submitLabel}
@@ -75,11 +97,12 @@ const AddContactForm = ({
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-3 rounded-md border border-gray-300 text-black hover:bg-[#2D468B] hover:text-white transition cursor-pointer"
+          className="px-6 py-3 rounded-md border border-gray-300 text-black hover:bg-[#2D468B] hover:text-white transition"
         >
           Cancel
         </button>
       </div>
+
     </form>
   );
 };

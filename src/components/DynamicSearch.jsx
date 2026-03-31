@@ -54,8 +54,7 @@ const DynamicSearch = ({
   };
 
   return (
-    <div className="relative w-full md:w-96">
-
+    <div className="relative w-full">
       <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
 
       <input
@@ -74,7 +73,6 @@ const DynamicSearch = ({
           <FiX />
         </button>
       )}
-
     </div>
   );
 };

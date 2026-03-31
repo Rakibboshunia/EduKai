@@ -144,7 +144,6 @@ export default function Organizations() {
 
   return (
     <div className="p-3 sm:p-5 md:p-6">
-
       {/* Header */}
       <div className="flex flex-col lg:flex-row justify-between gap-4 mb-8">
         <div>
@@ -169,32 +168,72 @@ export default function Organizations() {
       </div>
 
       {/* Search + Filter */}
-      <div className="bg-white/70 p-4 sm:p-5 rounded-xl border mb-8 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
-        <DynamicSearch
-          data={organizations}
-          searchKeys={["name", "local_authority", "town"]}
-          onFilter={handleSearchFilter}
-        />
+      <div className="bg-white/70 p-4 sm:p-5 rounded-xl border mb-8 flex flex-col md:flex-row gap-4">
 
-        {/* <select
-          value={industry}
-          onChange={(e) => setIndustry(e.target.value)}
-          className="w-full md:w-60 border rounded-lg px-4 py-2 sm:py-3 text-sm sm:text-base"
-        >
-          <option value="">All Phase</option>
-          <option value="primary">Primary</option>
-          <option value="secondary">Secondary</option>
-        </select> */}
+        <div className="w-full md:w-1/2">
+          <DynamicSearch
+            data={organizations}
+            searchKeys={["name", "local_authority", "town"]}
+            onFilter={handleSearchFilter}
+          />
+        </div>
+
+        <div className="w-full md:w-1/2">
+          <select
+            value={industry}
+            onChange={(e) => setIndustry(e.target.value)}
+            className="w-full rounded-lg px-4 py-2 sm:py-3 text-sm sm:text-base bg-white/60 text-black border border-[#2D468A] focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+          >
+            <option value="">Select Phase</option>
+            <option value="nursery">Nursery</option>
+            <option value="primary">Primary</option>
+            <option value="secondary">Secondary</option>
+            <option value="16plus">16 plus</option>
+            <option value="not_applicable">Not Applicable</option>
+          </select>
+        </div>
+
+        <div className="w-full md:w-1/2">
+          <select
+            value={industry}
+            onChange={(e) => setIndustry(e.target.value)}
+            className="w-full rounded-lg px-4 py-2 sm:py-3 text-sm sm:text-base bg-white/60 text-black border border-[#2D468A] focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+          >
+            <option value="">Select Location</option>
+            <option value="usa">USA</option>
+            <option value="london">London</option>
+            <option value="birmingham">Birmingham</option>
+            <option value="wallingford">Wallingford</option>
+            <option value="lancaster">Lancaster</option>
+            <option value="doncaster">Doncaster</option>
+            <option value="newcastle">Newcastle-upon-Tyne</option>
+
+          </select>
+        </div>
+
+        <div className="w-full md:w-1/2">
+          <select
+            value={industry}
+            onChange={(e) => setIndustry(e.target.value)}
+            className="w-full rounded-lg px-4 py-2 sm:py-3 text-sm sm:text-base bg-white/60 text-black border border-[#2D468A] focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+          >
+            <option value="">Select Job Title</option>
+            <option value="head_teacher">Head Teacher</option>
+            <option value="deputy_head_teacher">Deputy Head Teacher</option>
+          </select>
+        </div>
       </div>
 
       {/* Cards */}
-      <div className="
+      <div
+        className="
         grid gap-4 sm:gap-5 md:gap-6
         grid-cols-1 
         sm:grid-cols-2 
-        md:grid-cols-3 
-        lg:grid-cols-4 
-      ">
+        md:grid-cols-2 
+        lg:grid-cols-3 
+      "
+      >
         {filteredData.map((org) => (
           <OrganizationCard
             key={org.id}
@@ -207,7 +246,6 @@ export default function Organizations() {
 
       {/* Pagination */}
       <div className="mt-10 flex justify-center items-center gap-2 flex-wrap">
-        
         <button
           disabled={!previous}
           onClick={() => fetchOrganizations(previous)}
@@ -219,13 +257,9 @@ export default function Organizations() {
         {getVisiblePages().map((p) => (
           <button
             key={p}
-            onClick={() =>
-              fetchOrganizations(`/api/organizations/?page=${p}`)
-            }
+            onClick={() => fetchOrganizations(`/api/organizations/?page=${p}`)}
             className={`px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base ${
-              page === p
-                ? "bg-[#2D468A] text-white"
-                : "hover:bg-gray-100"
+              page === p ? "bg-[#2D468A] text-white" : "hover:bg-gray-100"
             }`}
           >
             {p}
