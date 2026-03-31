@@ -7,7 +7,6 @@ const DynamicSearch = ({
   onFilter,
   placeholder = "Search...",
 }) => {
-
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
@@ -19,33 +18,39 @@ const DynamicSearch = ({
     return () => clearTimeout(timer);
   }, [query]);
 
-  useEffect(() => {
+  // ✅ nested safe getter
+  const getValue = (obj, key) => {
+    try {
+      if (key.includes(".")) {
+        return key.split(".").reduce((o, k) => o?.[k], obj);
+      }
+      return obj?.[key];
+    } catch {
+      return null;
+    }
+  };
 
+  useEffect(() => {
     if (!debouncedQuery.trim()) {
       onFilter(data);
       return;
     }
 
-    const q = debouncedQuery.trim().toLowerCase();
+    const q = debouncedQuery.toLowerCase();
 
-    const filtered = data.filter((item) =>
-      searchKeys.some((key) => {
-        const field = item[key];
+    const filtered = data.filter((item) => {
+      if (!item) return false;
 
-        if (Array.isArray(field)) {
-          return field.join(" ").toLowerCase().includes(q);
-        }
+      return searchKeys.some((key) => {
+        const field = getValue(item, key);
 
-        if (field !== undefined && field !== null) {
-          return String(field).toLowerCase().includes(q);
-        }
+        if (!field) return false;
 
-        return false;
-      })
-    );
+        return String(field).toLowerCase().includes(q);
+      });
+    });
 
     onFilter(filtered);
-
   }, [debouncedQuery, data]);
 
   const clearSearch = () => {
@@ -62,13 +67,13 @@ const DynamicSearch = ({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-10 pr-10 py-3 bg-white/60 text-black border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+        className="w-full text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
       />
 
       {query && (
         <button
           onClick={clearSearch}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
         >
           <FiX />
         </button>

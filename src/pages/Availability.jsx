@@ -34,14 +34,28 @@ export default function Availability() {
 
   const fetchCandidates = async () => {
   try {
-    const res = await getCandidates();
-    console.log("candidates:", res);
+    let allData = [];
+    let page = 1;
+    let hasNext = true;
 
-    const list = Array.isArray(res?.results)
-      ? res.results
-      : [];
+    while (hasNext) {
+      const res = await getCandidates({
+        page: page,
+        page_size: 100,
+      });
 
-    const formattedData = list.map((item) => ({
+      const list = Array.isArray(res?.results) ? res.results : [];
+
+      allData = [...allData, ...list];
+
+      if (res.next) {
+        page += 1;
+      } else {
+        hasNext = false;
+      }
+    }
+
+    const formattedData = allData.map((item) => ({
       id: item.id,
       date: item.created_at
         ? new Date(item.created_at).toLocaleDateString()

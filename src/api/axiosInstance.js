@@ -5,17 +5,30 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token"); 
+// 🔥 RESPONSE INTERCEPTOR
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        // 🔥 refresh cookie-based session
+        await axiosInstance.post("/api/auth/refresh/");
+
+        // 🔥 retry previous request
+        return axiosInstance(originalRequest);
+      } catch (err) {
+        // 🔥 session expired → force login
+        window.location.href = "/auth/login";
+        return Promise.reject(err);
+      }
     }
 
-    return config;
-  },
-  (error) => Promise.reject(error)
+    return Promise.reject(error);
+  }
 );
 
 export default axiosInstance;

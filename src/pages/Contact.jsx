@@ -47,7 +47,7 @@ export default function Contact() {
 
       setContacts(results);
       setSearchData(results);
-      setFilteredData(results);
+      // setFilteredData(results);
 
       setNext(data?.pagination?.next);
       setPrevious(data?.pagination?.previous);
@@ -180,7 +180,6 @@ export default function Contact() {
 
   return (
     <div className="p-3 sm:p-5 md:p-6">
-
       {/* Header */}
       <div className="flex flex-col lg:flex-row justify-between gap-4 mb-8">
         <div>
@@ -193,7 +192,6 @@ export default function Contact() {
         </div>
 
         <div className="flex flex-wrap gap-2 sm:gap-3">
-
           <button
             onClick={() => setOpenAdd(true)}
             className="bg-[#2D468B] text-white px-4 sm:px-5 py-2 sm:py-3 rounded-lg flex items-center gap-2 text-sm sm:text-base"
@@ -207,11 +205,21 @@ export default function Contact() {
 
       {/* Search */}
       <div className="bg-white/70 p-4 sm:p-5 rounded-xl border mb-8 flex flex-col md:flex-row gap-4">
-
         <div className="w-full md:w-1/2">
           <DynamicSearch
-            data={organizations}
-            searchKeys={["name", "local_authority", "town"]}
+            data={contacts}
+            searchKeys={[
+              "contact_person",
+              "job_title",
+              "work_email",
+
+              // 🔥 fallback keys (important)
+              "name",
+
+              // 🔥 nested (if exists)
+              "organization.name",
+              "organization.town",
+            ]}
             onFilter={handleSearchFilter}
           />
         </div>
@@ -261,9 +269,7 @@ export default function Contact() {
               fetchContacts(`/api/organizations/contacts/?page=${p}`)
             }
             className={`px-3 py-2 border rounded-lg ${
-              page === p
-                ? "bg-[#2D468A] text-white"
-                : "hover:bg-gray-100"
+              page === p ? "bg-[#2D468A] text-white" : "hover:bg-gray-100"
             }`}
           >
             {p}

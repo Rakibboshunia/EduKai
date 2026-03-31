@@ -10,13 +10,11 @@ export const uploadCandidates = async (formData) => {
 };
 
 /* ================= GET CANDIDATES ================= */
-export const getCandidates = async (page = 1, pageSize = 20) => {
+export const getCandidates = async (params = {}) => {
   const res = await axiosInstance.get("/api/candidates/", {
-    params: {
-      page,
-      page_size: pageSize,
-    },
+    params: params,
   });
+
   return res.data;
 };
 
