@@ -1,25 +1,31 @@
 import { useState, useMemo } from "react";
 
-export default function Table({ columns = [], data = [], perPage = 10 }) {
+export default function Table({ columns = [], data = [], perPage = 100 }) {
 
   if (!Array.isArray(data)) data = [];
 
-  const [currentPage, setCurrentPage] = useState(1);
+  // 🔥 pagination state (commented)
+  // const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(data.length / perPage);
+  // 🔥 total pages (commented)
+  // const totalPages = Math.ceil(data.length / perPage);
 
-  const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * perPage;
-    return data.slice(start, start + perPage);
-  }, [data, currentPage, perPage]);
+  // 🔥 pagination logic (commented)
+  // const paginatedData = useMemo(() => {
+  //   const start = (currentPage - 1) * perPage;
+  //   return data.slice(start, start + perPage);
+  // }, [data, currentPage, perPage]);
 
-  const nextPage = () => {
-    if (currentPage < totalPages) setCurrentPage((p) => p + 1);
-  };
+  // 🔥 now show ALL data
+  const paginatedData = data;
 
-  const prevPage = () => {
-    if (currentPage > 1) setCurrentPage((p) => p - 1);
-  };
+  // const nextPage = () => {
+  //   if (currentPage < totalPages) setCurrentPage((p) => p + 1);
+  // };
+
+  // const prevPage = () => {
+  //   if (currentPage > 1) setCurrentPage((p) => p - 1);
+  // };
 
   return (
     <>
@@ -27,7 +33,6 @@ export default function Table({ columns = [], data = [], perPage = 10 }) {
 
       <div className="hidden md:block w-full bg-white rounded-2xl shadow-sm border border-gray-200">
 
-        {/* SCROLL */}
         <div className="overflow-x-auto max-h-[800px] overflow-y-auto">
 
           <table className="w-full min-w-[800px] text-sm">
@@ -98,8 +103,9 @@ export default function Table({ columns = [], data = [], perPage = 10 }) {
 
         </div>
 
-        {/* PAGINATION */}
+        {/* 🔥 PAGINATION (COMMENTED) */}
 
+        {/*
         {totalPages > 1 && (
 
           <div className="flex items-center justify-between px-6 py-4 border-t rounded-2xl">
@@ -127,11 +133,12 @@ export default function Table({ columns = [], data = [], perPage = 10 }) {
           </div>
 
         )}
+        */}
 
       </div>
 
 
-      {/* ================= MOBILE CARD VIEW ================= */}
+      {/* ================= MOBILE VIEW ================= */}
 
       <div className="md:hidden space-y-3">
 
@@ -177,35 +184,21 @@ export default function Table({ columns = [], data = [], perPage = 10 }) {
 
         )}
 
-        {/* MOBILE PAGINATION */}
+        {/* 🔥 MOBILE PAGINATION (COMMENTED) */}
 
+        {/*
         {totalPages > 1 && (
 
           <div className="flex justify-between items-center pt-2">
 
-            <button
-              onClick={prevPage}
-              disabled={currentPage === 1}
-              className="px-4 py-2 text-sm text-black rounded-lg border hover:bg-[#2D468A] hover:text-white disabled:opacity-40 cursor-pointer transition"
-            >
-              Prev
-            </button>
-
-            <span className="text-sm text-black">
-              {currentPage}/{totalPages}
-            </span>
-
-            <button
-              onClick={nextPage}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 text-sm text-black rounded-lg border hover:bg-[#2D468A] hover:text-white disabled:opacity-40 cursor-pointer transition"
-            >
-              Next
-            </button>
+            <button onClick={prevPage}>Prev</button>
+            <span>{currentPage}/{totalPages}</span>
+            <button onClick={nextPage}>Next</button>
 
           </div>
 
         )}
+        */}
 
       </div>
     </>

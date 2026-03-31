@@ -1,17 +1,16 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { MailCheck, XCircle } from "lucide-react";
 
 import Table from "../components/Table";
 import StatusBadge from "../components/StatusBadge";
 import DynamicSearch from "../components/DynamicSearch";
+import Pagination from "../components/Pagination"; // 🔥 add
 
-import {
-  getCandidates,
-  updateCandidateStatus,
-} from "../api/candidateApi";
+import { getCandidates, updateCandidateStatus } from "../api/candidateApi";
 
 export default function Availability() {
-
   const availabilityOptions = {
     available: {
       label: "available",
@@ -28,76 +27,65 @@ export default function Availability() {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
 
+  // 🔥 pagination state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
-    fetchCandidates();
-  }, []);
+    fetchCandidates(page);
+  }, [page]);
 
-  const fetchCandidates = async () => {
-  try {
-    let allData = [];
-    let page = 1;
-    let hasNext = true;
-
-    while (hasNext) {
+  const fetchCandidates = async (pageNumber = 1) => {
+    try {
       const res = await getCandidates({
-        page: page,
+        page: pageNumber,
         page_size: 100,
       });
 
       const list = Array.isArray(res?.results) ? res.results : [];
 
-      allData = [...allData, ...list];
+      const formattedData = list.map((item) => ({
+        id: item.id,
+        date: item.created_at
+          ? new Date(item.created_at).toLocaleDateString()
+          : "N/A",
+        name: item.name || "N/A",
+        email: item.email || "N/A",
+        jobTitle: Array.isArray(item.job_titles)
+          ? item.job_titles.join(", ")
+          : item.job_titles || "N/A",
+        whatsapp: item.whatsapp_number || "N/A",
+        status: item.availability_status || "not_available",
+      }));
 
-      if (res.next) {
-        page += 1;
-      } else {
-        hasNext = false;
-      }
+      setData(formattedData);
+      setFilteredData(formattedData);
+
+      // 🔥 backend pagination
+      setTotalPages(res?.pagination?.total_pages || 1);
+
+    } catch (error) {
+      console.error("Candidate fetch error:", error);
     }
-
-    const formattedData = allData.map((item) => ({
-      id: item.id,
-      date: item.created_at
-        ? new Date(item.created_at).toLocaleDateString()
-        : "N/A",
-      name: item.name || "N/A",
-      email: item.email || "N/A",
-      jobTitle: Array.isArray(item.job_titles)
-        ? item.job_titles.join(", ")
-        : item.job_titles || "N/A",
-      whatsapp: item.whatsapp_number || "N/A",
-      status: item.availability_status || "not_available",
-    }));
-
-    setData(formattedData);
-    setFilteredData(formattedData);
-
-  } catch (error) {
-    console.error("Candidate fetch error:", error);
-  }
-};
-
+  };
 
   const handleStatusChange = async (id, newStatus) => {
+    try {
+      await updateCandidateStatus(id, {
+        availability_status: newStatus,
+      });
 
-  try {
+      const updated = data.map((item) =>
+        item.id === id ? { ...item, status: newStatus } : item
+      );
 
-    await updateCandidateStatus(id, {
-      availability_status: newStatus,
-    });
+      setData(updated);
+      setFilteredData(updated);
 
-    const updated = data.map((item) =>
-      item.id === id ? { ...item, status: newStatus } : item
-    );
-
-    setData(updated);
-    setFilteredData(updated);
-
-  } catch (error) {
-    console.error("Status update error:", error);
-  }
-
-};
+    } catch (error) {
+      console.error("Status update error:", error);
+    }
+  };
 
   const columns = [
     { header: "Date & Time", accessor: "date" },
@@ -113,9 +101,7 @@ export default function Availability() {
         <StatusBadge
           value={value}
           options={availabilityOptions}
-          onChange={(newStatus) =>
-            handleStatusChange(row.id, newStatus)
-          }
+          onChange={(newStatus) => handleStatusChange(row.id, newStatus)}
         />
       ),
     },
@@ -130,7 +116,7 @@ export default function Availability() {
         </h1>
 
         <p className="text-sm sm:text-base text-gray-600 mt-2">
-          Track candidate availability via Email, SMS, and WhatsApp.
+          Track candidate availability via Email and WhatsApp.
         </p>
       </div>
 
@@ -143,18 +129,17 @@ export default function Availability() {
       </div>
 
       <div className="w-full rounded-xl">
-
-        <div className="overflow-x-auto">
-
-          <div className="max-h-[80vh] overflow-y-auto overflow-x-auto">
-
+          <div className="max-h-[90vh] overflow-y-auto overflow-x-auto">
             <Table columns={columns} data={filteredData} />
-
           </div>
-
-        </div>
-
       </div>
+
+      {/* 🔥 PAGINATION HERE */}
+      <Pagination
+        totalPages={totalPages}
+        currentPage={page}
+        onPageChange={setPage}
+      />
 
     </div>
   );

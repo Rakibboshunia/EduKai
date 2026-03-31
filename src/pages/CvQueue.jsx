@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Tabs from "../components/Tabs";
 import CVCard from "../components/CVCard";
 import DynamicSearch from "../components/DynamicSearch";
+import Pagination from "../components/Pagination"; // 🔥 add
 import toast from "react-hot-toast";
 
 import {
@@ -17,40 +18,26 @@ export default function CVQueuePage() {
   const [searchData, setSearchData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchCandidates();
-  }, []);
+  // 🔥 pagination state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchCandidates = async () => {
+  useEffect(() => {
+    fetchCandidates(page);
+  }, [page]);
+
+  const fetchCandidates = async (pageNumber = 1) => {
     try {
       setLoading(true);
 
-      let allData = [];
-      let page = 1;
-      let hasNext = true;
+      const res = await getCandidates({
+        page: pageNumber,
+        page_size: 100,
+      });
 
-      while (hasNext) {
-        const res = await getCandidates({
-          page,
-          page_size: 100,
-        });
+      const list = Array.isArray(res?.results) ? res.results : [];
 
-        const list = Array.isArray(res?.results)
-          ? res.results
-          : [];
-
-        allData = [...allData, ...list];
-
-        if (res.next) {
-          page++;
-        } else {
-          hasNext = false;
-        }
-
-        if (page > 50) break;
-      }
-
-      const formatted = allData.map((item) => ({
+      const formatted = list.map((item) => ({
         id: item.id,
         name: item.name || "Unknown",
         email: item.email || "No email",
@@ -68,8 +55,13 @@ export default function CVQueuePage() {
 
       setCVs(formatted);
       setSearchData(formatted);
+
+      // 🔥 backend pagination
+      setTotalPages(res?.pagination?.total_pages || 1);
+
     } catch (error) {
       console.error(error);
+      toast.error("Failed to load CVs");
     } finally {
       setLoading(false);
     }
@@ -103,6 +95,7 @@ export default function CVQueuePage() {
 
   return (
     <div className="p-4 space-y-6">
+
       <h1 className="text-2xl font-semibold">
         CV Processing Queue
       </h1>
@@ -120,14 +113,26 @@ export default function CVQueuePage() {
       />
 
       {loading ? (
-        <div className="text-center py-10">Loading...</div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {tabFiltered.map((cv) => (
-            <CVCard key={cv.id} data={cv} />
-          ))}
-        </div>
-      )}
+  <div className="text-center py-10">Loading...</div>
+) : (
+  <div className="max-h-[90vh] overflow-y-auto pr-2">
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {tabFiltered.map((cv) => (
+        <CVCard key={cv.id} data={cv} />
+      ))}
+    </div>
+
+  </div>
+)}
+
+      {/* 🔥 PAGINATION */}
+      <Pagination
+        totalPages={totalPages}
+        currentPage={page}
+        onPageChange={setPage}
+      />
+
     </div>
   );
 }

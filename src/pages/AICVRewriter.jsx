@@ -347,7 +347,7 @@ export default function AICVRewriter() {
               }
             />
 
-            <div className="absolute top-3 right-3 flex gap-2 z-20">
+            {/* <div className="absolute top-3 right-3 flex gap-2 z-20">
               {!editMode ? (
                 <button
                   onClick={handleEdit}
@@ -372,7 +372,7 @@ export default function AICVRewriter() {
                   </button>
                 </>
               )}
-            </div>
+            </div> */}
 
             {editMode && (
               <textarea
