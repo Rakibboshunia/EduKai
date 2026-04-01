@@ -6,38 +6,40 @@ export default function ImportExcelButton({ onFileUpload }) {
 
     if (!file) return;
 
+    console.log("Selected file:", file);
+
     // ✅ file type validation
-    if (
-      file.type !==
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
-      file.type !== "application/vnd.ms-excel"
-    ) {
-      alert("Please upload a valid Excel file");
+    const validTypes = [
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.ms-excel",
+      "text/csv",
+    ];
+
+    if (!validTypes.includes(file.type)) {
+      alert("Please upload a valid Excel/CSV file");
       return;
     }
 
-    // ✅ SAFETY CHECK (VERY IMPORTANT)
     if (typeof onFileUpload !== "function") {
       console.error("onFileUpload is not a function");
       alert("Upload handler not configured");
       return;
     }
 
-    // ✅ call parent function
     onFileUpload(file);
 
-    // ✅ reset input (same file re-upload fix)
+    // reset input
     e.target.value = null;
   };
 
   return (
-    <label className="border border-gray-300 px-2 py-2 rounded-xl flex items-center gap-2 cursor-pointer bg-gray-50 hover:bg-[#2D468B] hover:text-white transition-all text-gray-700">
+    <label className="border border-[#2D468A] px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer bg-white text-black hover:bg-[#2D468A] hover:text-white transition">
       <FiUpload />
-      Import From Excel File
+      Import Excel
 
       <input
         type="file"
-        accept=".xlsx,.xls"
+        accept=".xlsx,.xls,.csv"
         className="hidden"
         onChange={handleFileChange}
       />

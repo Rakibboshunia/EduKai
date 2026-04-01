@@ -18,7 +18,6 @@ const DynamicSearch = ({
     return () => clearTimeout(timer);
   }, [query]);
 
-  // ✅ nested safe getter
   const getValue = (obj, key) => {
     try {
       if (key.includes(".")) {
@@ -30,20 +29,24 @@ const DynamicSearch = ({
     }
   };
 
+  // ✅ NEW: sync when data changes
   useEffect(() => {
-    if (!debouncedQuery.trim()) {
+    onFilter(data);
+  }, [data]);
+
+  useEffect(() => {
+    const q = debouncedQuery.trim().toLowerCase();
+
+    if (!q) {
       onFilter(data);
       return;
     }
-
-    const q = debouncedQuery.toLowerCase();
 
     const filtered = data.filter((item) => {
       if (!item) return false;
 
       return searchKeys.some((key) => {
         const field = getValue(item, key);
-
         if (!field) return false;
 
         return String(field).toLowerCase().includes(q);
@@ -55,6 +58,7 @@ const DynamicSearch = ({
 
   const clearSearch = () => {
     setQuery("");
+    setDebouncedQuery("");
     onFilter(data);
   };
 

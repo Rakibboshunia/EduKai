@@ -1,47 +1,58 @@
 import axiosInstance from "./axiosInstance";
 
-/* ================= GET CONTACTS ================= */
-export const getContacts = async (url = "/api/organizations/contacts/") => {
+/* ================= GET ================= */
+export const getContacts = async (
+  url = "/api/organizations/contacts/?page=1&page_size=100"
+) => {
   const res = await axiosInstance.get(url);
   return res.data;
 };
 
-/* ================= CREATE CONTACT (FINAL FIX) ================= */
+/* ================= CREATE ================= */
 export const createContact = async (orgId, payload) => {
-  const res = await axiosInstance.post(
-    `/api/organizations/${orgId}/contacts/`, // ✅ CORRECT ENDPOINT
-    payload
+  if (!orgId) throw new Error("Organization ID missing ❌");
+
+  const { organization, ...cleanPayload } = payload;
+
+  return axiosInstance.post(
+    `/api/organizations/${orgId}/contacts/`,
+    cleanPayload
   );
-  return res.data;
 };
 
 /* ================= UPDATE ================= */
-export const updateContact = async (contactId, payload) => {
-  const res = await axiosInstance.patch(
-    `/api/organizations/contacts/${contactId}/`,
+export const updateContact = async (id, payload) => {
+  return axiosInstance.patch(
+    `/api/organizations/contacts/${id}/`,
     payload
   );
-  return res.data;
 };
 
 /* ================= DELETE ================= */
-export const deleteContact = async (contactId) => {
-  const res = await axiosInstance.delete(
-    `/api/organizations/contacts/${contactId}/`
+export const deleteContact = async (id) => {
+  return axiosInstance.delete(
+    `/api/organizations/contacts/${id}/`
   );
-  return res.data;
 };
 
 /* ================= IMPORT ================= */
 export const importContacts = async (file, orgId) => {
+  if (!file) throw new Error("File missing ❌");
+  if (!orgId) throw new Error("Organization ID missing ❌");
+
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("organization", orgId); // 🔥 required
+  formData.append("organization", orgId);
 
   const res = await axiosInstance.post(
     "/api/organizations/import/contacts/",
-    formData
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
   );
 
-  return res.data;
+  return res.data; // { task_id }
 };

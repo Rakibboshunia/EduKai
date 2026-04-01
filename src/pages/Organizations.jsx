@@ -1,5 +1,8 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
+
 import DynamicSearch from "../components/DynamicSearch";
 import OrganizationCard from "../components/OrganizationCard";
 import AddOrganizationModal from "../components/AddOrganizationModal";
@@ -18,12 +21,11 @@ import {
 export default function Organizations() {
   const [organizations, setOrganizations] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [searchData, setSearchData] = useState([]);
+  const [searchResult, setSearchResult] = useState([]);
 
-  const [industry, setIndustry] = useState("");
-
-  const [next, setNext] = useState(null);
-  const [previous, setPrevious] = useState(null);
+  const [phaseFilter, setPhaseFilter] = useState("");
+  const [townFilter, setTownFilter] = useState("");
+  const [genderFilter, setGenderFilter] = useState("");
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -34,24 +36,23 @@ export default function Organizations() {
   const [deleteId, setDeleteId] = useState(null);
 
   /* ================= FETCH ================= */
-  const fetchOrganizations = async (url) => {
+  const fetchOrganizations = async (
+    url = "/api/organizations/?page=1&page_size=100"
+  ) => {
     try {
       const data = await getOrganizations(url);
+
       const results = data?.results || [];
+      const pagination = data?.pagination || {};
 
       setOrganizations(results);
-      setSearchData(results);
       setFilteredData(results);
+      setSearchResult([]);
 
-      setNext(data?.pagination?.next);
-      setPrevious(data?.pagination?.previous);
-
-      setPage(data?.pagination?.page || 1);
-      setTotalPages(data?.pagination?.total_pages || 1);
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      setPage(pagination?.page || 1);
+      setTotalPages(pagination?.total_pages || 1);
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error(err);
     }
   };
 
@@ -60,32 +61,40 @@ export default function Organizations() {
   }, []);
 
   /* ================= SEARCH ================= */
-  const handleSearchFilter = (data) => {
-    setSearchData(data);
+  const handleSearchFilter = (filtered) => {
+    setSearchResult(filtered);
   };
 
   /* ================= FILTER ================= */
   useEffect(() => {
-    let result = [...searchData];
+    let data = [...(searchResult.length ? searchResult : organizations)];
 
-    if (industry) {
-      result = result.filter(
-        (org) =>
-          org.phase?.toLowerCase() === industry.toLowerCase()
+    if (phaseFilter) {
+      data = data.filter(
+        (item) => item.phase?.toLowerCase() === phaseFilter.toLowerCase()
       );
     }
 
-    setFilteredData(result);
-  }, [searchData, industry]);
+    if (townFilter) {
+      data = data.filter(
+        (item) =>
+          item.town &&
+          item.town.toLowerCase().includes(townFilter.toLowerCase())
+      );
+    }
+
+    if (genderFilter) {
+      data = data.filter((item) => item.gender === genderFilter);
+    }
+
+    setFilteredData(data);
+  }, [searchResult, phaseFilter, townFilter, genderFilter, organizations]);
 
   /* ================= ADD ================= */
   const handleAddOrganization = async (formData) => {
-    try {
-      await createOrganization(formData);
-      fetchOrganizations();
-    } catch (err) {
-      console.error(err);
-    }
+    await createOrganization(formData);
+    fetchOrganizations();
+    setOpenAdd(false);
   };
 
   /* ================= EDIT ================= */
@@ -95,70 +104,50 @@ export default function Organizations() {
     setOpenEdit(true);
   };
 
-  const handleUpdateOrganization = async (updatedOrg) => {
-    try {
-      await updateOrganization(updatedOrg.id, updatedOrg);
-      fetchOrganizations();
-      setOpenEdit(false);
-    } catch (err) {
-      console.error(err);
-    }
+  const handleUpdateOrganization = async (data) => {
+    await updateOrganization(data.id, data);
+    fetchOrganizations();
+    setOpenEdit(false);
   };
 
   /* ================= DELETE ================= */
-  const handleDelete = (id) => {
-    setDeleteId(id);
-  };
-
   const confirmDelete = async () => {
-    try {
-      await deleteOrganization(deleteId);
-      setDeleteId(null);
-      fetchOrganizations();
-    } catch (err) {
-      console.error("Delete error:", err);
-    }
+    await deleteOrganization(deleteId);
+    setDeleteId(null);
+    fetchOrganizations();
   };
 
   /* ================= IMPORT ================= */
   const handleImport = async (file) => {
     try {
       await importOrganizations(file);
+      alert("Import successful ✅");
       fetchOrganizations();
     } catch (err) {
-      console.error("Import error:", err);
+      console.error(err);
+      alert("Import failed ❌");
     }
   };
 
-  /* ================= PAGINATION ================= */
-  const getVisiblePages = () => {
-    let start = Math.max(page - 2, 1);
-    let end = Math.min(start + 4, totalPages);
+  const phaseOptions = [
+    ...new Set(organizations.map((o) => o.phase).filter(Boolean)),
+  ];
 
-    if (end - start < 4) {
-      start = Math.max(end - 4, 1);
-    }
-
-    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-  };
+  const townOptions = [
+    ...new Set(organizations.map((o) => o.town).filter(Boolean)),
+  ];
 
   return (
-    <div className="p-3 sm:p-5 md:p-6">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#2D468A]">
-            Organization & Client Management
-          </h1>
-          <p className="text-sm text-gray-600 mt-1">
-            Manage recipient organizations and track relationships.
-          </p>
-        </div>
+    <div className="p-6">
+      <div className="flex justify-between mb-6">
+        <h1 className="text-2xl font-bold text-[#2D468A]">
+          Organization Management
+        </h1>
 
-        <div className="flex flex-wrap gap-2 sm:gap-3">
+        <div className="flex gap-2">
           <button
             onClick={() => setOpenAdd(true)}
-            className="bg-[#2D468B] text-white px-4 sm:px-5 py-2 sm:py-3 rounded-lg flex items-center gap-2 text-sm sm:text-base"
+            className="bg-[#2D468B] text-white px-4 py-2 rounded-lg flex items-center gap-2"
           >
             <FiPlus /> Add Organization
           </button>
@@ -167,10 +156,9 @@ export default function Organizations() {
         </div>
       </div>
 
-      {/* Search + Filter */}
-      <div className="bg-white/70 p-4 sm:p-5 rounded-xl border mb-8 flex flex-col md:flex-row gap-4">
-
-        <div className="w-full md:w-1/2">
+      <div className="flex items-center gap-4 mb-6">
+        {/* SEARCH */}
+        <div className="flex-1">
           <DynamicSearch
             data={organizations}
             searchKeys={["name", "local_authority", "town"]}
@@ -178,104 +166,84 @@ export default function Organizations() {
           />
         </div>
 
-        <div className="w-full md:w-1/2">
-          <select
-            value={industry}
-            onChange={(e) => setIndustry(e.target.value)}
-            className="w-full rounded-lg px-4 py-2 sm:py-3 text-sm sm:text-base bg-white/60 text-black border border-[#2D468A] focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
-          >
-            <option value="">Select Phase</option>
-            <option value="nursery">Nursery</option>
-            <option value="primary">Primary</option>
-            <option value="secondary">Secondary</option>
-            <option value="16plus">16 plus</option>
-            <option value="not_applicable">Not Applicable</option>
-          </select>
-        </div>
+        {/* PHASE */}
+        <select
+          value={phaseFilter}
+          onChange={(e) => setPhaseFilter(e.target.value)}
+          className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+        >
+          <option value="">Phase</option>
+          {phaseOptions.map((p) => (
+            <option key={p}>{p}</option>
+          ))}
+        </select>
 
-        <div className="w-full md:w-1/2">
-          <select
-            value={industry}
-            onChange={(e) => setIndustry(e.target.value)}
-            className="w-full rounded-lg px-4 py-2 sm:py-3 text-sm sm:text-base bg-white/60 text-black border border-[#2D468A] focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
-          >
-            <option value="">Select Location</option>
-            <option value="usa">USA</option>
-            <option value="london">London</option>
-            <option value="birmingham">Birmingham</option>
-            <option value="wallingford">Wallingford</option>
-            <option value="lancaster">Lancaster</option>
-            <option value="doncaster">Doncaster</option>
-            <option value="newcastle">Newcastle-upon-Tyne</option>
+        {/* TOWN */}
+        <select
+          value={townFilter}
+          onChange={(e) => setTownFilter(e.target.value)}
+          className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+        >
+          <option value="">Town</option>
+          {townOptions.map((t) => (
+            <option key={t}>{t}</option>
+          ))}
+        </select>
 
-          </select>
-        </div>
-
-        <div className="w-full md:w-1/2">
-          <select
-            value={industry}
-            onChange={(e) => setIndustry(e.target.value)}
-            className="w-full rounded-lg px-4 py-2 sm:py-3 text-sm sm:text-base bg-white/60 text-black border border-[#2D468A] focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
-          >
-            <option value="">Select Job Title</option>
-            <option value="head_teacher">Head Teacher</option>
-            <option value="deputy_head_teacher">Deputy Head Teacher</option>
-          </select>
-        </div>
+        {/* GENDER */}
+        <select
+          value={genderFilter}
+          onChange={(e) => setGenderFilter(e.target.value)}
+          className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+        >
+          <option value="">Gender</option>
+          <option value="boys">Boys</option>
+          <option value="girls">Girls</option>
+          <option value="mixed">Mixed</option>
+        </select>
       </div>
 
-      {/* Cards */}
-      <div
-        className="
-        grid gap-4 sm:gap-5 md:gap-6
-        grid-cols-1 
-        sm:grid-cols-2 
-        md:grid-cols-2 
-        lg:grid-cols-3 
-      "
-      >
+      <div className="grid md:grid-cols-3 gap-4">
         {filteredData.map((org) => (
           <OrganizationCard
             key={org.id}
             data={org}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={setDeleteId}
           />
         ))}
       </div>
 
-      {/* Pagination */}
-      <div className="mt-10 flex justify-center items-center gap-2 flex-wrap">
+      <div className="mt-8 flex justify-center gap-3">
         <button
-          disabled={!previous}
-          onClick={() => fetchOrganizations(previous)}
-          className="px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base hover:bg-[#2D468A] hover:text-white disabled:opacity-40"
+          disabled={page === 1}
+          onClick={() =>
+            fetchOrganizations(
+              `/api/organizations/?page=${page - 1}&page_size=100`,
+            )
+          }
+          className="px-4 py-2 border rounded-lg"
         >
           Prev
         </button>
 
-        {getVisiblePages().map((p) => (
-          <button
-            key={p}
-            onClick={() => fetchOrganizations(`/api/organizations/?page=${p}`)}
-            className={`px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base ${
-              page === p ? "bg-[#2D468A] text-white" : "hover:bg-gray-100"
-            }`}
-          >
-            {p}
-          </button>
-        ))}
+        <span>
+          Page {page} / {totalPages}
+        </span>
 
         <button
-          disabled={!next}
-          onClick={() => fetchOrganizations(next)}
-          className="px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base hover:bg-[#2D468A] hover:text-white disabled:opacity-40"
+          disabled={page === totalPages}
+          onClick={() =>
+            fetchOrganizations(
+              `/api/organizations/?page=${page + 1}&page_size=100`,
+            )
+          }
+          className="px-4 py-2 border rounded-lg"
         >
           Next
         </button>
       </div>
 
-      {/* Modals */}
       <AddOrganizationModal
         open={openAdd}
         onClose={() => setOpenAdd(false)}
@@ -291,8 +259,6 @@ export default function Organizations() {
 
       <ConfirmDeleteModal
         open={deleteId !== null}
-        title="Delete Organization"
-        description="Are you sure?"
         onCancel={() => setDeleteId(null)}
         onConfirm={confirmDelete}
       />

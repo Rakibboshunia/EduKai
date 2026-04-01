@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 
@@ -7,6 +9,8 @@ import EditContactModal from "../components/EditContactModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import ImportExcelButton from "../components/ImportExcelButton";
 import ContactCard from "../components/ContactCard";
+
+import axiosInstance from "../api/axiosInstance";
 
 import {
   getContacts,
@@ -21,18 +25,17 @@ import { getOrganizations } from "../api/organizationApi";
 export default function Contact() {
   const [contacts, setContacts] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [searchData, setSearchData] = useState([]);
+  const [searchResult, setSearchResult] = useState([]);
 
-  const [industry, setIndustry] = useState("");
+  const [jobFilter, setJobFilter] = useState("");
 
   const [organizations, setOrganizations] = useState([]);
   const [selectedOrg, setSelectedOrg] = useState("");
 
-  const [next, setNext] = useState(null);
-  const [previous, setPrevious] = useState(null);
-
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  const [importing, setImporting] = useState(false);
 
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
@@ -40,36 +43,38 @@ export default function Contact() {
   const [deleteId, setDeleteId] = useState(null);
 
   /* ================= FETCH CONTACTS ================= */
-  const fetchContacts = async (url) => {
+  const fetchContacts = async (pageNumber = 1) => {
     try {
-      const data = await getContacts(url);
-      const results = data?.results || [];
+      const res = await getContacts(
+        `/api/organizations/contacts/?page=${pageNumber}&page_size=100`
+      );
+
+      const results = res?.results || [];
 
       setContacts(results);
-      setSearchData(results);
-      // setFilteredData(results);
+      setFilteredData(results);
+      setSearchResult([]);
 
-      setNext(data?.pagination?.next);
-      setPrevious(data?.pagination?.previous);
-
-      setPage(data?.pagination?.page || 1);
-      setTotalPages(data?.pagination?.total_pages || 1);
+      setPage(res?.pagination?.page || 1);
+      setTotalPages(res?.pagination?.total_pages || 1);
 
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
-      console.error(err);
+      console.error("Fetch Contacts Error:", err);
     }
   };
 
   /* ================= FETCH ORGANIZATIONS ================= */
   const fetchOrganizations = async () => {
     try {
-      const res = await getOrganizations();
+      const res = await getOrganizations(
+        "/api/organizations/?page=1&page_size=100"
+      );
+
       const data = res?.results || [];
 
       setOrganizations(data);
 
-      // default select first org
       if (data.length > 0) {
         setSelectedOrg(data[0].id);
       }
@@ -79,50 +84,100 @@ export default function Contact() {
   };
 
   useEffect(() => {
-    fetchContacts();
     fetchOrganizations();
   }, []);
+
+  useEffect(() => {
+    fetchContacts(page);
+  }, [page]);
+
+  /* ================= IMPORT STATUS POLLING ================= */
+  const checkImportStatus = async (taskId) => {
+    try {
+      const res = await axiosInstance.get(
+        `/api/organizations/import/status/${taskId}/`
+      );
+
+      const status = res.data?.status;
+
+      if (status === "completed") {
+        setImporting(false);
+        alert("Import completed ✅");
+        fetchContacts(page);
+      } else if (status === "failed") {
+        setImporting(false);
+        alert("Import failed ❌");
+      } else {
+        setTimeout(() => checkImportStatus(taskId), 2000);
+      }
+    } catch (err) {
+      console.error(err);
+      setImporting(false);
+    }
+  };
 
   /* ================= IMPORT ================= */
   const handleImportContacts = async (file) => {
     try {
       if (!selectedOrg) {
-        alert("Please select organization first");
+        alert("Select organization first ❗");
         return;
       }
 
-      await importContacts(file, selectedOrg);
-      fetchContacts();
+      setImporting(true);
+
+      const res = await importContacts(file, selectedOrg);
+
+      if (!res?.task_id) throw new Error("Task ID missing");
+
+      alert("Import started 🚀");
+
+      checkImportStatus(res.task_id);
     } catch (err) {
       console.error(err);
-      alert("Import failed!");
+      setImporting(false);
+      alert("Import failed ❌");
     }
   };
 
   /* ================= SEARCH ================= */
-  const handleSearchFilter = (data) => {
-    setSearchData(data);
+  const handleSearchFilter = (filtered) => {
+    setSearchResult(filtered);
   };
 
+  /* ================= FILTER ================= */
   useEffect(() => {
-    setFilteredData(searchData);
-  }, [searchData]);
+    let data = [...(searchResult.length ? searchResult : contacts)];
+
+    if (jobFilter) {
+      data = data.filter(
+        (item) =>
+          item.job_title &&
+          item.job_title.toLowerCase().includes(jobFilter.toLowerCase())
+      );
+    }
+
+    if (selectedOrg) {
+      data = data.filter(
+        (item) =>
+          String(item.organization?.id) === String(selectedOrg)
+      );
+    }
+
+    setFilteredData(data);
+  }, [searchResult, jobFilter, contacts, selectedOrg]);
 
   /* ================= ADD ================= */
   const handleAddContact = async (formData) => {
     try {
       if (!selectedOrg) {
-        alert("Please select organization first");
+        alert("Select organization first ❗");
         return;
       }
 
-      await createContact(selectedOrg, {
-        contact_person: formData.contact_person,
-        job_title: formData.job_title || null,
-        work_email: formData.work_email,
-      });
+      await createContact(selectedOrg, formData);
 
-      fetchContacts();
+      fetchContacts(page);
       setOpenAdd(false);
     } catch (err) {
       console.error(err);
@@ -138,13 +193,8 @@ export default function Contact() {
 
   const handleUpdateContact = async (data) => {
     try {
-      await updateContact(data.id, {
-        contact_person: data.contact_person,
-        job_title: data.job_title || null,
-        work_email: data.work_email,
-      });
-
-      fetchContacts();
+      await updateContact(data.id, data);
+      fetchContacts(page);
       setOpenEdit(false);
     } catch (err) {
       console.error(err);
@@ -152,49 +202,33 @@ export default function Contact() {
   };
 
   /* ================= DELETE ================= */
-  const handleDelete = (id) => {
-    setDeleteId(id);
-  };
-
   const confirmDelete = async () => {
     try {
       await deleteContact(deleteId);
       setDeleteId(null);
-      fetchContacts();
-    } catch (err) {
+      fetchContacts(page);
+    } catch {
       alert("Delete failed");
     }
   };
 
-  /* ================= PAGINATION ================= */
-  const getVisiblePages = () => {
-    let start = Math.max(page - 2, 1);
-    let end = Math.min(start + 4, totalPages);
-
-    if (end - start < 4) {
-      start = Math.max(end - 4, 1);
-    }
-
-    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-  };
+  /* ================= JOB OPTIONS ================= */
+  const jobOptions = [
+    ...new Set(contacts.map((c) => c.job_title).filter(Boolean)),
+  ];
 
   return (
-    <div className="p-3 sm:p-5 md:p-6">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#2D468A]">
-            Contacts Management
-          </h1>
-          <p className="text-sm text-gray-600 mt-1">
-            Manage recipient contacts and track relationships.
-          </p>
-        </div>
+    <div className="p-5">
+      {/* HEADER */}
+      <div className="flex justify-between mb-6">
+        <h1 className="text-2xl font-bold text-[#2D468A]">
+          Contacts Management
+        </h1>
 
-        <div className="flex flex-wrap gap-2 sm:gap-3">
+        <div className="flex gap-2">
           <button
             onClick={() => setOpenAdd(true)}
-            className="bg-[#2D468B] text-white px-4 sm:px-5 py-2 sm:py-3 rounded-lg flex items-center gap-2 text-sm sm:text-base"
+            className="bg-[#2D468B] text-white px-4 py-2 rounded-lg flex items-center gap-2"
           >
             <FiPlus /> Add Contact
           </button>
@@ -203,20 +237,22 @@ export default function Contact() {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="bg-white/70 p-4 sm:p-5 rounded-xl border mb-8 flex flex-col md:flex-row gap-4">
-        <div className="w-full md:w-1/2">
+      {/* IMPORT STATUS */}
+      {importing && (
+        <p className="text-blue-600 mb-4 font-medium">
+          Importing... Please wait ⏳
+        </p>
+      )}
+
+      {/* SEARCH + FILTER */}
+      <div className="flex items-center gap-4 mb-6">
+        <div className="flex-1">
           <DynamicSearch
             data={contacts}
             searchKeys={[
               "contact_person",
               "job_title",
               "work_email",
-
-              // 🔥 fallback keys (important)
-              "name",
-
-              // 🔥 nested (if exists)
               "organization.name",
               "organization.town",
             ]}
@@ -224,68 +260,67 @@ export default function Contact() {
           />
         </div>
 
-        <div className="w-full md:w-1/2">
-          <select
-            value={industry}
-            onChange={(e) => setIndustry(e.target.value)}
-            className="w-full rounded-lg px-4 py-2 sm:py-3 text-sm sm:text-base bg-white/60 text-black border border-[#2D468A] focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
-          >
-            <option value="">Select Job Title</option>
-            <option value="nursery">Nursery</option>
-            <option value="primary">Primary</option>
-            <option value="secondary">Secondary</option>
-            <option value="16plus">16 plus</option>
-            <option value="not_applicable">Not Applicable</option>
-          </select>
-        </div>
+        <select
+          value={jobFilter}
+          onChange={(e) => setJobFilter(e.target.value)}
+          className="text-black px-4 py-2 border rounded-lg"
+        >
+          <option value="">All Jobs</option>
+          {jobOptions.map((job) => (
+            <option key={job}>{job}</option>
+          ))}
+        </select>
+
+        <select
+          value={selectedOrg}
+          onChange={(e) => setSelectedOrg(e.target.value)}
+          className="text-black px-4 py-2 border rounded-lg"
+        >
+          <option value="">Select Organization</option>
+          {organizations.map((org) => (
+            <option key={org.id} value={org.id}>
+              {org.name}
+            </option>
+          ))}
+        </select>
       </div>
 
-      {/* Cards */}
-      <div className="grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      {/* CARDS */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredData.map((contact) => (
           <ContactCard
             key={contact.id}
             data={contact}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={setDeleteId}
           />
         ))}
       </div>
 
-      {/* Pagination */}
-      <div className="mt-10 flex justify-center items-center gap-2 flex-wrap">
+      {/* PAGINATION */}
+      <div className="mt-8 flex justify-center gap-3">
         <button
-          disabled={!previous}
-          onClick={() => fetchContacts(previous)}
-          className="px-3 py-2 border rounded-lg hover:bg-[#2D468A] hover:text-white disabled:opacity-40"
+          disabled={page === 1}
+          onClick={() => setPage((prev) => prev - 1)}
+          className="px-4 py-2 border rounded-lg"
         >
           Prev
         </button>
 
-        {getVisiblePages().map((p) => (
-          <button
-            key={p}
-            onClick={() =>
-              fetchContacts(`/api/organizations/contacts/?page=${p}`)
-            }
-            className={`px-3 py-2 border rounded-lg ${
-              page === p ? "bg-[#2D468A] text-white" : "hover:bg-gray-100"
-            }`}
-          >
-            {p}
-          </button>
-        ))}
+        <span>
+          Page {page} / {totalPages}
+        </span>
 
         <button
-          disabled={!next}
-          onClick={() => fetchContacts(next)}
-          className="px-3 py-2 border rounded-lg hover:bg-[#2D468A] hover:text-white disabled:opacity-40"
+          disabled={page === totalPages}
+          onClick={() => setPage((prev) => prev + 1)}
+          className="px-4 py-2 border rounded-lg"
         >
           Next
         </button>
       </div>
 
-      {/* Modals */}
+      {/* MODALS */}
       <AddOrganizationModal
         open={openAdd}
         onClose={() => setOpenAdd(false)}
@@ -302,8 +337,6 @@ export default function Contact() {
 
       <ConfirmDeleteModal
         open={deleteId !== null}
-        title="Delete Contact"
-        description="Are you sure?"
         onCancel={() => setDeleteId(null)}
         onConfirm={confirmDelete}
       />

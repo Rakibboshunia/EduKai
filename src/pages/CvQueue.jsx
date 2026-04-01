@@ -96,7 +96,7 @@ export default function CVQueuePage() {
   return (
     <div className="p-4 space-y-6">
 
-      <h1 className="text-2xl font-semibold">
+      <h1 className="text-2xl font-semibold text-[#2D468A]">
         CV Processing Queue
       </h1>
 

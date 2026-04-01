@@ -1,27 +1,26 @@
 import axiosInstance from "./axiosInstance";
 
 /* ================= GET ================= */
-export const getOrganizations = async (url = "/api/organizations/") => {
+export const getOrganizations = async (
+  url = "/api/organizations/?page=1&page_size=100"
+) => {
   const res = await axiosInstance.get(url);
-  return res.data; // ✅ full response
+  return res.data;
 };
 
 /* ================= CREATE ================= */
 export const createOrganization = async (data) => {
-  const res = await axiosInstance.post("/api/organizations/", data);
-  return res.data;
+  return axiosInstance.post("/api/organizations/", data);
 };
 
 /* ================= UPDATE ================= */
 export const updateOrganization = async (id, data) => {
-  const res = await axiosInstance.patch(`/api/organizations/${id}/`, data);
-  return res.data;
+  return axiosInstance.patch(`/api/organizations/${id}/`, data);
 };
 
 /* ================= DELETE ================= */
 export const deleteOrganization = async (id) => {
-  const res = await axiosInstance.delete(`/api/organizations/${id}/`);
-  return res.data;
+  return axiosInstance.delete(`/api/organizations/${id}/`);
 };
 
 /* ================= IMPORT ================= */
@@ -30,13 +29,8 @@ export const importOrganizations = async (file) => {
   formData.append("file", file);
 
   const res = await axiosInstance.post(
-    "/api/organizations/import/contacts/", // ✅ FIXED
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
+    "/api/organizations/import/",
+    formData
   );
 
   return res.data;

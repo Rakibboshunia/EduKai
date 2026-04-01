@@ -56,6 +56,7 @@ export const getNearbyContacts = async (candidateId, params = {}) => {
     `/api/candidates/${candidateId}/nearby-contacts/`,
     { params }
   );
+
   return res.data;
 };
 
@@ -67,6 +68,7 @@ export const getNearbyOrganizations = async (candidateId, params = {}) => {
   );
   return res.data;
 };
+
 
 /* ================= SEND EMAIL ================= */
 export const sendToContacts = async (candidateId, data) => {
