@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { FaFilePdf } from "react-icons/fa";
 import { HiOutlineDocumentDownload } from "react-icons/hi";
 
@@ -21,7 +22,7 @@ const UploadPDF = ({ onFileSelect }) => {
     );
 
     if (validFiles.length !== selectedFiles.length) {
-      alert("Only PDF files are allowed.");
+      toast.error("Only PDF files are allowed.");
     }
 
     const newFiles = [...files, ...validFiles];

@@ -1,4 +1,5 @@
 import { FiUpload } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 export default function ImportExcelButton({ onFileUpload }) {
   const handleFileChange = (e) => {
@@ -14,13 +15,13 @@ export default function ImportExcelButton({ onFileUpload }) {
                     file.type === "application/vnd.ms-excel";
 
     if (!isExcel) {
-      alert("Please upload a valid .xlsx Excel file");
+      toast.error("Please upload a valid .xlsx Excel file");
       return;
     }
 
     if (typeof onFileUpload !== "function") {
       console.error("onFileUpload is not a function");
-      alert("Upload handler not configured");
+      toast.error("Upload handler not configured");
       return;
     }
 

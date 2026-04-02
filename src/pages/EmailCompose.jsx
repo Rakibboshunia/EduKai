@@ -282,7 +282,7 @@ Kind regards,`;
               <FiSend />
               {isSending
                 ? "Sending..."
-                : `Send Via Outlook to ${contactIds.length} Contact(s)`}
+                : `Send Via Mail to ${contactIds.length} Contact(s)`}
             </button>
 
             <button className="px-6 py-3 text-black border border-gray-300 rounded-lg text-sm hover:bg-gray-200">

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 import DynamicSearch from "../components/DynamicSearch";
 import AddOrganizationModal from "../components/AddOrganizationModal";
@@ -26,6 +27,7 @@ export default function Contact() {
   const [contacts, setContacts] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
+  const [totalContacts, setTotalContacts] = useState(0);
 
   const [jobFilter, setJobFilter] = useState("");
 
@@ -57,6 +59,7 @@ export default function Contact() {
 
       setPage(res?.pagination?.page || 1);
       setTotalPages(res?.pagination?.total_pages || 1);
+      setTotalContacts(res?.pagination?.total || 0);
 
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
@@ -106,11 +109,16 @@ export default function Contact() {
 
       if (statusStr === "completed" || statusStr === "success" || statusStr === "done") {
         setImporting(false);
-        alert("Import completed ✅\n" + (res.data?.message || ""));
+        const summary = res.data?.summary;
+        if (summary && summary.contacts_skipped > 0) {
+           toast.error(`Import Finished: ${summary.contacts_created} created, ${summary.contacts_skipped} skipped.\n\nPlease fix the validation errors in your Excel file. Your backend rejected the rows.`, { duration: 6000 });
+        } else {
+           toast.success("Import completed\n" + (res.data?.message || ""));
+        }
         fetchContacts(page);
       } else if (statusStr === "failed" || statusStr === "failure" || statusStr === "error") {
         setImporting(false);
-        alert("Import failed ❌\n" + (res.data?.error || res.data?.message || ""));
+        toast.error("Import failed\n" + (res.data?.error || res.data?.message || ""));
       } else {
         // Still processing (status: pending, processing, started, etc.)
         setTimeout(() => checkImportStatus(taskId), 2000);
@@ -118,31 +126,25 @@ export default function Contact() {
     } catch (err) {
       console.error("Polling error:", err);
       setImporting(false);
-      alert("Error checking import status. " + (err.response?.data?.error || err.message));
+      toast.error("Error checking import status. " + (err.response?.data?.error || err.message));
     }
   };
 
   /* ================= IMPORT ================= */
   const handleImportContacts = async (file) => {
     try {
-      if (!selectedOrg) {
-        alert("Select organization first ❗");
-        return;
-      }
-
       setImporting(true);
 
-      const res = await importContacts(file, selectedOrg);
+      const res = await importContacts(file);
 
       if (!res?.task_id) throw new Error("Task ID missing");
 
-      alert("Import started 🚀");
-
+      // No alert here, checkImportStatus handles it
       checkImportStatus(res.task_id);
     } catch (err) {
       console.error(err);
       setImporting(false);
-      alert("Import failed ❌");
+      toast.error("Import failed");
     }
   };
 
@@ -163,13 +165,6 @@ export default function Contact() {
       );
     }
 
-    if (selectedOrg) {
-      data = data.filter(
-        (item) =>
-          String(item.organization?.id || item.organization) === String(selectedOrg)
-      );
-    }
-
     setFilteredData(data);
   }, [searchResult, jobFilter, contacts, selectedOrg]);
 
@@ -177,7 +172,7 @@ export default function Contact() {
   const handleAddContact = async (formData) => {
     try {
       if (!selectedOrg) {
-        alert("Select organization first ❗");
+        toast.error("Select organization first");
         return;
       }
 
@@ -214,7 +209,7 @@ export default function Contact() {
       setDeleteId(null);
       fetchContacts(page);
     } catch {
-      alert("Delete failed");
+      toast.error("Delete failed");
     }
   };
 
@@ -227,9 +222,14 @@ export default function Contact() {
     <div className="p-5">
       {/* HEADER */}
       <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold text-[#2D468A]">
-          Contacts Management
-        </h1>
+        <div>
+          <h1 className="text-2xl font-bold text-[#2D468A]">
+            Contacts Management
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Total records in database: {totalContacts}
+          </p>
+        </div>
 
         <div className="flex gap-2">
           <button
@@ -267,7 +267,7 @@ export default function Contact() {
         </div>
 
         {/* ORGANIZATION FILTER */}
-        <select
+        {/* <select
           value={selectedOrg}
           onChange={(e) => setSelectedOrg(e.target.value)}
           className="text-black pl-4 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
@@ -278,7 +278,7 @@ export default function Contact() {
               {org.name || `Org ${org.id}`}
             </option>
           ))}
-        </select>
+        </select> */}
 
         {/* JOB FILTER */}
         <select
@@ -295,7 +295,7 @@ export default function Contact() {
 
       {/* CARDS */}
       <div className="max-h-250 overflow-y-auto pr-2">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {filteredData.map((contact) => (
             <ContactCard
               key={contact.id}
@@ -312,19 +312,19 @@ export default function Contact() {
         <button
           disabled={page === 1}
           onClick={() => setPage((prev) => prev - 1)}
-          className="px-4 py-2 border rounded-lg"
+          className="bg-[#2D468A] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed text-white"
         >
           Prev
         </button>
 
-        <span>
+        <span className="text-[#2D468A] font-medium flex items-center">
           Page {page} / {totalPages}
         </span>
 
         <button
           disabled={page === totalPages}
           onClick={() => setPage((prev) => prev + 1)}
-          className="px-4 py-2 border rounded-lg"
+          className="bg-[#2D468A] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed text-white"
         >
           Next
         </button>

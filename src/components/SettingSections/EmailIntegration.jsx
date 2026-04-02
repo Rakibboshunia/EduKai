@@ -46,7 +46,7 @@ const EmailIntegration = ({ openSection, toggleSection }) => {
 
         <div className="px-6 pb-6 space-y-6">
 
-          <div className="border border-gray-300 rounded-lg p-4 flex justify-between items-center">
+          {/* <div className="border border-gray-300 rounded-lg p-4 flex justify-between items-center">
 
             <div>
               <h4 className="font-semibold">
@@ -73,7 +73,7 @@ const EmailIntegration = ({ openSection, toggleSection }) => {
               )}
             </button>
 
-          </div>
+          </div> */}
 
           <div className="border border-gray-300 rounded-lg p-4 flex justify-between items-center">
 

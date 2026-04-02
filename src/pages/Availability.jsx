@@ -30,6 +30,7 @@ export default function Availability() {
   // 🔥 pagination state
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCandidates, setTotalCandidates] = useState(0);
 
   useEffect(() => {
     fetchCandidates(page);
@@ -63,6 +64,7 @@ export default function Availability() {
 
       // 🔥 backend pagination
       setTotalPages(res?.pagination?.total_pages || 1);
+      setTotalCandidates(res?.pagination?.total || 0);
 
     } catch (error) {
       console.error("Candidate fetch error:", error);
@@ -115,8 +117,12 @@ export default function Availability() {
           Availability Check
         </h1>
 
-        <p className="text-sm sm:text-base text-gray-600 mt-2">
+        <p className="text-sm sm:text-base text-gray-600 mt-1">
           Track candidate availability via Email and WhatsApp.
+        </p>
+
+        <p className="text-sm sm:text-base text-gray-600 mt-2">
+          Total records in database: {totalCandidates}
         </p>
       </div>
 

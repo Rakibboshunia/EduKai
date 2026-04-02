@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Tabs from "../components/Tabs";
 import CVCard from "../components/CVCard";
 import DynamicSearch from "../components/DynamicSearch";
-import Pagination from "../components/Pagination"; // 🔥 add
+import Pagination from "../components/Pagination";
 import toast from "react-hot-toast";
 
 import {
@@ -18,9 +18,9 @@ export default function CVQueuePage() {
   const [searchData, setSearchData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 🔥 pagination state
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCvs, setTotalCvs] = useState(0);
 
   useEffect(() => {
     fetchCandidates(page);
@@ -56,8 +56,8 @@ export default function CVQueuePage() {
       setCVs(formatted);
       setSearchData(formatted);
 
-      // 🔥 backend pagination
       setTotalPages(res?.pagination?.total_pages || 1);
+      setTotalCvs(res?.pagination?.total || 0);
 
     } catch (error) {
       console.error(error);
@@ -96,9 +96,14 @@ export default function CVQueuePage() {
   return (
     <div className="p-4 space-y-6">
 
-      <h1 className="text-2xl font-semibold text-[#2D468A]">
-        CV Processing Queue
-      </h1>
+      <div>
+        <h1 className="text-2xl font-semibold text-[#2D468A]">
+          CV Processing Queue
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600 mt-2">
+          Total records in database: {totalCvs}
+        </p>
+      </div>
 
       <DynamicSearch
         data={cvs}

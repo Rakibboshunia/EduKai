@@ -18,34 +18,31 @@ export default function MailSubmission() {
   const [currentPage, setCurrentPage] = useState(1);
   const [organizations, setOrganizations] = useState([]);
 
-  const PER_PAGE = 10;
+  const PER_PAGE = 100;
 
   /* ================= API CALL ================= */
   useEffect(() => {
     if (!candidate.id) return;
 
+    // Fetch a large pool of nearby contacts once. Client-side will handle all searching and filtering.
     const params = {
       page: 1,
-      page_size: 100,
+      page_size: 1000, 
     };
-
-    if (filters.city) params.town = filters.city;
-    if (filters.job) params.job_title = filters.job;
-    if (orgSearch) params.search = orgSearch;
 
     getNearbyContacts(candidate.id, params)
       .then((res) => {
         const mapped = (res?.results || []).map((item) => ({
           // ✅ UNIQUE ID FIX
-          id: `${item.contact_id}-${item.contact_email}`,
-          name: item.organization_name,
-          email: item.contact_email,
-          contact_person: item.contact_person,
-          job_title: item.contact_job_title,
-          industry: item.organization_local_authority || "-",
-          location: item.organization_town,
-          radius: item.distance_km,
-          phase: item.organization_phase,
+          id: `${item.contact_id}-${item.contact_email} `,
+          name: item.organization_name || "N/A",
+          email: item.contact_email || "N/A",
+          contact_person: item.contact_person || "N/A",
+          job_title: item.contact_job_title || "N/A",
+          industry: item.organization_local_authority || "N/A",
+          location: item.organization_town || "N/A",
+          radius: item.distance_km || "N/A" ,
+          phase: item.organization_phase || "N/A",
         }));
 
         setOrganizations(mapped);
@@ -55,7 +52,7 @@ export default function MailSubmission() {
         setOrganizations([]);
       });
 
-  }, [candidate.id, filters.city, filters.job, orgSearch]);
+  }, [candidate.id]);
 
   /* ================= RESET PAGE ================= */
   useEffect(() => {
@@ -194,7 +191,7 @@ export default function MailSubmission() {
               placeholder="Search..."
               value={orgSearch}
               onChange={(e) => setOrgSearch(e.target.value)}
-              className="w-full text-black border border-gray-300 rounded-md pl-10 pr-4 py-2 text-sm"
+              className="w-full text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
             />
           </div>
         </div>
@@ -208,9 +205,9 @@ export default function MailSubmission() {
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, city: e.target.value }))
             }
-            className="text-black border border-gray-300 rounded-md px-3 py-2 text-sm"
+            className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
           >
-            <option value="">All</option>
+            <option value="">All Location</option>
             {cityOptions.map((c) => (
               <option key={c}>{c}</option>
             ))}
@@ -222,9 +219,9 @@ export default function MailSubmission() {
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, job: e.target.value }))
             }
-            className="text-black border border-gray-300 rounded-md px-3 py-2 text-sm"
+            className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
           >
-            <option value="">All</option>
+            <option value="">All Job Title</option>
             {jobOptions.map((j) => (
               <option key={j}>{j}</option>
             ))}
@@ -236,9 +233,9 @@ export default function MailSubmission() {
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, phase: e.target.value }))
             }
-            className="text-black border border-gray-300 rounded-md px-3 py-2 text-sm"
+            className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
           >
-            <option value="">All</option>
+            <option value="">All Phase</option>
             {phaseOptions.map((p) => (
               <option key={p}>{p}</option>
             ))}
@@ -250,7 +247,7 @@ export default function MailSubmission() {
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, radius: e.target.value }))
             }
-            className="text-black border border-gray-300 rounded-md px-3 py-2 text-sm"
+            className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
           >
             <option value="">Radius</option>
             <option value="5">5 KM</option>

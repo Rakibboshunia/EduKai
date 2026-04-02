@@ -9,6 +9,7 @@ import {
 
 import { useNavigate } from "react-router-dom";
 import { getCandidateById } from "../api/candidateApi";
+import toast from "react-hot-toast";
 
 export default function CVCard({
   data,
@@ -70,7 +71,7 @@ export default function CVCard({
       const res = await getCandidateById(data.id);
 
       if (!res.original_cv_url) {
-        alert("CV not available");
+        toast.error("CV not available");
         return;
       }
 

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import InputField from "./InputField";
 import { FiPlus } from "react-icons/fi";
 import OrganizationSelect from "./OrganizationSelect";
@@ -21,7 +22,7 @@ const AddContactForm = ({
     e.preventDefault();
 
     if (!formData.contact_person || !formData.work_email) {
-      alert("Contact Person & Email required");
+      toast.error("Contact Person & Email required");
       return;
     }
 
