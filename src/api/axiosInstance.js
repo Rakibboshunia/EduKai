@@ -5,17 +5,55 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token"); 
+let isRefreshing = false;
+let queue = [];
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+const processQueue = (error) => {
+  queue.forEach((p) => {
+    if (error) p.reject(error);
+    else p.resolve();
+  });
+  queue = [];
+};
+
+axiosInstance.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          queue.push({
+            resolve: () => resolve(axiosInstance(originalRequest)),
+            reject,
+          });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        await axiosInstance.post("/api/auth/refresh/");
+
+        processQueue(null);
+        return axiosInstance(originalRequest);
+
+      } catch (err) {
+        processQueue(err);
+
+        // ❌ refresh fail → global logout trigger
+        window.dispatchEvent(new Event("logout"));
+
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
     }
 
-    return config;
-  },
-  (error) => Promise.reject(error)
+    return Promise.reject(error);
+  }
 );
 
 export default axiosInstance;

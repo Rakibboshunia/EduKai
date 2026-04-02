@@ -28,8 +28,8 @@ const ContactCard = ({ data = {}, onEdit, onDelete }) => {
   const fieldsToShow = ["job_title"];
 
   return (
-    <div className="bg-white/70 backdrop-blur rounded-2xl shadow-md border p-4 sm:p-6 hover:border-gray-300 transition">
-      <div className="flex justify-between gap-4">
+    <div className="bg-white/70 backdrop-blur rounded-2xl shadow-md border p-4 hover:border-gray-300 transition">
+      <div className="flex justify-between gap-4 items-start">
         <div className="flex gap-3 min-w-0">
           <div className="w-10 h-10 flex items-center justify-center rounded-md bg-[#EEF2FF]">
             <HiOutlineOfficeBuilding className="text-[#2D468A]" />
@@ -63,7 +63,7 @@ const ContactCard = ({ data = {}, onEdit, onDelete }) => {
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6 text-sm">
+      <div className="mt-3 text-sm space-y-2">
         <InfoRow label={labelMap.job_title} value={data.job_title} />
       </div>
     </div>

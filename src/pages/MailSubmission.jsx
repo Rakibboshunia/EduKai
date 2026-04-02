@@ -1,30 +1,11 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { FiCheckCircle, FiSearch } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getNearbyContacts } from "../api/candidateApi";
 import Pagination from "../components/Pagination";
 import Table from "../components/Table";
-
-const FILTERS = [
-  {
-    name: "city",
-    label: "Location",
-    options: ["London", "New York", "Helsinki", "Copenhagen", "Stockholm"],
-  },
-  {
-    name: "job",
-    label: "Job Title",
-    options: [
-      "Flutter Developer",
-      "Science Teacher",
-      "Maths Teacher",
-      "English Teacher",
-      "ICT Teacher",
-    ],
-  },
-];
 
 export default function MailSubmission() {
   const navigate = useNavigate();
@@ -54,10 +35,9 @@ export default function MailSubmission() {
 
     getNearbyContacts(candidate.id, params)
       .then((res) => {
-        console.log("API RESPONSE:", res);
-
         const mapped = (res?.results || []).map((item) => ({
-          id: item.contact_id, // 🔥 IMPORTANT
+          // ✅ UNIQUE ID FIX
+          id: `${item.contact_id}-${item.contact_email}`,
           name: item.organization_name,
           email: item.contact_email,
           contact_person: item.contact_person,
@@ -75,31 +55,59 @@ export default function MailSubmission() {
         setOrganizations([]);
       });
 
-  }, [candidate.id, filters, orgSearch]);
+  }, [candidate.id, filters.city, filters.job, orgSearch]);
 
   /* ================= RESET PAGE ================= */
   useEffect(() => {
     setCurrentPage(1);
   }, [filters, orgSearch]);
 
-  /* ================= SEARCH ================= */
+  /* ================= DYNAMIC OPTIONS ================= */
+  const getUnique = (key) => {
+    return [...new Set(organizations.map((o) => o[key]).filter(Boolean))];
+  };
+
+  const cityOptions = getUnique("location");
+  const jobOptions = getUnique("job_title");
+  const phaseOptions = getUnique("phase");
+
+  /* ================= FILTER ================= */
   const filteredOrganizations = useMemo(() => {
-    if (!orgSearch) return organizations;
+    let data = [...organizations];
 
-    const search = orgSearch.toLowerCase();
+    if (orgSearch) {
+      const search = orgSearch.toLowerCase();
+      data = data.filter((org) =>
+        [
+          org.name,
+          org.location,
+          org.contact_person,
+          org.job_title,
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(search)
+      );
+    }
 
-    return organizations.filter((org) =>
-      [
-        org.name,
-        org.location,
-        org.contact_person,
-        org.job_title,
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(search)
-    );
-  }, [organizations, orgSearch]);
+    if (filters.city) {
+      data = data.filter((o) => o.location === filters.city);
+    }
+
+    if (filters.job) {
+      data = data.filter((o) => o.job_title === filters.job);
+    }
+
+    if (filters.phase) {
+      data = data.filter((o) => o.phase === filters.phase);
+    }
+
+    if (filters.radius) {
+      data = data.filter((o) => o.radius <= Number(filters.radius));
+    }
+
+    return data;
+  }, [organizations, orgSearch, filters]);
 
   /* ================= PAGINATION ================= */
   const totalPages = Math.ceil(filteredOrganizations.length / PER_PAGE);
@@ -110,7 +118,6 @@ export default function MailSubmission() {
   );
 
   /* ================= SELECT ================= */
-
   const toggleSelect = (id) => {
     setSelectedIds((prev) =>
       prev.includes(id)
@@ -193,32 +200,65 @@ export default function MailSubmission() {
         </div>
 
         {/* FILTERS */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {FILTERS.map((filter) => (
-            <div key={filter.name}>
-              <label className="text-xs text-[#2D468A] font-medium">
-                {filter.label}
-              </label>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
 
-              <select
-                value={filters[filter.name] || ""}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    [filter.name]: e.target.value,
-                  }))
-                }
-                className="w-full text-black border border-gray-300 rounded-md px-3 py-2 text-sm"
-              >
-                <option value="">All</option>
-                {filter.options.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ))}
+          {/* LOCATION */}
+          <select
+            value={filters.city || ""}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, city: e.target.value }))
+            }
+            className="text-black border border-gray-300 rounded-md px-3 py-2 text-sm"
+          >
+            <option value="">All</option>
+            {cityOptions.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </select>
+
+          {/* JOB */}
+          <select
+            value={filters.job || ""}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, job: e.target.value }))
+            }
+            className="text-black border border-gray-300 rounded-md px-3 py-2 text-sm"
+          >
+            <option value="">All</option>
+            {jobOptions.map((j) => (
+              <option key={j}>{j}</option>
+            ))}
+          </select>
+
+          {/* PHASE */}
+          <select
+            value={filters.phase || ""}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, phase: e.target.value }))
+            }
+            className="text-black border border-gray-300 rounded-md px-3 py-2 text-sm"
+          >
+            <option value="">All</option>
+            {phaseOptions.map((p) => (
+              <option key={p}>{p}</option>
+            ))}
+          </select>
+
+          {/* RADIUS */}
+          <select
+            value={filters.radius || ""}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, radius: e.target.value }))
+            }
+            className="text-black border border-gray-300 rounded-md px-3 py-2 text-sm"
+          >
+            <option value="">Radius</option>
+            <option value="5">5 KM</option>
+            <option value="10">10 KM</option>
+            <option value="20">20 KM</option>
+            <option value="50">50 KM</option>
+          </select>
+
         </div>
 
         {/* SELECT ALL */}

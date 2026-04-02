@@ -98,21 +98,27 @@ export default function Contact() {
         `/api/organizations/import/status/${taskId}/`
       );
 
-      const status = res.data?.status;
+      console.log("Polling status response:", res.data);
+      
+      // Fallback to state or status and handle casing differences
+      const status = res.data?.status || res.data?.state || "";
+      const statusStr = status.toLowerCase();
 
-      if (status === "completed") {
+      if (statusStr === "completed" || statusStr === "success" || statusStr === "done") {
         setImporting(false);
-        alert("Import completed ✅");
+        alert("Import completed ✅\n" + (res.data?.message || ""));
         fetchContacts(page);
-      } else if (status === "failed") {
+      } else if (statusStr === "failed" || statusStr === "failure" || statusStr === "error") {
         setImporting(false);
-        alert("Import failed ❌");
+        alert("Import failed ❌\n" + (res.data?.error || res.data?.message || ""));
       } else {
+        // Still processing (status: pending, processing, started, etc.)
         setTimeout(() => checkImportStatus(taskId), 2000);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Polling error:", err);
       setImporting(false);
+      alert("Error checking import status. " + (err.response?.data?.error || err.message));
     }
   };
 
@@ -160,7 +166,7 @@ export default function Contact() {
     if (selectedOrg) {
       data = data.filter(
         (item) =>
-          String(item.organization?.id) === String(selectedOrg)
+          String(item.organization?.id || item.organization) === String(selectedOrg)
       );
     }
 
@@ -260,41 +266,45 @@ export default function Contact() {
           />
         </div>
 
+        {/* ORGANIZATION FILTER */}
+        <select
+          value={selectedOrg}
+          onChange={(e) => setSelectedOrg(e.target.value)}
+          className="text-black pl-4 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+        >
+          <option value="">All Organizations</option>
+          {organizations.map((org) => (
+            <option key={org.id} value={org.id}>
+              {org.name || `Org ${org.id}`}
+            </option>
+          ))}
+        </select>
+
+        {/* JOB FILTER */}
         <select
           value={jobFilter}
           onChange={(e) => setJobFilter(e.target.value)}
-          className="text-black px-4 py-2 border rounded-lg"
+          className="text-black pl-4 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
         >
           <option value="">All Jobs</option>
           {jobOptions.map((job) => (
             <option key={job}>{job}</option>
           ))}
         </select>
-
-        <select
-          value={selectedOrg}
-          onChange={(e) => setSelectedOrg(e.target.value)}
-          className="text-black px-4 py-2 border rounded-lg"
-        >
-          <option value="">Select Organization</option>
-          {organizations.map((org) => (
-            <option key={org.id} value={org.id}>
-              {org.name}
-            </option>
-          ))}
-        </select>
       </div>
 
       {/* CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {filteredData.map((contact) => (
-          <ContactCard
-            key={contact.id}
-            data={contact}
-            onEdit={handleEdit}
-            onDelete={setDeleteId}
-          />
-        ))}
+      <div className="max-h-250 overflow-y-auto pr-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {filteredData.map((contact) => (
+            <ContactCard
+              key={contact.id}
+              data={contact}
+              onEdit={handleEdit}
+              onDelete={setDeleteId}
+            />
+          ))}
+        </div>
       </div>
 
       {/* PAGINATION */}

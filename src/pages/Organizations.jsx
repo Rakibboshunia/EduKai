@@ -203,15 +203,17 @@ export default function Organizations() {
         </select>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
-        {filteredData.map((org) => (
-          <OrganizationCard
-            key={org.id}
-            data={org}
-            onEdit={handleEdit}
-            onDelete={setDeleteId}
-          />
-        ))}
+      <div className="max-h-250 overflow-y-auto pr-2">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredData.map((org) => (
+            <OrganizationCard
+              key={org.id}
+              data={org}
+              onEdit={handleEdit}
+              onDelete={setDeleteId}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="mt-8 flex justify-center gap-3">
@@ -222,12 +224,12 @@ export default function Organizations() {
               `/api/organizations/?page=${page - 1}&page_size=100`,
             )
           }
-          className="px-4 py-2 border rounded-lg"
+          className="bg-[#2D468A] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           Prev
         </button>
 
-        <span>
+        <span className="text-[#2D468A] font-medium">
           Page {page} / {totalPages}
         </span>
 
@@ -238,7 +240,7 @@ export default function Organizations() {
               `/api/organizations/?page=${page + 1}&page_size=100`,
             )
           }
-          className="px-4 py-2 border rounded-lg"
+          className="bg-[#2D468A] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           Next
         </button>

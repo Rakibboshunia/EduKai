@@ -37,22 +37,17 @@ export const deleteContact = async (id) => {
 
 /* ================= IMPORT ================= */
 export const importContacts = async (file, orgId) => {
-  if (!file) throw new Error("File missing ❌");
-  if (!orgId) throw new Error("Organization ID missing ❌");
-
   const formData = new FormData();
+
+  // 🔥 IMPORTANT (backend field name match korte hobe)
   formData.append("file", file);
-  formData.append("organization", orgId);
+  formData.append("organization", orgId); 
+  formData.append("organization_id", orgId); 
 
   const res = await axiosInstance.post(
     "/api/organizations/import/contacts/",
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
+    formData
   );
 
-  return res.data; // { task_id }
+  return res.data;
 };

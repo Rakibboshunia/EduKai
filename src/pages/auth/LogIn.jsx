@@ -27,38 +27,42 @@ const LogIn = () => {
   }, []);
 
   const handleLogin = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!email || !password) {
-    toast.error("Email and password are required!");
-    return;
-  }
-
-  try {
-    setLoading(true);
-
-    const data = await loginApi(email, password);
-
-    loginUser(data.user);
-
-    if (remember) {
-      localStorage.setItem("rememberEmail", email);
-    } else {
-      localStorage.removeItem("rememberEmail");
+    if (!email || !password) {
+      toast.error("Email and password are required!");
+      return;
     }
 
-    toast.success(data.message || "Login successful");
+    try {
+      setLoading(true);
 
-    navigate("/", { replace: true });
+      const data = await loginApi(email, password);
 
-  } catch (error) {
-    toast.error(
-      error?.response?.data?.message || "Login failed"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+      // ✅ user context e save
+      loginUser(data.user);
+
+      // ✅ localStorage e user save (page reload er jonno)
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      if (remember) {
+        localStorage.setItem("rememberEmail", email);
+      } else {
+        localStorage.removeItem("rememberEmail");
+      }
+
+      toast.success(data.message || "Login successful");
+
+      navigate("/", { replace: true });
+
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Login failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="bg-white grid justify-center items-center py-16 md:px-11 px-6 rounded-3xl border border-[#E5E7EB] shadow-lg relative">
@@ -95,7 +99,6 @@ const LogIn = () => {
           placeholder="Enter your email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          inputClass="rounded-lg border border-[#2D468A]"
         />
 
         <Password
@@ -103,24 +106,19 @@ const LogIn = () => {
           placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          inputClass="rounded-lg border border-[#2D468A]"
         />
 
         <div className="w-full flex items-center justify-between text-sm">
-          <label className="flex items-center gap-2 cursor-pointer text-[#333]">
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={remember}
               onChange={(e) => setRemember(e.target.checked)}
-              className="accent-[#2D468A]"
             />
-            Remember Password
+            Remember Email
           </label>
 
-          <Link
-            to="/auth/reset/password"
-            className="text-[#2D468A] hover:underline"
-          >
+          <Link to="/auth/reset/password">
             Forgot Password?
           </Link>
         </div>
@@ -128,12 +126,7 @@ const LogIn = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg mt-6 flex items-center justify-center gap-2 cursor-pointer transition
-          ${
-            loading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#2D468A] text-white hover:bg-[#243a73]"
-          }`}
+          className="w-full py-3 rounded-lg mt-6 flex items-center justify-center gap-2 bg-[#2D468A] text-white"
         >
           <MdLogin />
           {loading ? "Signing in..." : "Sign in"}

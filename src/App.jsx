@@ -1,24 +1,24 @@
-import { useState } from 'react'
-import './App.css'
+import { useEffect } from "react";
+import axiosInstance from "./api/axiosInstance";
+import Router from "./routes/Router";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
-  return (
-    <>
-      
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      
-    </>
-  )
+  useEffect(() => {
+    const init = async () => {
+      try {
+        await axiosInstance.post("/api/auth/refresh/");
+        console.log("Token refreshed ✅");
+      } catch {
+        console.log("User not logged in ❌");
+      }
+    };
+
+    init();
+  }, []);
+
+  return <Router />;
 }
 
-export default App
+export default App;

@@ -8,15 +8,13 @@ export default function ImportExcelButton({ onFileUpload }) {
 
     console.log("Selected file:", file);
 
-    // ✅ file type validation
-    const validTypes = [
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "application/vnd.ms-excel",
-      "text/csv",
-    ];
+    // ✅ check by extension as a fallback
+    const isExcel = file.name.match(/\.(xlsx|xls)$/i) || 
+                    file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+                    file.type === "application/vnd.ms-excel";
 
-    if (!validTypes.includes(file.type)) {
-      alert("Please upload a valid Excel/CSV file");
+    if (!isExcel) {
+      alert("Please upload a valid .xlsx Excel file");
       return;
     }
 
@@ -28,7 +26,6 @@ export default function ImportExcelButton({ onFileUpload }) {
 
     onFileUpload(file);
 
-    // reset input
     e.target.value = null;
   };
 
@@ -39,7 +36,7 @@ export default function ImportExcelButton({ onFileUpload }) {
 
       <input
         type="file"
-        accept=".xlsx,.xls,.csv"
+        accept=".xlsx"
         className="hidden"
         onChange={handleFileChange}
       />
