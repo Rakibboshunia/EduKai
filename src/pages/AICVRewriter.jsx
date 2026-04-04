@@ -17,11 +17,10 @@ import CVPreviewCard from "../components/CVPreviewCard";
 import {
   rewriteCandidateCV,
   getCandidateById,
-  getRewriteStatus, 
+  getRewriteStatus,
 } from "../api/candidateApi";
 
 export default function AICVRewriter() {
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -46,55 +45,49 @@ export default function AICVRewriter() {
   const [editMode, setEditMode] = useState(false);
   const [tempCV, setTempCV] = useState("");
 
-  /* ================= LOAD ORIGINAL CV ================= */
+  // 🔥 NEW STATE (PDF edit support)
+  const [isEditingPDF, setIsEditingPDF] = useState(false);
+
+  /* ================= LOAD ORIGINAL + ENHANCED ================= */
   useEffect(() => {
     if (candidate.id) {
       getCandidateById(candidate.id)
         .then((res) => {
-          const cvText =
-            res.parsed_cv ||
-            res.parsed_text ||
-            res.cv_text ||
-            res.original_text ||
-            res.resume_text ||
-            res.text ||
-            JSON.stringify(res, null, 2);
+          // ORIGINAL
+          if (res.original_cv_url) {
+            setOriginalCV({ type: "pdf", url: res.original_cv_url });
+          }
 
-          setOriginalCV(
-            typeof cvText === "string"
-              ? cvText
-              : JSON.stringify(cvText, null, 2)
-          );
+          // 🔥 ENHANCED AUTO LOAD
+          if (res.enhanced_cv_url) {
+            setAiCV({ type: "pdf", url: res.enhanced_cv_url });
+          } else if (res.ai_enhanced_cv_content) {
+            const content =
+              typeof res.ai_enhanced_cv_content === "string"
+                ? res.ai_enhanced_cv_content
+                : JSON.stringify(res.ai_enhanced_cv_content, null, 2);
+
+            setAiCV({ type: "text", content });
+            setTempCV(content);
+          }
         })
         .catch(() => {
           setOriginalCV("Error loading original CV.");
         });
-    } else {
-      setOriginalCV("No candidate ID provided.");
     }
   }, [candidate.id]);
 
-  /* ================= REWRITE WITH AI (FIXED ONLY) ================= */
+  /* ================= REWRITE ================= */
   const handleRewriteWithAI = async () => {
-
-    if (!candidate.name) {
-      toast.error("Candidate name missing");
-      return;
-    }
-    
     if (!candidate.id) {
-      toast.error("Candidate ID missing. No real candidate selected.");
+      toast.error("Candidate ID missing");
       return;
     }
 
     try {
       setIsRewriting(true);
 
-      // 🔥 STEP 1: start rewrite
-      const startRes = await rewriteCandidateCV(candidate.id, {
-        removeSurname: options.removeSurname,
-        removeEmployer: options.removeEmployer,
-      });
+      const startRes = await rewriteCandidateCV(candidate.id, options);
 
       if (startRes.rewrite_status !== "processing") {
         toast.error("Rewrite failed to start");
@@ -103,7 +96,6 @@ export default function AICVRewriter() {
 
       toast.success("AI rewriting started...");
 
-      // 🔥 STEP 2: polling
       let retries = 0;
       let finalData = null;
 
@@ -125,17 +117,13 @@ export default function AICVRewriter() {
         return;
       }
 
-      // 🔥 STEP 3: extract CV
       const enhancedUrl = finalData?.candidate?.enhanced_cv_url;
 
       if (enhancedUrl) {
         setAiCV({ type: "pdf", url: enhancedUrl });
-        setTempCV(""); // optional
       } else {
         const aiContent =
           finalData?.candidate?.ai_enhanced_cv_content ||
-          finalData?.candidate?.parsed_cv ||
-          finalData?.candidate?.cv_text ||
           JSON.stringify(finalData, null, 2);
 
         const finalText =
@@ -147,131 +135,35 @@ export default function AICVRewriter() {
         setTempCV(finalText);
       }
 
-      const finalText =
-        typeof aiContent === "string"
-          ? aiContent
-          : JSON.stringify(aiContent, null, 2);
-
-      setAiCV(finalText);
-      setTempCV(finalText);
-
       toast.success("CV rewritten successfully ✅");
     } catch (error) {
-
       console.error(error);
       toast.error("Rewrite failed");
-
     } finally {
-
       setIsRewriting(false);
-
     }
   };
 
-  const handleEdit = () => {
+  /* ================= DOWNLOAD ================= */
+  const handleDownload = () => {
     if (!aiCV) {
-      toast.error("Generate CV first");
+      toast.error("No AI CV to download");
       return;
     }
-    setTempCV(aiCV);
-    setEditMode(true);
-  };
 
-  const handleSave = () => {
-    setAiCV(tempCV);
-    setEditMode(false);
-    toast.success("CV updated");
-  };
+    if (aiCV.type === "pdf") {
+      window.open(aiCV.url, "_blank");
+    } else {
+      const blob = new Blob([aiCV.content], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
 
-  const handleCancel = () => {
-    setEditMode(false);
-    setTempCV(aiCV);
-  };
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "AI_CV.txt";
+      a.click();
 
-  const handleDownload = () => {
-  if (!aiCV) {
-    toast.error("No AI CV to download");
-    return;
-  }
-
-  if (aiCV.type === "pdf") {
-    const a = document.createElement("a");
-    a.href = aiCV.url;
-    a.download = "AI_CV.pdf";
-    a.click();
-  } else {
-    const blob = new Blob([aiCV.content], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "AI_CV.txt";
-    a.click();
-
-    URL.revokeObjectURL(url);
-  }
-};
-
-  const renderCandidateDetails = (cand) => {
-    if (cand.original_cv_url) {
-      return (
-        <div className="w-full h-full flex flex-col items-center justify-center">
-          <iframe 
-            src={`${cand.original_cv_url}#toolbar=0&navpanes=0`} 
-            title="Original CV PDF View" 
-            className="w-full rounded-md border border-gray-200" 
-            style={{ minHeight: '550px' }}
-          />
-        </div>
-      );
+      URL.revokeObjectURL(url);
     }
-
-    return (
-      <div className="w-full flex flex-col gap-4 text-left">
-        <div className="border-b pb-4 mb-2">
-          <h2 className="text-xl font-bold text-[#2D468A]">{cand.name || "Unknown Candidate"}</h2>
-          {cand.job_title && <p className="text-gray-600 font-medium mt-1">{cand.job_title}</p>}
-        </div>
-        
-        <div className="grid grid-cols-1 gap-3 text-sm text-gray-700">
-          {cand.email && (
-             <p className="flex items-center gap-2"><FiMail className="text-gray-500" /> {cand.email}</p>
-          )}
-          {cand.phone && (
-             <p className="flex items-center gap-2"><FiPhone className="text-gray-500" /> {cand.phone}</p>
-          )}
-          {cand.experience !== undefined && cand.experience !== null && (
-             <p className="flex items-center gap-2"><FiBriefcase className="text-gray-500" /> {cand.experience} years experience</p>
-          )}
-        </div>
-        
-        {cand.skills && cand.skills.length > 0 && (
-          <div className="mt-4">
-            <h3 className="font-semibold text-gray-800 mb-2">Skills</h3>
-            <div className="flex flex-wrap gap-2">
-              {cand.skills.map((s, i) => (
-                <span key={i} className="px-3 py-1 bg-[#E8EDFB] text-[#2D468A] rounded-full text-xs font-medium">{s}</span>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderOriginalCVContent = () => {
-    if (!originalCV) return "Loading original CV...";
-    if (typeof originalCV === "string") {
-      try {
-        const parsed = JSON.parse(originalCV);
-        if (typeof parsed === "object" && parsed !== null) {
-          return renderCandidateDetails(parsed);
-        }
-      } catch(e) {
-        return originalCV;
-      }
-    }
-    return renderCandidateDetails(originalCV);
   };
 
   return (
@@ -287,53 +179,60 @@ export default function AICVRewriter() {
       </div>
 
       <div className="bg-white/60 p-4 rounded-lg border mb-6">
-        <div className="grid grid-cols-1 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-              <FiUser className="text-gray-400" />
-              Candidate
-            </label>
-
-            <input
-              type="text"
-              value={candidate.name}
-              readOnly
-              className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-700"
-            />
-          </div>
-        </div>
+        <input
+          type="text"
+          value={candidate.name}
+          readOnly
+          className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-700"
+        />
       </div>
 
       <div className="bg-white/60 p-4 sm:p-6 md:p-8 mb-8 rounded-lg shadow-sm">
-        <div className="inline-block border border-gray-100 rounded-xl p-3 bg-white">
-          <button
-            onClick={handleRewriteWithAI}
-            disabled={isRewriting}
-            className={`px-4 py-3 rounded-md text-sm flex items-center gap-2 cursor-pointer transition
-              ${
-                isRewriting
-                  ? "bg-gray-400 text-white cursor-not-allowed"
-                  : "bg-[#2D468A] text-white hover:bg-[#243a73]"
-              }`}
-          >
-            <SiOpenai />
-            {isRewriting ? "AI is rewriting..." : "Rewrite with AI"}
-          </button>
-        </div>
+        <button
+          onClick={handleRewriteWithAI}
+          disabled={isRewriting}
+          className={`px-4 py-3 rounded-md text-sm flex items-center gap-2
+            ${
+              isRewriting
+                ? "bg-gray-400 text-white"
+                : "bg-[#2D468A] text-white hover:bg-[#243a73]"
+            }`}
+        >
+          <SiOpenai />
+          {isRewriting ? "AI is rewriting..." : "Rewrite with AI"}
+        </button>
 
-        <div className="grid text-black grid-cols-1 lg:grid-cols-2 gap-6 mb-6 pt-6 sm:pt-8">
+        <div className="grid text-black grid-cols-1 lg:grid-cols-2 gap-6 pt-8">
+          {/* ORIGINAL */}
           <CVPreviewCard
             title="Original CV"
             status="Before AI processing"
-            content={renderOriginalCVContent()}
+            content={
+              originalCV?.type === "pdf" ? (
+                <iframe
+                  src={`${originalCV.url}#toolbar=0&navpanes=0`}
+                  className="w-full rounded-md border"
+                  style={{ minHeight: "550px" }}
+                />
+              ) : (
+                originalCV
+              )
+            }
           />
 
+          {/* AI */}
           <div className="relative">
             <CVPreviewCard
               title="AI-Enhanced CV"
-              status="Processed by ChatGPT"
+              status="Processed by AI"
               content={
-                aiCV?.type === "pdf" ? (
+                isEditingPDF ? (
+                  <textarea
+                    value={tempCV}
+                    onChange={(e) => setTempCV(e.target.value)}
+                    className="absolute inset-0 w-full h-full p-4 border rounded-lg bg-white text-sm z-10"
+                  />
+                ) : aiCV?.type === "pdf" ? (
                   <iframe
                     src={`${aiCV.url}#toolbar=0&navpanes=0`}
                     className="w-full rounded-md border"
@@ -347,49 +246,53 @@ export default function AICVRewriter() {
               }
             />
 
+            {/* 🔥 EDIT BUTTON */}
             <div className="absolute top-3 right-3 flex gap-2 z-20">
-              {!editMode ? (
+              {!isEditingPDF ? (
                 <button
-                  onClick={handleEdit}
-                  className="bg-[#2D468B] hover:bg-[#3b56a1] transition shadow text-white border border-gray-300 px-3 py-2 text-sm rounded-lg flex items-center gap-1 cursor-pointer"
+                  onClick={() => {
+                    if (aiCV?.type === "pdf") {
+                      setTempCV("Paste or edit CV content here...");
+                    } else {
+                      setTempCV(aiCV?.content || "");
+                    }
+                    setIsEditingPDF(true);
+                  }}
+                  className="bg-[#2D468B] text-white px-3 py-2 text-sm rounded-lg flex items-center gap-1"
                 >
                   <FiEdit /> Edit
                 </button>
               ) : (
                 <>
                   <button
-                    onClick={handleSave}
-                    className="bg-[#354b88] text-green-400 px-2 py-1 text-md rounded flex items-center gap-1 cursor-pointer hover:bg-green-600 hover:text-white transition"
+                    onClick={() => {
+                      setAiCV({ type: "text", content: tempCV });
+                      setIsEditingPDF(false);
+                      toast.success("CV updated");
+                    }}
+                    className="bg-green-600 text-white px-2 py-1 rounded flex items-center gap-1"
                   >
                     <FiSave /> Save
                   </button>
 
                   <button
-                    onClick={handleCancel}
-                    className="bg-[#354b88] text-red-400 px-2 py-1 text-md rounded cursor-pointer hover:bg-red-600 hover:text-white transition flex items-center gap-1"
+                    onClick={() => setIsEditingPDF(false)}
+                    className="bg-red-600 text-white px-2 py-1 rounded flex items-center gap-1"
                   >
                     Cancel
                   </button>
                 </>
               )}
             </div>
-
-            {editMode && (
-              <textarea
-                value={tempCV}
-                onChange={(e) => setTempCV(e.target.value)}
-                className="absolute inset-0 w-full h-full p-4 border rounded-lg bg-white text-sm z-10"
-              />
-            )}
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 pt-6 sm:pt-8">
+        <div className="flex flex-col sm:flex-row gap-4 pt-8">
           <button
             onClick={() =>
               navigate("/ai/mail-submission", { state: { candidate } })
             }
-            className="flex-1 bg-[#2D468B] text-white px-6 py-3 rounded-md hover:bg-[#354e92] flex items-center justify-center gap-2 transition cursor-pointer"
+            className="flex-1 bg-[#2D468B] text-white px-6 py-3 rounded-md flex items-center justify-center gap-2"
           >
             <FiSend />
             Mail Submission
@@ -397,7 +300,7 @@ export default function AICVRewriter() {
 
           <button
             onClick={handleDownload}
-            className="flex-1 border border-gray-300 px-6 py-3 rounded-md text-sm text-black hover:text-white hover:bg-[#2D468B] transition flex items-center justify-center gap-2 cursor-pointer"
+            className="flex-1 border px-6 py-3 rounded-md flex items-center justify-center gap-2"
           >
             <FiDownload />
             Download CV

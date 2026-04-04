@@ -51,6 +51,10 @@ export default function CVQueuePage() {
         createdAt: item.created_at
           ? new Date(item.created_at).toLocaleString()
           : "N/A",
+        photo: item.profile_photo_url || null,
+        name_without_surname: item.name_without_surname || "",
+        location: item.location || "",
+        job_titles: item.job_titles || [],
       }));
 
       setCVs(formatted);
