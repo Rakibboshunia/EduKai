@@ -66,7 +66,7 @@ export default function StatusBadge({
   };
 
   return (
-    <div ref={ref} className="relative inline-block text-right">
+    <div ref={ref} className="relative inline-block text-left">
 
       <button
         disabled={loading}
@@ -86,7 +86,7 @@ export default function StatusBadge({
 
       {open && (
         <div
-          className={`absolute right-0 mt-2 ${width} bg-white border border-gray-200 rounded-md shadow-lg z-50`}
+          className={`absolute left-0 mt-2 ${width} bg-white border border-gray-200 rounded-md shadow-lg z-50 overflow-hidden`}
         >
           {Object.entries(options).map(([key, item]) => {
 

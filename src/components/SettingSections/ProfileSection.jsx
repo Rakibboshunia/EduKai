@@ -202,7 +202,7 @@ const ProfileSection = () => {
         <div className="flex justify-end gap-3">
           <button
             onClick={() => setIsEdit(false)}
-            className="px-6 py-2 border rounded-lg"
+            className="px-6 py-2 border rounded-lg text-black cursor-pointer hover:bg-gray-100 hover:text-red-500 hover:border-red-500 transition-all duration-200"
           >
             Cancel
           </button>
@@ -210,7 +210,7 @@ const ProfileSection = () => {
           <button
             onClick={handleProfileUpdate}
             disabled={loading}
-            className="px-4 py-2 bg-[#2D468A] text-white rounded-lg flex items-center gap-2"
+            className="px-4 py-2 bg-[#2D468A] text-white rounded-lg flex items-center gap-2 cursor-pointer hover:bg-[#3a5ab3] transition-all duration-200"
           >
             {loading ? (
               <>

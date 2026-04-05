@@ -15,7 +15,9 @@ import StatCard from "../components/StatCard";
 import {
   getDashboardStats,
   getRecentActivities,
+  markActivitiesAsRead,
 } from "../api/dashboardApi";
+import toast from "react-hot-toast";
 
 const formatTimeAgo = (dateString) => {
   if (!dateString) return "Just now";
@@ -46,9 +48,10 @@ const ActivitiesCard = ({
   name,
   time,
   dotColor = "bg-[#00C950]",
+  is_read = true,
 }) => {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-[#E8EDFB] p-4 rounded-xl">
+    <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl transition ${is_read ? "bg-[#f4f7fc]" : "bg-[#E8EDFB] border border-[#d6e0f5]"}`}>
       <div className="flex items-start sm:items-center gap-4">
         <span className={`w-2 h-2 mt-2 sm:mt-0 rounded-full ${dotColor}`} />
         <div>
@@ -70,6 +73,26 @@ const Home = () => {
   const [stats, setStats] = useState([]);
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  const fetchActivities = async () => {
+    try {
+      const activity = await getRecentActivities();
+      const activityList = activity?.results || [];
+      setActivities(
+        activityList.map((item) => ({
+          id: item.id,
+          title: item.title || item.message,
+          name: item.user_name || "System",
+          time: item.time_ago || formatTimeAgo(item.created_at),
+          dotColor: item.severity === "error" ? "bg-[#FB2C36]" : "bg-[#00C950]",
+          is_read: item.is_read !== false // assumes true if missing
+        })),
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,55 +104,46 @@ const Home = () => {
         console.log("activity:", activity);
 
         setStats([
-  {
-    title: "Total CV Import",
-    value: dashboard?.summary?.total_candidates || 0,
-    icon: IoDocumentTextOutline,
-    iconBg: "bg-[#2B7FFF]",
-  },
-  {
-    title: "Quality Passed",
-    value: dashboard?.quality?.passed || 0,
-    icon: FaRegCircleCheck,
-    iconBg: "bg-[#00C950]",
-  },
-  {
-    title: "Quality Failed",
-    value: dashboard?.quality?.failed || 0,
-    icon: MdOutlineCancel,
-    iconBg: "bg-[#FB2C36]",
-  },
-  {
-    title: "Pending Review",
-    value: dashboard?.quality?.pending || 0,
-    icon: FaClockRotateLeft,
-    iconBg: "bg-[#F0B100]",
-  },
-  {
-    title: "CV Submitted",
-    value: dashboard?.summary?.total_processed || 0,
-    icon: FiSend,
-    iconBg: "bg-[#AD46FF]",
-  },
-  {
-    title: "Success Rate",
-    value: `${dashboard?.summary?.success_rate || 0}%`,
-    icon: GoGraph,
-    iconBg: "bg-[#2B7FFF]",
-  },
-]);
-        // ✅ FIXED HERE
-        const activityList = activity?.results || [];
+          {
+            title: "Total CV Import",
+            value: dashboard?.summary?.total_candidates || 0,
+            icon: IoDocumentTextOutline,
+            iconBg: "bg-[#2B7FFF]",
+          },
+          {
+            title: "Quality Passed",
+            value: dashboard?.quality?.passed || 0,
+            icon: FaRegCircleCheck,
+            iconBg: "bg-[#00C950]",
+          },
+          {
+            title: "Quality Failed",
+            value: dashboard?.quality?.failed || 0,
+            icon: MdOutlineCancel,
+            iconBg: "bg-[#FB2C36]",
+          },
+          {
+            title: "Pending Review",
+            value: dashboard?.quality?.pending || 0,
+            icon: FaClockRotateLeft,
+            iconBg: "bg-[#F0B100]",
+          },
+          {
+            title: "CV Submitted",
+            value: dashboard?.summary?.total_processed || 0,
+            icon: FiSend,
+            iconBg: "bg-[#AD46FF]",
+          },
+          {
+            title: "Success Rate",
+            value: `${dashboard?.summary?.success_rate || 0}%`,
+            icon: GoGraph,
+            iconBg: "bg-[#2B7FFF]",
+          },
+        ]);
 
-        setActivities(
-          activityList.map((item) => ({
-            title: item.title || item.message,
-            name: item.user_name || "Unknown",
-            time: item.time_ago || formatTimeAgo(item.created_at),
-            dotColor:
-              item.severity === "error" ? "bg-[#FB2C36]" : "bg-[#00C950]",
-          })),
-        );
+        await fetchActivities();
+        
       } catch (error) {
         console.error("Dashboard API error:", error);
       } finally {
@@ -139,6 +153,19 @@ const Home = () => {
 
     fetchData();
   }, []);
+
+  const handleMarkAsRead = async () => {
+    try {
+      await markActivitiesAsRead();
+      toast.success("Activities marked as read");
+      await fetchActivities();
+    } catch (error) {
+      toast.error("Failed to mark activities as read");
+      console.error(error);
+    }
+  };
+
+  const visibleActivities = isExpanded ? activities : activities.slice(0, 5);
 
   return (
     <div className="p-4 sm:p-6">
@@ -174,19 +201,40 @@ const Home = () => {
 
       {/* Activities */}
       <div className="mt-10 bg-white/60 p-4 sm:p-6 rounded-xl border border-[#E5E7EB]">
-        <h3 className="text-[#2D468A] text-xl sm:text-2xl font-semibold">
-          Recent Automated Activities
-        </h3>
-
-        <div className="mt-6 flex flex-col gap-4">
-          {activities.map((activity, index) => (
-            <ActivitiesCard key={index} {...activity} />
-          ))}
+        
+        <div className="flex justify-between items-center flex-wrap gap-3">
+          <h3 className="text-[#2D468A] text-xl sm:text-2xl font-semibold">
+            Recent Automated Activities
+          </h3>
+          <button 
+            onClick={handleMarkAsRead}
+            className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg border border-gray-300 transition shadow-sm cursor-pointer"
+          >
+            ✓ Mark all as read
+          </button>
         </div>
 
-        <button className="mt-6 text-[#2D468A] flex items-center gap-2 font-semibold">
-          View All Activities <FaArrowRight />
-        </button>
+        <div className="mt-6 flex flex-col gap-4">
+          {visibleActivities.map((activity, index) => (
+            <ActivitiesCard key={index} {...activity} />
+          ))}
+          {activities.length === 0 && (
+             <p className="text-gray-500 text-sm italic py-4">No recent activities found.</p>
+          )}
+        </div>
+
+        {activities.length > 5 && (
+          <button 
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="mt-6 text-[#2D468A] flex items-center gap-2 font-semibold hover:underline cursor-pointer"
+          >
+            {isExpanded ? (
+               <>View Less</>
+            ) : (
+               <>See More <FaArrowRight /></>
+            )}
+          </button>
+        )}
       </div>
     </div>
   );

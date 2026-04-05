@@ -7,10 +7,7 @@ import DynamicSearch from "../components/DynamicSearch";
 import Pagination from "../components/Pagination";
 import toast from "react-hot-toast";
 
-import {
-  getCandidates,
-  updateCandidateStatus,
-} from "../api/candidateApi";
+import { getCandidates, updateCandidateStatus } from "../api/candidateApi";
 
 export default function CVQueuePage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -62,7 +59,6 @@ export default function CVQueuePage() {
 
       setTotalPages(res?.pagination?.total_pages || 1);
       setTotalCvs(res?.pagination?.total || 0);
-
     } catch (error) {
       console.error(error);
       toast.error("Failed to load CVs");
@@ -71,25 +67,37 @@ export default function CVQueuePage() {
     }
   };
 
+  const handleCandidateDelete = (id) => {
+    setCVs((prev) => prev.filter((cv) => cv.id !== id));
+    setSearchData((prev) => prev.filter((cv) => cv.id !== id));
+    setTotalCvs((prev) => Math.max(0, prev - 1));
+  };
+
   const tabs = useMemo(
     () => [
       { key: "all", label: "All CVs", count: searchData.length },
       {
+        key: "pending",
+        label: "Pending",
+        count: searchData.filter((c) => c.status === "pending").length,
+      },
+      {
         key: "passed",
         label: "Quality Passed",
-        count: searchData.filter(
-          (c) => c.status === "passed"
-        ).length,
+        count: searchData.filter((c) => c.status === "passed").length,
       },
       {
         key: "failed",
         label: "Quality Failed",
-        count: searchData.filter(
-          (c) => c.status === "failed"
-        ).length,
+        count: searchData.filter((c) => c.status === "failed").length,
+      },
+      {
+        key: "manual",
+        label: "Manual Review",
+        count: searchData.filter((c) => c.status === "manual").length,
       },
     ],
-    [searchData]
+    [searchData],
   );
 
   const tabFiltered = useMemo(() => {
@@ -99,7 +107,6 @@ export default function CVQueuePage() {
 
   return (
     <div className="p-4 space-y-6">
-
       <div>
         <h1 className="text-2xl font-semibold text-[#2D468A]">
           CV Processing Queue
@@ -115,25 +122,19 @@ export default function CVQueuePage() {
         onFilter={setSearchData}
       />
 
-      <Tabs
-        tabs={tabs}
-        active={activeTab}
-        onChange={setActiveTab}
-      />
+      <Tabs tabs={tabs} active={activeTab} onChange={setActiveTab} />
 
       {loading ? (
-  <div className="text-center py-10">Loading...</div>
-) : (
-  <div className="max-h-[90vh] overflow-y-auto pr-2">
-    
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {tabFiltered.map((cv) => (
-        <CVCard key={cv.id} data={cv} />
-      ))}
-    </div>
-
-  </div>
-)}
+        <div className="text-center py-10">Loading...</div>
+      ) : (
+        <div className="max-h-[90vh] overflow-y-auto pr-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {tabFiltered.map((cv) => (
+              <CVCard key={cv.id} data={cv} onDelete={handleCandidateDelete} />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 🔥 PAGINATION */}
       <Pagination
@@ -141,7 +142,6 @@ export default function CVQueuePage() {
         currentPage={page}
         onPageChange={setPage}
       />
-
     </div>
   );
 }

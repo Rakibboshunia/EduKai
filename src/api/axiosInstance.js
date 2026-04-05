@@ -35,7 +35,11 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await axiosInstance.post("/api/auth/refresh/");
+        await axios.post(
+          `${import.meta.env.VITE_BASE_URL}/api/auth/refresh/`,
+          {},
+          { withCredentials: true }
+        );
 
         processQueue(null);
         return axiosInstance(originalRequest);

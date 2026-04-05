@@ -10,6 +10,7 @@ const InputField = ({
   onChange,
   type = "text",
   name,
+  disabled = false,
 }) => {
   return (
     <div className={`flex flex-col w-full gap-2 ${className}`}>
@@ -25,8 +26,9 @@ const InputField = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        disabled={disabled}
         className={`outline-none p-2 text-black placeholder:text-black/50 rounded-lg 
-        focus:ring-2 focus:ring-[#2D468A] bg-white border border-gray-300 ${inputClass}`}
+        focus:ring-2 focus:ring-[#2D468A] bg-white border border-gray-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed ${inputClass}`}
       />
     </div>
   );

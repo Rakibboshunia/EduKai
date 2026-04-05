@@ -2,7 +2,6 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../provider/AuthProvider";
 
 import ProfileSection from "../components/SettingSections/ProfileSection";
-import EmailIntegration from "../components/SettingSections/EmailIntegration";
 import PasswordSection from "../components/SettingSections/PasswordSection";
 
 const Settings = () => {
@@ -36,14 +35,6 @@ const Settings = () => {
           <ProfileSection
             user={user}
             updateUser={updateUser}
-          />
-        </div>
-
-        {/* Email Integration */}
-        <div className="bg-white/80 rounded-2xl shadow-sm">
-          <EmailIntegration
-            openSection={openSection}
-            toggleSection={toggleSection}
           />
         </div>
 

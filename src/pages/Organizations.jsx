@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { FiPlus } from "react-icons/fi";
+import { useEffect, useState, useMemo } from "react";
+import { FiPlus, FiSearch } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 import DynamicSearch from "../components/DynamicSearch";
@@ -35,6 +35,9 @@ export default function Organizations() {
   const [selectedOrg, setSelectedOrg] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
 
+  const [knownPhases, setKnownPhases] = useState(new Set());
+  const [knownTowns, setKnownTowns] = useState(new Set());
+
   /* ================= FETCH ================= */
   const fetchOrganizations = async (pageNumber = 1) => {
     try {
@@ -51,17 +54,27 @@ export default function Organizations() {
       const pagination = data?.pagination || {};
 
       setOrganizations(results);
-
       setPage(pagination?.page || 1);
       setTotalPages(pagination?.total_pages || 1);
       setTotalOrganizations(pagination?.total || 0);
+
+      setKnownPhases(prev => {
+        const next = new Set(prev);
+        results.forEach(r => r.phase && next.add(r.phase));
+        return next;
+      });
+      setKnownTowns(prev => {
+        const next = new Set(prev);
+        results.forEach(r => r.town && next.add(r.town));
+        return next;
+      });
     } catch (err) {
       console.error(err);
     }
   };
 
   useEffect(() => {
-    fetchOrganizations(1);
+      fetchOrganizations(1);
   }, [searchQuery, phaseFilter, townFilter, genderFilter]);
 
   /* ================= SEARCH ================= */
@@ -108,13 +121,8 @@ export default function Organizations() {
     }
   };
 
-  const phaseOptions = [
-    ...new Set(organizations.map((o) => o.phase).filter(Boolean)),
-  ];
-
-  const townOptions = [
-    ...new Set(organizations.map((o) => o.town).filter(Boolean)),
-  ];
+  const phaseOptions = useMemo(() => [...knownPhases].sort(), [knownPhases]);
+  const townOptions = useMemo(() => [...knownTowns].sort(), [knownTowns]);
 
   return (
     <div className="p-6">
@@ -140,14 +148,15 @@ export default function Organizations() {
         </div>
       </div>
 
-      <div className="flex items-center gap-4 mb-6">
-        <div className="flex-1 relative">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="relative">
+          <FiSearch className="absolute left-3 top-[14px] text-gray-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={handleSearchChange}
-            placeholder="Search all organizations..."
-            className="w-full text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+            placeholder="Search organizations..."
+            className="w-full text-black pl-10 pr-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
           />
         </div>
 
@@ -155,11 +164,11 @@ export default function Organizations() {
         <select
           value={phaseFilter}
           onChange={(e) => setPhaseFilter(e.target.value)}
-          className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+          className="w-full text-black px-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
         >
-          <option value="">Phase</option>
+          <option value="">All Phases</option>
           {phaseOptions.map((p) => (
-            <option key={p}>{p}</option>
+            <option key={p} value={p}>{p}</option>
           ))}
         </select>
 
@@ -167,11 +176,11 @@ export default function Organizations() {
         <select
           value={townFilter}
           onChange={(e) => setTownFilter(e.target.value)}
-          className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+          className="w-full text-black px-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
         >
-          <option value="">Town</option>
+          <option value="">All Towns</option>
           {townOptions.map((t) => (
-            <option key={t}>{t}</option>
+            <option key={t} value={t}>{t}</option>
           ))}
         </select>
 
@@ -179,9 +188,9 @@ export default function Organizations() {
         <select
           value={genderFilter}
           onChange={(e) => setGenderFilter(e.target.value)}
-          className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+          className="w-full text-black px-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
         >
-          <option value="">Gender</option>
+          <option value="">All Genders</option>
           <option value="boys">Boys</option>
           <option value="girls">Girls</option>
           <option value="mixed">Mixed</option>

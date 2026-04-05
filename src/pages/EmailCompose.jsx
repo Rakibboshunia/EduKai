@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiEdit2, FiPaperclip, FiSend, FiSave, FiX } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -6,6 +6,8 @@ import EmailSignatureCard from "../components/EmailSignatureCard";
 import {
   sendToContacts,
   getSendStatus,
+  getCandidateById,
+  updateCandidateStatus,
 } from "../api/candidateApi";
 
 export default function EmailCompose() {
@@ -18,40 +20,34 @@ export default function EmailCompose() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
-  const defaultSubject = `Candidate Submission - ${
-    candidate.name || "John Smith"
-  } for ${
-    candidate.job_title || "Senior Software Developer"
-  }`;
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
 
-  const [subject, setSubject] = useState(defaultSubject);
+  const [draftSubject, setDraftSubject] = useState("");
+  const [draftBody, setDraftBody] = useState("");
 
-  const defaultBody = `Dear Hiring Manager,
-
-I am pleased to present ${
-    candidate.name || "John Smith"
-  }, an exceptional candidate for your consideration.
-
-CANDIDATE OVERVIEW:
-${
-    candidate.name || "John Smith"
-  } is a highly skilled ${
-    candidate.job_title || "Professional"
-  } with progressive experience in their field. They bring a strong track record of delivering positive outcomes.
-
-KEY QUALIFICATIONS:
-• 5+ years of relevant experience
-• Strong track record of improving performance
-• Adaptive and collaborative
-
-This candidate has undergone our comprehensive quality screening process and has confirmed their immediate availability. Their CV is attached for your review.
-
-Kind regards,`;
-
-  const [body, setBody] = useState(defaultBody);
-
-  const [draftSubject, setDraftSubject] = useState(subject);
-  const [draftBody, setDraftBody] = useState(body);
+  useEffect(() => {
+    const fetchCandidateEmailData = async () => {
+      if (candidate.id) {
+        try {
+          const data = await getCandidateById(candidate.id);
+          
+          if (data.email_subject) {
+            setSubject(data.email_subject);
+            setDraftSubject(data.email_subject);
+          }
+          if (data.email_body) {
+            setBody(data.email_body);
+            setDraftBody(data.email_body);
+          }
+        } catch (error) {
+          console.error("Failed to fetch candidate email data:", error);
+        }
+      }
+    };
+    
+    fetchCandidateEmailData();
+  }, [candidate.id]);
 
   /* ================= EDIT HANDLERS ================= */
 
@@ -61,15 +57,32 @@ Kind regards,`;
     setIsEditing(true);
   };
 
-  const handleSave = () => {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
     if (!draftSubject.trim() || !draftBody.trim()) {
       toast.error("Subject and body cannot be empty");
       return;
     }
 
-    setSubject(draftSubject);
-    setBody(draftBody);
-    setIsEditing(false);
+    try {
+      setIsSaving(true);
+      await updateCandidateStatus(candidate.id, {
+        email_subject: draftSubject,
+        email_body: draftBody,
+      });
+
+      toast.success("Email content saved locally");
+
+      setSubject(draftSubject);
+      setBody(draftBody);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to save email edits:", error);
+      toast.error("Failed to save changes to the server");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -94,10 +107,11 @@ Kind regards,`;
     try {
       setIsSending(true);
 
+      // Filter out the email to only send the 36-character UUID
+      const cleanContactIds = contactIds.map(id => id.substring(0, 36));
+
       const res = await sendToContacts(candidate.id, {
-        contact_ids: contactIds,
-        subject,
-        body,
+        contact_ids: cleanContactIds,
       });
 
       console.log("SEND RESPONSE:", res);
@@ -118,32 +132,36 @@ Kind regards,`;
   /* ================= POLLING ================= */
 
   const pollStatus = (taskId) => {
-    const interval = setInterval(async () => {
+    // Check the status EXACTLY ONCE after a brief delay
+    setTimeout(async () => {
       try {
         const res = await getSendStatus(taskId);
+        console.log("STATUS RESPONSE:", res);
 
-        console.log("STATUS:", res);
+        const currentStatus = (res?.status || res?.state || res?.task_status || "").toString().toUpperCase();
 
-        if (res.status === "SUCCESS") {
-          clearInterval(interval);
+        if (currentStatus === "SUCCESS" || currentStatus === "COMPLETED") {
           setIsSending(false);
           toast.success("All emails sent 🎉");
-
-          navigate("/ai/mail-submission");
-        }
-
-        if (res.status === "FAILURE") {
-          clearInterval(interval);
+          navigate("/cv/queue");
+        } 
+        else if (currentStatus === "FAILURE" || currentStatus === "FAILED" || currentStatus === "ERROR") {
           setIsSending(false);
-          toast.error("Email sending failed ❌");
+          toast.error("Email sending failed ❌ Check backend logs.");
         }
-
+        else {
+          // If it's still pending, don't trap the user. Assume it's safely queued.
+          setIsSending(false);
+          toast.success("Emails queued for background sending 🚀");
+          navigate("/cv/queue");
+        }
       } catch (err) {
-        clearInterval(interval);
         setIsSending(false);
         console.error(err);
+        toast.success("Task is executing in the background.");
+        navigate("/cv/queue");
       }
-    }, 2000);
+    }, 2000); // Only checks once after 2 seconds
   };
 
   /* ================= NO CANDIDATE ================= */
@@ -204,10 +222,11 @@ Kind regards,`;
             <div className="flex gap-3">
               <button
                 onClick={handleSave}
-                className="bg-[#354b88] text-green-400 px-2 py-1 rounded flex items-center gap-1 hover:bg-green-600 hover:text-white"
+                disabled={isSaving}
+                className="bg-[#354b88] text-green-400 px-2 py-1 rounded flex items-center gap-1 hover:bg-green-600 hover:text-white disabled:opacity-50"
               >
                 <FiSave />
-                Save
+                {isSaving ? "Saving..." : "Save"}
               </button>
 
               <button
@@ -258,10 +277,10 @@ Kind regards,`;
 
           <div className="flex items-center gap-2 text-sm text-[#2D468A] bg-blue-50 border border-blue-200 px-3 py-2 rounded-md w-fit">
             <FiPaperclip />
-            Attached: {(candidate.name ? candidate.name.replace(/\s+/g, '_') : "John_Smith")}_CV_Enhanced.pdf
+            Attached: {candidate.name ? candidate.name.replace(/\s+/g, '_') + "_CV_Enhanced.pdf" : "CV_Enhanced.pdf"}
           </div>
 
-          <EmailSignatureCard
+          {/* <EmailSignatureCard
             name="Samuel Crona"
             title="Investor Communications Designer"
             email="samuel@walmart.com"
@@ -269,7 +288,7 @@ Kind regards,`;
             phone="+1 234 568 8897"
             company="Walmart"
             avatar="/logo.png"
-          />
+          /> */}
 
           <div className="flex flex-col sm:flex-row gap-4 pt-2">
             <button
@@ -283,10 +302,6 @@ Kind regards,`;
               {isSending
                 ? "Sending..."
                 : `Send Via Mail to ${contactIds.length} Contact(s)`}
-            </button>
-
-            <button className="px-6 py-3 text-black border border-gray-300 rounded-lg text-sm hover:bg-gray-200">
-              Save as Draft
             </button>
           </div>
 

@@ -34,14 +34,14 @@ export default function MailSubmission() {
       .then((res) => {
         const mapped = (res?.results || []).map((item) => ({
           // ✅ UNIQUE ID FIX
-          id: `${item.contact_id}-${item.contact_email} `,
+          id: `${item.contact_id}-${item.contact_email}`,
           name: item.organization_name || "N/A",
           email: item.contact_email || "N/A",
           contact_person: item.contact_person || "N/A",
           job_title: item.contact_job_title || "N/A",
           industry: item.organization_local_authority || "N/A",
           location: item.organization_town || "N/A",
-          radius: item.distance_km || "N/A" ,
+          radius: item.distance_km || "N/A",
           phase: item.organization_phase || "N/A",
         }));
 
@@ -67,6 +67,14 @@ export default function MailSubmission() {
   const cityOptions = getUnique("location");
   const jobOptions = getUnique("job_title");
   const phaseOptions = getUnique("phase");
+  
+  // Parse numeric radii, round up, deduplicate, and sort ascending
+  const rawRadius = getUnique("radius");
+  const radiusOptions = [...new Set(
+    rawRadius
+      .map((r) => (r === "N/A" ? null : Math.ceil(Number(r))))
+      .filter((r) => r !== null && !isNaN(r))
+  )].sort((a, b) => a - b);
 
   /* ================= FILTER ================= */
   const filteredOrganizations = useMemo(() => {
@@ -178,84 +186,83 @@ export default function MailSubmission() {
 
       <div className="bg-white p-8 rounded-xl border border-gray-200 space-y-6">
 
-        {/* SEARCH */}
+        {/* SEARCH & FILTERS ON ONE LINE */}
         <div>
           <label className="text-sm font-medium text-[#2D468A] mb-2 block">
-            Search Organizations
+            Search & Filter Organizations
           </label>
 
-          <div className="relative">
-            <FiSearch className="absolute left-3 top-3 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={orgSearch}
-              onChange={(e) => setOrgSearch(e.target.value)}
-              className="w-full text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+
+            {/* SEARCH */}
+            <div className="relative">
+              <FiSearch className="absolute left-3 top-[14px] text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search keywords..."
+                value={orgSearch}
+                onChange={(e) => setOrgSearch(e.target.value)}
+                className="w-full text-black pl-10 pr-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+              />
+            </div>
+
+            {/* LOCATION */}
+            <select
+              value={filters.city || ""}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, city: e.target.value }))
+              }
+              className="w-full text-black px-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+            >
+              <option value="">All Location</option>
+              {cityOptions.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+
+            {/* JOB */}
+            <select
+              value={filters.job || ""}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, job: e.target.value }))
+              }
+              className="w-full text-black px-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+            >
+              <option value="">All Job Title</option>
+              {jobOptions.map((j) => (
+                <option key={j}>{j}</option>
+              ))}
+            </select>
+
+            {/* PHASE */}
+            <select
+              value={filters.phase || ""}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, phase: e.target.value }))
+              }
+              className="w-full text-black px-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+            >
+              <option value="">All Phase</option>
+              {phaseOptions.map((p) => (
+                <option key={p}>{p}</option>
+              ))}
+            </select>
+
+            {/* RADIUS */}
+            <select
+              value={filters.radius || ""}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, radius: e.target.value }))
+              }
+              className="w-full text-black px-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+            >
+              <option value="">All Radius</option>
+              {radiusOptions.map((r) => (
+                <option key={r} value={r}>Up to {r} KM</option>
+              ))}
+            </select>
+
           </div>
-        </div>
-
-        {/* FILTERS */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-
-          {/* LOCATION */}
-          <select
-            value={filters.city || ""}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, city: e.target.value }))
-            }
-            className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
-          >
-            <option value="">All Location</option>
-            {cityOptions.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-
-          {/* JOB */}
-          <select
-            value={filters.job || ""}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, job: e.target.value }))
-            }
-            className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
-          >
-            <option value="">All Job Title</option>
-            {jobOptions.map((j) => (
-              <option key={j}>{j}</option>
-            ))}
-          </select>
-
-          {/* PHASE */}
-          <select
-            value={filters.phase || ""}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, phase: e.target.value }))
-            }
-            className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
-          >
-            <option value="">All Phase</option>
-            {phaseOptions.map((p) => (
-              <option key={p}>{p}</option>
-            ))}
-          </select>
-
-          {/* RADIUS */}
-          <select
-            value={filters.radius || ""}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, radius: e.target.value }))
-            }
-            className="text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
-          >
-            <option value="">Radius</option>
-            <option value="5">5 KM</option>
-            <option value="10">10 KM</option>
-            <option value="20">20 KM</option>
-            <option value="50">50 KM</option>
-          </select>
-
         </div>
 
         {/* SELECT ALL */}

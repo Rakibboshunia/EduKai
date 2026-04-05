@@ -212,7 +212,7 @@ export default function AICVRewriter() {
                 <iframe
                   src={`${originalCV.url}#toolbar=0&navpanes=0`}
                   className="w-full rounded-md border"
-                  style={{ minHeight: "550px" }}
+                  style={{ minHeight: "650px" }}
                 />
               ) : (
                 originalCV
@@ -236,7 +236,7 @@ export default function AICVRewriter() {
                   <iframe
                     src={`${aiCV.url}#toolbar=0&navpanes=0`}
                     className="w-full rounded-md border"
-                    style={{ minHeight: "550px" }}
+                    style={{ minHeight: "650px" }}
                   />
                 ) : editMode ? (
                   tempCV

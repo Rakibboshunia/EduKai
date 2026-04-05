@@ -11,3 +11,9 @@ export const getRecentActivities = async () => {
   const res = await axiosInstance.get("/api/auth/activity/");
   return res.data;
 };
+
+// 🔹 Mark activity as read
+export const markActivitiesAsRead = async () => {
+  const res = await axiosInstance.post("/api/auth/activity/mark-read/");
+  return res.data;
+};
