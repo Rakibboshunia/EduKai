@@ -292,7 +292,7 @@ export default function AICVRewriter() {
             onClick={() =>
               navigate("/ai/mail-submission", { state: { candidate } })
             }
-            className="flex-1 bg-[#2D468B] text-white px-6 py-3 rounded-md flex items-center justify-center gap-2"
+            className="flex-1 bg-[#2D468B] hover:bg-[#1a3060] text-white px-6 py-3 rounded-md flex items-center justify-center gap-2"
           >
             <FiSend />
             Mail Submission
@@ -300,7 +300,7 @@ export default function AICVRewriter() {
 
           <button
             onClick={handleDownload}
-            className="flex-1 border px-6 py-3 rounded-md flex items-center justify-center gap-2"
+            className="flex-1 border text-[#2D468B] hover:text-white hover:bg-[#2D468B] px-6 py-3 rounded-md flex items-center justify-center gap-2 transition-all"
           >
             <FiDownload />
             Download CV

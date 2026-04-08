@@ -183,7 +183,7 @@ const BulkImport = () => {
       <div className="pt-6 flex justify-center">
 
         <button
-          className="bg-[#2D468A] text-white px-28 py-3 text-xl rounded-md hover:bg-[#354e92] cursor-pointer flex items-center gap-2 transition-all"
+          className="bg-[#2D468A] text-white px-28 py-3 text-xl rounded-md hover:bg-[#1a3060] cursor-pointer flex items-center gap-2 transition-all"
           onClick={handleSubmit}
           disabled={loading}
         >

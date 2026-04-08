@@ -23,7 +23,7 @@ const OrganizationSelect = ({ value, onChange }) => {
 
       const newOptions = (res.results || []).map((org) => ({
         value: org.id,
-        label: org.name,
+        label: org.local_authority ? `${org.name} - ${org.local_authority}` : org.name,
       }));
 
       setOptions((prev) =>

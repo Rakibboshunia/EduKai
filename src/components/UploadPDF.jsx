@@ -76,7 +76,7 @@ const UploadPDF = ({ onFileSelect }) => {
           onClick={() => inputRef.current.click()}
           className="bg-[#2D468A] text-white px-10 py-2 rounded-md flex items-center gap-2 hover:bg-[#354e92] cursor-pointer"
         >
-          <HiOutlineDocumentDownload className="w-6 h-6" />
+          <HiOutlineDocumentDownload className="w-6 h-6 hover:bg-[#1a3060]" />
           Select PDF
         </button>
 

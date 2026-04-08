@@ -24,6 +24,7 @@ export default function Organizations() {
   const [phaseFilter, setPhaseFilter] = useState("");
   const [townFilter, setTownFilter] = useState("");
   const [genderFilter, setGenderFilter] = useState("");
+  const [laFilter, setLaFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
   const [page, setPage] = useState(1);
@@ -37,6 +38,7 @@ export default function Organizations() {
 
   const [knownPhases, setKnownPhases] = useState(new Set());
   const [knownTowns, setKnownTowns] = useState(new Set());
+  const [knownLas, setKnownLas] = useState(new Set());
 
   /* ================= FETCH ================= */
   const fetchOrganizations = async (pageNumber = 1) => {
@@ -47,6 +49,7 @@ export default function Organizations() {
       if (phaseFilter) url += `&phase=${encodeURIComponent(phaseFilter)}`;
       if (townFilter) url += `&town=${encodeURIComponent(townFilter)}`;
       if (genderFilter) url += `&gender=${encodeURIComponent(genderFilter)}`;
+      if (laFilter) url += `&local_authority=${encodeURIComponent(laFilter)}`;
 
       const data = await getOrganizations(url);
 
@@ -68,6 +71,11 @@ export default function Organizations() {
         results.forEach(r => r.town && next.add(r.town));
         return next;
       });
+      setKnownLas(prev => {
+        const next = new Set(prev);
+        results.forEach(r => r.local_authority && next.add(r.local_authority));
+        return next;
+      });
     } catch (err) {
       console.error(err);
     }
@@ -75,7 +83,7 @@ export default function Organizations() {
 
   useEffect(() => {
       fetchOrganizations(1);
-  }, [searchQuery, phaseFilter, townFilter, genderFilter]);
+  }, [searchQuery, phaseFilter, townFilter, genderFilter, laFilter]);
 
   /* ================= SEARCH ================= */
   const handleSearchChange = (e) => {
@@ -123,6 +131,7 @@ export default function Organizations() {
 
   const phaseOptions = useMemo(() => [...knownPhases].sort(), [knownPhases]);
   const townOptions = useMemo(() => [...knownTowns].sort(), [knownTowns]);
+  const laOptions = useMemo(() => [...knownLas].sort(), [knownLas]);
 
   return (
     <div className="p-6">
@@ -139,7 +148,7 @@ export default function Organizations() {
         <div className="flex gap-2">
           <button
             onClick={() => setOpenAdd(true)}
-            className="bg-[#2D468B] text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            className="bg-[#2D468B] hover:bg-[#1a3060] text-white px-4 py-2 rounded-lg flex items-center gap-2"
           >
             <FiPlus /> Add Organization
           </button>
@@ -148,7 +157,7 @@ export default function Organizations() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
         <div className="relative">
           <FiSearch className="absolute left-3 top-[14px] text-gray-400" />
           <input
@@ -195,6 +204,18 @@ export default function Organizations() {
           <option value="girls">Girls</option>
           <option value="mixed">Mixed</option>
         </select>
+
+        {/* LA */}
+        <select
+          value={laFilter}
+          onChange={(e) => setLaFilter(e.target.value)}
+          className="w-full text-black px-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+        >
+          <option value="">All Local Authoritys</option>
+          {laOptions.map((la) => (
+            <option key={la} value={la}>{la}</option>
+          ))}
+        </select>
       </div>
 
       <div className="max-h-250 overflow-y-auto pr-2">
@@ -214,7 +235,7 @@ export default function Organizations() {
         <button
           disabled={page === 1}
           onClick={() => fetchOrganizations(page - 1)}
-          className="bg-[#2D468A] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed text-white"
+          className="bg-[#2D468A] hover:bg-[#1a3060] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed text-white"
         >
           Prev
         </button>
@@ -226,7 +247,7 @@ export default function Organizations() {
         <button
           disabled={page === totalPages}
           onClick={() => fetchOrganizations(page + 1)}
-          className="bg-[#2D468A] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed text-white"
+          className="bg-[#2D468A] hover:bg-[#1a3060] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed text-white"
         >
           Next
         </button>

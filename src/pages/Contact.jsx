@@ -30,6 +30,7 @@ export default function Contact() {
   const [totalContacts, setTotalContacts] = useState(0);
 
   const [jobFilter, setJobFilter] = useState("");
+  const [knownJobs, setKnownJobs] = useState(new Set());
 
   const [organizations, setOrganizations] = useState([]);
   const [selectedOrg, setSelectedOrg] = useState("");
@@ -47,9 +48,12 @@ export default function Contact() {
   /* ================= FETCH CONTACTS ================= */
   const fetchContacts = async (pageNumber = 1) => {
     try {
-      const res = await getContacts(
-        `/api/organizations/contacts/?page=${pageNumber}&page_size=100`
-      );
+      let url = `/api/organizations/contacts/?page=${pageNumber}&page_size=100`;
+      if (jobFilter) {
+        url += `&job_title=${encodeURIComponent(jobFilter)}`;
+      }
+      
+      const res = await getContacts(url);
 
       const results = res?.results || [];
 
@@ -61,9 +65,55 @@ export default function Contact() {
       setTotalPages(res?.pagination?.total_pages || 1);
       setTotalContacts(res?.pagination?.total || 0);
 
+      setKnownJobs(prev => {
+        const next = new Set(prev);
+        results.forEach(r => r.job_title && next.add(r.job_title));
+        return next;
+      });
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.error("Fetch Contacts Error:", err);
+    }
+  };
+
+  /* ================= FETCH ALL JOBS FOR DROPDOWN ================= */
+  const fetchAllJobs = async () => {
+    try {
+      // 1. Fetch first page to get total pages
+      const res = await getContacts("/api/organizations/contacts/?page=1&page_size=100");
+      
+      let jobs = new Set();
+      const firstResults = res?.results || [];
+      firstResults.forEach(r => r.job_title && jobs.add(r.job_title));
+      
+      // Update with first page immediately
+      setKnownJobs(new Set(jobs));
+
+      const totalPages = res?.pagination?.total_pages || 40;
+
+      // 2. Fetch the remaining pages concurrently (cap at 50 to avoid overloading backend)
+      if (totalPages > 1) {
+        const maxPages = Math.min(totalPages, 50);
+        const promises = [];
+        for (let p = 2; p <= maxPages; p++) {
+          promises.push(getContacts(`/api/organizations/contacts/?page=${p}&page_size=100`));
+        }
+
+        const responses = await Promise.all(promises.map(p => p.catch(() => null)));
+        
+        responses.forEach(response => {
+          if (response && response.results) {
+            response.results.forEach(r => r.job_title && jobs.add(r.job_title));
+          }
+        });
+
+        // 3. Final update with all collected jobs
+        setKnownJobs(new Set(jobs));
+      }
+
+    } catch (err) {
+      console.error("Fetch All Jobs Error:", err);
     }
   };
 
@@ -88,11 +138,12 @@ export default function Contact() {
 
   useEffect(() => {
     fetchOrganizations();
+    fetchAllJobs();
   }, []);
 
   useEffect(() => {
     fetchContacts(page);
-  }, [page]);
+  }, [page, jobFilter]);
 
   /* ================= IMPORT STATUS POLLING ================= */
   const checkImportStatus = async (taskId) => {
@@ -156,17 +207,8 @@ export default function Contact() {
   /* ================= FILTER ================= */
   useEffect(() => {
     let data = [...(searchResult.length ? searchResult : contacts)];
-
-    if (jobFilter) {
-      data = data.filter(
-        (item) =>
-          item.job_title &&
-          item.job_title.toLowerCase().includes(jobFilter.toLowerCase())
-      );
-    }
-
     setFilteredData(data);
-  }, [searchResult, jobFilter, contacts, selectedOrg]);
+  }, [searchResult, contacts]);
 
   /* ================= ADD ================= */
   const handleAddContact = async (formData) => {
@@ -214,9 +256,7 @@ export default function Contact() {
   };
 
   /* ================= JOB OPTIONS ================= */
-  const jobOptions = [
-    ...new Set(contacts.map((c) => c.job_title).filter(Boolean)),
-  ];
+  const jobOptions = [...knownJobs].sort();
 
   return (
     <div className="p-5">
@@ -234,7 +274,7 @@ export default function Contact() {
         <div className="flex gap-2">
           <button
             onClick={() => setOpenAdd(true)}
-            className="bg-[#2D468B] text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            className="bg-[#2D468B] hover:bg-[#1a3060] text-white px-4 py-2 rounded-lg flex items-center gap-2"
           >
             <FiPlus /> Add Contact
           </button>
@@ -283,7 +323,10 @@ export default function Contact() {
         {/* JOB FILTER */}
         <select
           value={jobFilter}
-          onChange={(e) => setJobFilter(e.target.value)}
+          onChange={(e) => {
+            setJobFilter(e.target.value);
+            setPage(1);
+          }}
           className="text-black pl-4 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
         >
           <option value="">All Jobs</option>
@@ -295,7 +338,7 @@ export default function Contact() {
 
       {/* CARDS */}
       <div className="max-h-250 overflow-y-auto pr-2">
-        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {filteredData.map((contact) => (
             <ContactCard
               key={contact.id}
@@ -312,7 +355,7 @@ export default function Contact() {
         <button
           disabled={page === 1}
           onClick={() => setPage((prev) => prev - 1)}
-          className="bg-[#2D468A] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed text-white"
+          className="bg-[#2D468A] hover:bg-[#1a3060] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed text-white"
         >
           Prev
         </button>
@@ -324,7 +367,7 @@ export default function Contact() {
         <button
           disabled={page === totalPages}
           onClick={() => setPage((prev) => prev + 1)}
-          className="bg-[#2D468A] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed text-white"
+          className="bg-[#2D468A] hover:bg-[#1a3060] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed text-white"
         >
           Next
         </button>

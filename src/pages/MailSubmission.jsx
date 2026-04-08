@@ -300,7 +300,7 @@ export default function MailSubmission() {
               state: { contactIds: selectedIds, candidate },
             })
           }
-          className={`w-full py-3 rounded-lg font-medium text-sm
+          className={`w-full py-3 rounded-lg font-medium text-sm hover:bg-[#1a3060]
             ${
               selectedIds.length
                 ? "bg-[#2D468A] text-white"

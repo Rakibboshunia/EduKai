@@ -33,7 +33,7 @@ export default function ImportExcelButton({ onFileUpload }) {
   return (
     <label className="border border-[#2D468A] px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer bg-white text-black hover:bg-[#2D468A] hover:text-white transition">
       <FiUpload />
-      Import Excel
+      Import From Excel File
 
       <input
         type="file"
