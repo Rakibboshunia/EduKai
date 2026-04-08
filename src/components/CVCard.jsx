@@ -141,7 +141,9 @@ export default function CVCard({ data, onStatusChange, onAvailabilityChange, onD
       // Only send fields that actually changed to avoid backend validation errors (like unique email)
       const payload = {};
       if (formData.name !== data.name) payload.name = formData.name;
-      if (formData.name_without_surname !== data.name_without_surname) payload.name_without_surname = formData.name_without_surname;
+      if (formData.name_without_surname !== data.name_without_surname) {
+        payload.name_without_surname = formData.name_without_surname ? formData.name_without_surname.trim().split(" ").pop() : "";
+      }
       if (formData.email !== data.email) payload.email = formData.email;
       if (formData.phone !== data.phone) payload.whatsapp_number = formData.phone;
       if (Number(formData.experience) !== Number(data.experience)) payload.years_of_experience = formData.experience;

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import toast from "react-hot-toast";
+import { FiSearch } from "react-icons/fi";
 
 import DynamicSearch from "../components/DynamicSearch";
 import AddOrganizationModal from "../components/AddOrganizationModal";
@@ -25,8 +26,7 @@ import { getOrganizations } from "../api/organizationApi";
 
 export default function Contact() {
   const [contacts, setContacts] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [searchResult, setSearchResult] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [totalContacts, setTotalContacts] = useState(0);
 
   const [jobFilter, setJobFilter] = useState("");
@@ -49,6 +49,9 @@ export default function Contact() {
   const fetchContacts = async (pageNumber = 1) => {
     try {
       let url = `/api/organizations/contacts/?page=${pageNumber}&page_size=100`;
+      if (searchQuery) {
+        url += `&search=${encodeURIComponent(searchQuery)}`;
+      }
       if (jobFilter) {
         url += `&job_title=${encodeURIComponent(jobFilter)}`;
       }
@@ -58,8 +61,6 @@ export default function Contact() {
       const results = res?.results || [];
 
       setContacts(results);
-      setFilteredData(results);
-      setSearchResult([]);
 
       setPage(res?.pagination?.page || 1);
       setTotalPages(res?.pagination?.total_pages || 1);
@@ -143,7 +144,7 @@ export default function Contact() {
 
   useEffect(() => {
     fetchContacts(page);
-  }, [page, jobFilter]);
+  }, [page, jobFilter, searchQuery]);
 
   /* ================= IMPORT STATUS POLLING ================= */
   const checkImportStatus = async (taskId) => {
@@ -199,16 +200,7 @@ export default function Contact() {
     }
   };
 
-  /* ================= SEARCH ================= */
-  const handleSearchFilter = (filtered) => {
-    setSearchResult(filtered);
-  };
 
-  /* ================= FILTER ================= */
-  useEffect(() => {
-    let data = [...(searchResult.length ? searchResult : contacts)];
-    setFilteredData(data);
-  }, [searchResult, contacts]);
 
   /* ================= ADD ================= */
   const handleAddContact = async (formData) => {
@@ -219,11 +211,13 @@ export default function Contact() {
       }
 
       await createContact(selectedOrg, formData);
+      toast.success("Contact added successfully!");
 
       fetchContacts(page);
       setOpenAdd(false);
     } catch (err) {
       console.error(err);
+      toast.error(err.response?.data?.message || "Failed to add contact");
     }
   };
 
@@ -237,10 +231,12 @@ export default function Contact() {
   const handleUpdateContact = async (data) => {
     try {
       await updateContact(data.id, data);
+      toast.success("Contact updated successfully!");
       fetchContacts(page);
       setOpenEdit(false);
     } catch (err) {
       console.error(err);
+      toast.error(err.response?.data?.message || "Failed to update contact");
     }
   };
 
@@ -248,10 +244,12 @@ export default function Contact() {
   const confirmDelete = async () => {
     try {
       await deleteContact(deleteId);
+      toast.success("Contact deleted successfully!");
       setDeleteId(null);
       fetchContacts(page);
-    } catch {
-      toast.error("Delete failed");
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Delete failed");
     }
   };
 
@@ -292,17 +290,17 @@ export default function Contact() {
 
       {/* SEARCH + FILTER */}
       <div className="flex items-center gap-4 mb-6">
-        <div className="flex-1">
-          <DynamicSearch
-            data={contacts}
-            searchKeys={[
-              "contact_person",
-              "job_title",
-              "work_email",
-              "organization.name",
-              "organization.town",
-            ]}
-            onFilter={handleSearchFilter}
+        <div className="relative flex-1">
+          <FiSearch className="absolute left-3 top-[14px] text-gray-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Search contacts..."
+            className="w-full text-black pl-10 pr-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
           />
         </div>
 
@@ -339,7 +337,7 @@ export default function Contact() {
       {/* CARDS */}
       <div className="max-h-250 overflow-y-auto pr-2">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {filteredData.map((contact) => (
+          {contacts.map((contact) => (
             <ContactCard
               key={contact.id}
               data={contact}

@@ -92,9 +92,15 @@ export default function Organizations() {
 
   /* ================= ADD ================= */
   const handleAddOrganization = async (formData) => {
-    await createOrganization(formData);
-    fetchOrganizations(page);
-    setOpenAdd(false);
+    try {
+      await createOrganization(formData);
+      toast.success("Organization added successfully!");
+      fetchOrganizations(page);
+      setOpenAdd(false);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to add organization");
+    }
   };
 
   /* ================= EDIT ================= */
@@ -105,16 +111,28 @@ export default function Organizations() {
   };
 
   const handleUpdateOrganization = async (data) => {
-    await updateOrganization(data.id, data);
-    fetchOrganizations(page);
-    setOpenEdit(false);
+    try {
+      await updateOrganization(data.id, data);
+      toast.success("Organization updated successfully!");
+      fetchOrganizations(page);
+      setOpenEdit(false);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to update organization");
+    }
   };
 
   /* ================= DELETE ================= */
   const confirmDelete = async () => {
-    await deleteOrganization(deleteId);
-    setDeleteId(null);
-    fetchOrganizations(page);
+    try {
+      await deleteOrganization(deleteId);
+      toast.success("Organization deleted successfully!");
+      setDeleteId(null);
+      fetchOrganizations(page);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to delete organization");
+    }
   };
 
   /* ================= IMPORT ================= */

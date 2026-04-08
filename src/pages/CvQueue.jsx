@@ -34,25 +34,38 @@ export default function CVQueuePage() {
 
       const list = Array.isArray(res?.results) ? res.results : [];
 
-      const formatted = list.map((item) => ({
-        id: item.id,
-        name: item.name || "Unknown",
-        email: item.email || "No email",
-        phone: item.whatsapp_number || "No phone",
-        experience: Number(item.years_of_experience) || 0,
-        skills: Array.isArray(item.skills)
-          ? item.skills
-          : item.skills?.split(",") || [],
-        status: item.quality_status || "failed",
-        availability: item.availability_status || "not_available",
-        createdAt: item.created_at
-          ? new Date(item.created_at).toLocaleString()
-          : "N/A",
-        photo: item.profile_photo_url || null,
-        name_without_surname: item.name_without_surname || "",
-        location: item.location || "",
-        job_titles: item.job_titles || [],
-      }));
+      const formatted = list.map((item) => {
+        const fullName = item.name || "Unknown";
+        let rawSurname = item.name_without_surname || "";
+        let finalSurname = "";
+        
+        if (rawSurname) {
+          finalSurname = rawSurname.trim().split(" ").pop() || "";
+        } else {
+          const parts = fullName.trim().split(" ");
+          finalSurname = parts.length > 1 ? parts.pop() : "";
+        }
+
+        return {
+          id: item.id,
+          name: fullName,
+          email: item.email || "No email",
+          phone: item.whatsapp_number || "No phone",
+          experience: Number(item.years_of_experience) || 0,
+          skills: Array.isArray(item.skills)
+            ? item.skills
+            : item.skills?.split(",") || [],
+          status: item.quality_status || "failed",
+          availability: item.availability_status || "not_available",
+          createdAt: item.created_at
+            ? new Date(item.created_at).toLocaleString()
+            : "N/A",
+          photo: item.profile_photo_url || null,
+          name_without_surname: finalSurname,
+          location: item.location || "",
+          job_titles: item.job_titles || [],
+        };
+      });
 
       setCVs(formatted);
       setSearchData(formatted);
