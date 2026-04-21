@@ -113,11 +113,11 @@ export default function Availability() {
     <div className="p-4 sm:p-6 lg:p-8 w-full">
 
       <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#2D468A]">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2D468A]">
           Availability Check
         </h1>
 
-        <p className="text-sm sm:text-base text-gray-600 mt-1">
+        <p className="text-sm sm:text-base text-gray-600 mt-5">
           Track candidate availability via Email and WhatsApp.
         </p>
 
@@ -126,7 +126,7 @@ export default function Availability() {
         </p>
       </div>
 
-      <div className="mb-6">
+      <div className="mb-5">
         <DynamicSearch
           data={data}
           searchKeys={["name", "email", "whatsapp", "jobTitle"]}

@@ -153,20 +153,20 @@ export default function Organizations() {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#2D468A]">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2D468A]">
             Organization Management
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 mt-2 md:mt-4">
             Total organizations: {totalOrganizations}
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2 sm:gap-3">
           <button
             onClick={() => setOpenAdd(true)}
-            className="bg-[#2D468B] hover:bg-[#1a3060] text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            className="bg-[#2D468B] hover:bg-[#1a3060] text-white px-4 py-2.5 sm:py-2 rounded-lg flex items-center justify-center gap-2 w-full sm:w-auto transition font-medium text-sm sm:text-base whitespace-nowrap"
           >
             <FiPlus /> Add Organization
           </button>

@@ -39,10 +39,8 @@ export const deleteContact = async (id) => {
 export const importContacts = async (file, orgId) => {
   const formData = new FormData();
 
-  // 🔥 IMPORTANT (backend field name match korte hobe)
   formData.append("file", file);
-  formData.append("organization", orgId); 
-  formData.append("organization_id", orgId); 
+  formData.append("organization", orgId);
 
   const res = await axiosInstance.post(
     "/api/organizations/import/contacts/",

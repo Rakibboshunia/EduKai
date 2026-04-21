@@ -116,34 +116,28 @@ const BulkImport = () => {
       <Toaster position="top-right" />
 
       <div className="flex items-center justify-between">
-
-        <div>
+        <div className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2D468A]">
           <Breadcrumb />
 
-          <p className="text-[#4A5565] text-sm md:text-base mt-1.5">
+          <p className="text-[#4A5565] text-sm sm:text-base md:text-lg mt-5">
             Recruitment Management System
           </p>
         </div>
-
       </div>
 
       <div className="mt-6 col-span-12">
-
         {activeTab === "upload" && (
-
           <UploadPDF
             onFileSelect={(file) => {
               console.log("Selected files:", file);
               setFiles(file);
             }}
           />
-
         )}
 
       </div>
 
       <div className="mt-6">
-
         <QualityCheck
           experience={experience}
           setExperience={setExperience}
@@ -152,7 +146,6 @@ const BulkImport = () => {
           jobRole={jobRole}
           setJobRole={setJobRole}
         />
-
       </div>
 
       {loading && (

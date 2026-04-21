@@ -91,7 +91,7 @@ export default function Contact() {
       // Update with first page immediately
       setKnownJobs(new Set(jobs));
 
-      const totalPages = res?.pagination?.total_pages || 40;
+      const totalPages = res?.pagination?.total_pages || 1;
 
       // 2. Fetch the remaining pages concurrently (cap at 50 to avoid overloading backend)
       if (totalPages > 1) {
@@ -187,7 +187,7 @@ export default function Contact() {
     try {
       setImporting(true);
 
-      const res = await importContacts(file);
+      const res = await importContacts(file, selectedOrg);
 
       if (!res?.task_id) throw new Error("Task ID missing");
 
@@ -259,20 +259,20 @@ export default function Contact() {
   return (
     <div className="p-5">
       {/* HEADER */}
-      <div className="flex justify-between mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#2D468A]">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2D468A]">
             Contacts Management
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 mt-2 md:mt-4">
             Total records in database: {totalContacts}
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2 sm:gap-3">
           <button
             onClick={() => setOpenAdd(true)}
-            className="bg-[#2D468B] hover:bg-[#1a3060] text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            className="bg-[#2D468B] hover:bg-[#1a3060] text-white px-4 py-2.5 sm:py-2 rounded-lg flex items-center justify-center gap-2 w-full sm:w-auto transition font-medium text-sm sm:text-base whitespace-nowrap"
           >
             <FiPlus /> Add Contact
           </button>
@@ -289,8 +289,8 @@ export default function Contact() {
       )}
 
       {/* SEARCH + FILTER */}
-      <div className="flex items-center gap-4 mb-6">
-        <div className="relative flex-1">
+      <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
+        <div className="relative w-full sm:w-1/2">
           <FiSearch className="absolute left-3 top-[14px] text-gray-400" />
           <input
             type="text"
@@ -325,7 +325,7 @@ export default function Contact() {
             setJobFilter(e.target.value);
             setPage(1);
           }}
-          className="text-black pl-4 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+          className="w-full sm:w-1/2 text-black pl-4 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
         >
           <option value="">All Jobs</option>
           {jobOptions.map((job) => (

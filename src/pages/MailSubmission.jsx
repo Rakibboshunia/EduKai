@@ -24,15 +24,35 @@ export default function MailSubmission() {
   useEffect(() => {
     if (!candidate.id) return;
 
-    // Fetch a large pool of nearby contacts once. Client-side will handle all searching and filtering.
-    const params = {
-      page: 1,
-      page_size: 1000, 
-    };
+    const fetchAllContacts = async () => {
+      try {
+        // Fetch first page to get total pages
+        const res = await getNearbyContacts(candidate.id, { page: 1, page_size: 100 });
+        let allResults = [...(res?.results || [])];
+        
+        let totalPages = 1;
+        if (res?.pagination?.total_pages) {
+          totalPages = res.pagination.total_pages;
+        } else if (res?.count) {
+          totalPages = Math.ceil(res.count / 100);
+        }
 
-    getNearbyContacts(candidate.id, params)
-      .then((res) => {
-        const mapped = (res?.results || []).map((item) => ({
+        // Fetch remaining pages concurrently
+        if (totalPages > 1) {
+          const promises = [];
+          for (let p = 2; p <= totalPages; p++) {
+            promises.push(getNearbyContacts(candidate.id, { page: p, page_size: 100 }));
+          }
+
+          const responses = await Promise.all(promises.map((p) => p.catch(() => null)));
+          responses.forEach((r) => {
+            if (r && r.results) {
+              allResults = [...allResults, ...r.results];
+            }
+          });
+        }
+
+        const mapped = allResults.map((item) => ({
           // ✅ UNIQUE ID FIX
           id: `${item.contact_id}-${item.contact_email}`,
           name: item.organization_name || "N/A",
@@ -46,12 +66,13 @@ export default function MailSubmission() {
         }));
 
         setOrganizations(mapped);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error(err);
         setOrganizations([]);
-      });
+      }
+    };
 
+    fetchAllContacts();
   }, [candidate.id]);
 
   /* ================= RESET PAGE ================= */
@@ -174,14 +195,18 @@ export default function MailSubmission() {
   return (
     <div className="p-6 space-y-8">
 
-      <div className="space-y-2">
-        <h2 className="text-3xl font-semibold text-[#2D468A]">
-          Email Submission
-        </h2>
-
-        <p className="text-sm text-gray-600">
-          Generate and send candidate application emails automatically
-        </p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
+        <div>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2D468A]">
+            Email Submission
+          </h2>
+          <p className="text-sm text-gray-600 mt-4">
+            Generate and send candidate application emails automatically
+          </p>
+        </div>
+        {/* <div className="bg-[#2D468A]/10 text-[#2D468A] px-4 py-2 rounded-lg font-medium border border-[#2D468A]/20">
+          Total Contacts Loaded: {organizations.length}
+        </div> */}
       </div>
 
       <div className="bg-white p-8 rounded-xl border border-gray-200 space-y-6">

@@ -169,11 +169,11 @@ export default function AICVRewriter() {
   return (
     <div className="p-4 sm:p-6">
       <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#2D468A]">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2D468A]">
           AI CV Rewriter & Anonymization
         </h1>
 
-        <p className="text-sm text-gray-600 mt-1 max-w-2xl">
+        <p className="text-sm sm:text-base text-gray-600 mt-4 max-w-2xl">
           Enhance CVs with AI and apply anonymization settings
         </p>
       </div>

@@ -121,10 +121,10 @@ export default function CVQueuePage() {
   return (
     <div className="p-4 space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-[#2D468A]">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2D468A]">
           CV Processing Queue
         </h1>
-        <p className="text-sm sm:text-base text-gray-600 mt-2">
+        <p className="text-sm sm:text-base text-gray-600 mt-4">
           Total records in database: {totalCvs}
         </p>
       </div>

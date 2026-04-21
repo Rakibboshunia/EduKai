@@ -193,11 +193,11 @@ export default function EmailCompose() {
     <div className="p-4 space-y-16">
 
       <div className="space-y-2">
-        <h2 className="text-3xl font-semibold text-[#2D468A]">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2D468A]">
           Email Submission
         </h2>
 
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 mt-4">
           Generate and send candidate specification emails automatically
         </p>
       </div>
