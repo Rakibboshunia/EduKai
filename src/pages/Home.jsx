@@ -169,10 +169,11 @@ const Home = () => {
 
   return (
     <div className="p-4 sm:p-6">
+      <div className="max-w-[1800px] mx-auto space-y-8 mb-5 bg-white/70 p-6 sm:p-8 rounded-2xl border border-blue-50 shadow-sm">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 ">
         <div>
-          <h3 className="text-[#2D468A] text-2xl sm:text-3xl font-semibold">
+          <h3 className="text-[#2D468A] text-2xl sm:text-2xl lg:text-3xl font-semibold">
             Dashboard Overview
           </h3>
           <p className="text-[#4A5565] text-sm sm:text-base mt-1.5 max-w-xl">
@@ -181,18 +182,19 @@ const Home = () => {
         </div>
 
         <Link to="cv/automation/platform">
-          <button className="bg-[#2D468B] hover:bg-[#1a3060] text-white px-5 py-2.5 rounded-md flex items-center gap-2">
-            <CiImport className="w-5 h-5" />
+          <button className="bg-[#2D468B] hover:bg-[#1a3060] text-white px-6 py-3.5 rounded-md flex items-center gap-2 transition shadow-sm">
+            <CiImport className="w-6 h-6" />
             Bulk Import
           </button>
         </Link>
       </div>
+    </div>
 
       {/* Stats */}
       {loading ? (
         <p className="mt-6">Loading...</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6 mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-8 mt-8 bg-white/70 p-8 sm:p-8 rounded-2xl border border-blue-50 shadow-sm">
           {stats.map((item, index) => (
             <StatCard key={index} {...item} />
           ))}
@@ -200,7 +202,7 @@ const Home = () => {
       )}
 
       {/* Activities */}
-      <div className="mt-10 bg-white/60 p-4 sm:p-6 rounded-xl border border-[#E5E7EB]">
+      <div className="mt-8 bg-white/70 p-8 sm:p-8 rounded-xl border border-[#E5E7EB]">
         
         <div className="flex justify-between items-center flex-wrap gap-3">
           <h3 className="text-[#2D468A] text-xl sm:text-2xl font-semibold">

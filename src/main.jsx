@@ -11,14 +11,12 @@ import { Toaster } from "react-hot-toast";
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <Toaster />
-          <RouterProvider router={router} />
-        </AuthProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
-  </StrictMode>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Toaster />
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );

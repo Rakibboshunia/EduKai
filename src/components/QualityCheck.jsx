@@ -12,7 +12,7 @@ const QualityCheck = ({
 }) => {
 
   return (
-    <div className="bg-white/60 p-8 rounded-xl">
+    <div className="bg-white/60 p-8 rounded-xl border border-gray-300">
 
       <h3 className="text-[#2D468A] text-2xl font-semibold">
         Automated Quality Check Rules

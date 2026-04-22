@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { FiSearch } from "react-icons/fi";
+import { FiSearch, FiSend } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getNearbyContacts } from "../api/candidateApi";
 import Pagination from "../components/Pagination";
@@ -193,41 +193,56 @@ export default function MailSubmission() {
 
   /* ================= UI ================= */
   return (
-    <div className="p-6 space-y-8">
-
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
-        <div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2D468A]">
-            Email Submission
-          </h2>
-          <p className="text-sm text-gray-600 mt-4">
-            Generate and send candidate application emails automatically
-          </p>
+    <div className="p-4 sm:p-8 max-w-[1800px] mx-auto space-y-8 mb-10">
+      
+      {/* Header Section */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 bg-white p-6 sm:p-8 rounded-2xl border border-blue-50 shadow-sm relative overflow-hidden">
+        {/* Subtle Background Decoration */}
+        <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full -z-10 opacity-60 pointer-events-none"></div>
+        
+        <div className="flex flex-col md:flex-row justify-between w-full h-full relative z-10 gap-6">
+          <div className="space-y-2">
+            <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#2D468A]">
+              Mail Submission Queue
+            </h1>
+            <p className="text-gray-500 font-medium text-sm sm:text-base max-w-xl mt-5">
+              Select contacts and automatically distribute candidate applications dynamically.
+            </p>
+          </div>
+          <div className="z-10 bg-gradient-to-r from-blue-50 to-blue-100/50 text-[#2D468A] px-5 py-3 rounded-xl border border-blue-200 shadow-sm flex items-center justify-between gap-6 w-full sm:w-auto">
+            <div className="flex flex-col">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#2D468A]/70">Loaded Contacts</span>
+              <span className="text-xl font-extrabold leading-none">{organizations.length}</span>
+            </div>
+            <div className="w-px h-8 bg-blue-200/50 hidden sm:block"></div>
+            <div className="flex flex-col pl-2 sm:pl-0">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#2D468A]/70">Selected</span>
+              <span className="text-xl font-extrabold leading-none text-green-600">{selectedIds.length}</span>
+            </div>
+          </div>
         </div>
-        {/* <div className="bg-[#2D468A]/10 text-[#2D468A] px-4 py-2 rounded-lg font-medium border border-[#2D468A]/20">
-          Total Contacts Loaded: {organizations.length}
-        </div> */}
       </div>
 
-      <div className="bg-white p-8 rounded-xl border border-gray-200 space-y-6">
-
-        {/* SEARCH & FILTERS ON ONE LINE */}
-        <div>
-          <label className="text-sm font-medium text-[#2D468A] mb-2 block">
-            Search & Filter Organizations
+      {/* Main Content Area */}
+      <div className="bg-white rounded-3xl border border-blue-50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col">
+        
+        {/* Filters Area */}
+        <div className="p-6 border-b border-gray-100 bg-slate-50/50">
+          <label className="text-xs font-bold tracking-wider uppercase text-[#2D468A] mb-3 block">
+            Search & Filter Audience
           </label>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            
             {/* SEARCH */}
             <div className="relative">
-              <FiSearch className="absolute left-3 top-[14px] text-gray-400" />
+              <FiSearch className="absolute left-3.5 top-[14px] text-[#2D468A]/60" size={18} />
               <input
                 type="text"
                 placeholder="Search keywords..."
                 value={orgSearch}
                 onChange={(e) => setOrgSearch(e.target.value)}
-                className="w-full text-black pl-10 pr-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+                className="w-full text-gray-800 pl-10 pr-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm"
               />
             </div>
 
@@ -237,9 +252,9 @@ export default function MailSubmission() {
               onChange={(e) =>
                 setFilters((prev) => ({ ...prev, city: e.target.value }))
               }
-              className="w-full text-black px-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
             >
-              <option value="">All Location</option>
+              <option value="">All Locations</option>
               {cityOptions.map((c) => (
                 <option key={c}>{c}</option>
               ))}
@@ -251,9 +266,9 @@ export default function MailSubmission() {
               onChange={(e) =>
                 setFilters((prev) => ({ ...prev, job: e.target.value }))
               }
-              className="w-full text-black px-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
             >
-              <option value="">All Job Title</option>
+              <option value="">All Job Titles</option>
               {jobOptions.map((j) => (
                 <option key={j}>{j}</option>
               ))}
@@ -265,9 +280,9 @@ export default function MailSubmission() {
               onChange={(e) =>
                 setFilters((prev) => ({ ...prev, phase: e.target.value }))
               }
-              className="w-full text-black px-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
             >
-              <option value="">All Phase</option>
+              <option value="">All Phases</option>
               {phaseOptions.map((p) => (
                 <option key={p}>{p}</option>
               ))}
@@ -279,9 +294,9 @@ export default function MailSubmission() {
               onChange={(e) =>
                 setFilters((prev) => ({ ...prev, radius: e.target.value }))
               }
-              className="w-full text-black px-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
             >
-              <option value="">All Radius</option>
+              <option value="">All Radius Data</option>
               {radiusOptions.map((r) => (
                 <option key={r} value={r}>Up to {r} KM</option>
               ))}
@@ -290,50 +305,78 @@ export default function MailSubmission() {
           </div>
         </div>
 
-        {/* SELECT ALL */}
-        <label className="flex items-center gap-2 text-sm text-[#2D468A]">
-          <input
-            type="checkbox"
-            checked={
-              paginatedOrganizations.length > 0 &&
-              paginatedOrganizations.every((o) =>
-                selectedIds.includes(o.id)
-              )
-            }
-            onChange={toggleSelectAll}
-          />
-          Select All (This Page)
-        </label>
+        {/* Data Container */}
+        <div className="p-6 sm:p-8 bg-gray-50/30 font-medium">
+          
+          <div className="flex items-center justify-between mb-4">
+            <label className="flex items-center gap-3 text-sm font-bold text-[#2D468A] bg-white border border-blue-100 shadow-sm px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors w-max">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2D468A] rounded border-gray-300 focus:ring-[#2D468A]"
+                checked={
+                  paginatedOrganizations.length > 0 &&
+                  paginatedOrganizations.every((o) =>
+                    selectedIds.includes(o.id)
+                  )
+                }
+                onChange={toggleSelectAll}
+              />
+              Select All on Current Page
+            </label>
+          </div>
 
-        {/* TABLE */}
-        <div className="overflow-x-auto">
-          <Table columns={columns} data={paginatedOrganizations} />
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <Table columns={columns} data={paginatedOrganizations} />
+            </div>
+          </div>
+          
+          {organizations.length === 0 && (
+             <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-xl border border-dashed border-gray-300 mt-4">
+               <div className="bg-gray-50 p-4 rounded-full mb-4">
+                 <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+               </div>
+               <h3 className="text-xl font-bold tracking-tight text-gray-700">No Contacts Found</h3>
+               <p className="text-gray-500 text-sm mt-2 max-w-sm">
+                 Please adjust your search and filters to discover candidates.
+               </p>
+             </div>
+          )}
+
         </div>
 
-        {/* PAGINATION */}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
-
-        {/* BUTTON */}
-        <button
-          disabled={selectedIds.length === 0}
-          onClick={() =>
-            navigate("/ai/mail-submission/compose", {
-              state: { contactIds: selectedIds, candidate },
-            })
-          }
-          className={`w-full py-3 rounded-lg font-medium text-sm hover:bg-[#1a3060]
-            ${
-              selectedIds.length
-                ? "bg-[#2D468A] text-white"
-                : "bg-gray-300 cursor-not-allowed"
-            }`}
-        >
-          ✈️ Proceed to Email Submission
-        </button>
+        {/* Pagination & Footer Actions */}
+        <div className="p-6 border-t border-gray-100 bg-white flex flex-col lg:flex-row items-center justify-between gap-6">
+          
+          <div className="w-full lg:w-auto">
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
+          </div>
+          
+          <button
+            disabled={selectedIds.length === 0}
+            onClick={() =>
+              navigate("/ai/mail-submission/compose", {
+                state: { contactIds: selectedIds, candidate },
+              })
+            }
+            className={`w-full lg:w-auto px-10 py-3.5 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-300
+              ${
+                selectedIds.length
+                  ? "bg-gradient-to-r from-[#2D468A] to-[#1a3060] text-white hover:scale-[1.02] hover:shadow-lg shadow-md"
+                  : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
+              }`}
+          >
+            <FiSend size={18} />
+            <span>Proceed to Email Submission Configuration →</span>
+          </button>
+          
+        </div>
 
       </div>
     </div>

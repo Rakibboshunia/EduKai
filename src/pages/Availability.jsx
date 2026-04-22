@@ -110,43 +110,76 @@ export default function Availability() {
   ];
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 w-full">
+    <div className="p-4 sm:p-8 max-w-[1800px] mx-auto space-y-8 mb-10">
 
-      <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2D468A]">
-          Availability Check
-        </h1>
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 bg-white/70 p-6 sm:p-8 rounded-2xl border border-blue-50 shadow-sm relative overflow-hidden">
+        {/* Subtle Background Decoration */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full -z-10 opacity-50 pointer-events-none"></div>
+        
+        <div className="space-y-2 z-10">
+          <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#2D468A]">
+            Availability Check
+          </h1>
+          <p className="text-gray-500 font-medium text-sm sm:text-base max-w-xl mt-5">
+            Track and update candidate availability status in real-time.
+          </p>
+        </div>
 
-        <p className="text-sm sm:text-base text-gray-600 mt-5">
-          Track candidate availability via Email and WhatsApp.
-        </p>
-
-        <p className="text-sm sm:text-base text-gray-600 mt-2">
-          Total records in database: {totalCandidates}
-        </p>
-      </div>
-
-      <div className="mb-5">
-        <DynamicSearch
-          data={data}
-          searchKeys={["name", "email", "whatsapp", "jobTitle"]}
-          onFilter={setFilteredData}
-        />
-      </div>
-
-      <div className="w-full rounded-xl">
-          <div className="max-h-[90vh] overflow-y-auto overflow-x-auto">
-            <Table columns={columns} data={filteredData} />
+        <div className="z-10 bg-gradient-to-r from-blue-50 to-blue-100/50 text-[#2D468A] px-6 py-3 rounded-xl border border-blue-200 shadow-sm flex items-center gap-4 w-fit">
+          <div className="bg-[#2D468A] text-white p-2 rounded-lg shadow-sm">
+            <MailCheck size={20} />
           </div>
+          <div className="flex flex-col">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#2D468A]/70">Total Candidates</span>
+            <span className="text-2xl font-extrabold leading-none">{totalCandidates}</span>
+          </div>
+        </div>
       </div>
 
-      {/* 🔥 PAGINATION HERE */}
-      <Pagination
-        totalPages={totalPages}
-        currentPage={page}
-        onPageChange={setPage}
-      />
+      {/* Main Content Area */}
+      <div className="bg-white/70 rounded-3xl border border-blue-50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col">
+        
+        {/* Search Bar Area */}
+        <div className="p-6 border-b border-gray-100 bg-slate-50/50">
+          <div className="w-full sm:max-w-md">
+            <DynamicSearch
+              data={data}
+              searchKeys={["name", "email", "whatsapp", "jobTitle"]}
+              onFilter={setFilteredData}
+            />
+          </div>
+        </div>
 
+        {/* Table Container */}
+        <div className="w-full">
+          <div className="max-h-[90vh] overflow-y-auto overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+            {filteredData.length > 0 ? (
+              <Table columns={columns} data={filteredData} />
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <div className="bg-gray-50 p-4 rounded-full mb-4">
+                  <XCircle className="w-12 h-12 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-bold tracking-tight text-gray-700">No Candidates Found</h3>
+                <p className="text-gray-500 text-sm mt-2 max-w-sm">
+                  We couldn't find any candidates matching your criteria. Try adjusting your search.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Pagination Section */}
+        <div className="p-4 sm:p-6 border-t border-gray-100 bg-gray-50/50 flex justify-center">
+          <Pagination
+            totalPages={totalPages}
+            currentPage={page}
+            onPageChange={setPage}
+          />
+        </div>
+
+      </div>
     </div>
   );
 }

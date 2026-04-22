@@ -190,60 +190,68 @@ export default function EmailCompose() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-4 space-y-16">
+    <div className="p-4 sm:p-8 space-y-10 w-full mb-10">
 
+      {/* Header Section */}
       <div className="space-y-2">
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2D468A]">
+        <h2 className="text-2xl sm:text-2xl lg:text-3xl font-semibold text-[#2D468A]">
           Email Submission
         </h2>
-
-        <p className="text-sm text-gray-600 mt-4">
-          Generate and send candidate specification emails automatically
+        <p className="text-sm sm:text-base text-gray-600 mt-5">
+          Review, customize, and automatically dispatch Candidate CVs to selected contacts.
         </p>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-300 p-8 max-w-7xl">
-
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-[#2D468A]">
-            Email Composition
-          </h3>
+      {/* Main Mail Editor Card */}
+      <div className="bg-white rounded-2xl border border-blue-100 shadow-xl max-w-5xl overflow-hidden mx-auto">
+        
+        {/* Card Header */}
+        <div className="bg-slate-50 border-b border-gray-200 px-6 sm:px-8 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-[#2D468A]/10 p-2 rounded-lg text-[#2D468A]">
+              <FiSend size={20} />
+            </div>
+            <h3 className="text-xl font-bold text-[#2D468A]">
+              Compose Email
+            </h3>
+          </div>
 
           {!isEditing ? (
             <button
               onClick={handleEdit}
               disabled={isSending}
-              className="flex items-center p-2 gap-1 text-sm text-white rounded-lg border bg-[#2D468A] hover:bg-[#243a73]"
+              className="flex w-full sm:w-auto items-center justify-center px-4 py-2 gap-2 text-sm font-medium text-[#2D468A] bg-white border border-[#2D468A] rounded-xl hover:bg-blue-50 transition-colors shadow-sm disabled:opacity-50"
             >
               <FiEdit2 />
               Edit Email
             </button>
           ) : (
-            <div className="flex gap-3">
-              <button
-                onClick={handleSave}
-                disabled={isSaving}
-                className="bg-[#354b88] text-green-400 px-2 py-1 rounded flex items-center gap-1 hover:bg-green-600 hover:text-white disabled:opacity-50"
-              >
-                <FiSave />
-                {isSaving ? "Saving..." : "Save"}
-              </button>
-
+            <div className="flex w-full sm:w-auto gap-3">
               <button
                 onClick={handleCancel}
-                className="bg-[#354b88] text-red-400 px-2 py-1 rounded hover:bg-red-600 hover:text-white flex items-center gap-1"
+                className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors shadow-sm flex items-center justify-center gap-2"
               >
                 <FiX />
                 Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-white bg-green-600 border border-green-700 rounded-xl hover:bg-green-700 transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                <FiSave />
+                {isSaving ? "Saving..." : "Save Changes"}
               </button>
             </div>
           )}
         </div>
 
-        <div className="max-w-[820px] mx-auto pt-12 space-y-8">
-
+        {/* Card Body */}
+        <div className="p-6 sm:p-8 space-y-8 bg-white">
+          
+          {/* Subject Field */}
           <div>
-            <label className="text-xs font-medium text-black">
+            <label className="text-sm font-semibold text-[#2D468A] mb-2 block">
               Subject :
             </label>
 
@@ -251,58 +259,69 @@ export default function EmailCompose() {
               <input
                 value={draftSubject}
                 onChange={(e) => setDraftSubject(e.target.value)}
-                className="w-full mt-1 border border-gray-400 rounded-lg px-3 py-2 text-sm bg-white text-black"
+                autoFocus
+                className="w-full border border-blue-300 rounded-xl px-4 py-3 text-sm bg-white text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2D468A]/50 transition-shadow"
               />
             ) : (
-              <input
-                readOnly
-                value={subject}
-                className="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 text-black"
-              />
+              <div className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-gray-50 text-gray-800 shadow-inner">
+                {subject || "No subject provided"}
+              </div>
             )}
           </div>
 
-          {isEditing ? (
-            <textarea
-              value={draftBody}
-              onChange={(e) => setDraftBody(e.target.value)}
-              rows={16}
-              className="w-full border border-gray-400 rounded-lg p-4 text-sm text-black"
-            />
-          ) : (
-            <div className="border border-gray-300 rounded-lg p-4 text-sm text-black whitespace-pre-line bg-gray-50">
-              {body}
-            </div>
-          )}
-
-          <div className="flex items-center gap-2 text-sm text-[#2D468A] bg-blue-50 border border-blue-200 px-3 py-2 rounded-md w-fit">
-            <FiPaperclip />
-            Attached: {candidate.name ? candidate.name.replace(/\s+/g, '_') + "_CV_Enhanced.pdf" : "CV_Enhanced.pdf"}
+          {/* Message Body Field */}
+          <div>
+            <label className="text-sm font-semibold text-[#2D468A] mb-2 block">
+              Message Body :
+            </label>
+            {isEditing ? (
+              <textarea
+                value={draftBody}
+                onChange={(e) => setDraftBody(e.target.value)}
+                rows={16}
+                className="w-full border border-blue-300 rounded-xl p-5 text-sm text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2D468A]/50 transition-shadow resize-none leading-relaxed"
+              />
+            ) : (
+              <div className="w-full border border-gray-200 rounded-xl p-5 text-sm text-gray-800 bg-gray-50 shadow-inner whitespace-pre-line leading-relaxed min-h-[300px]">
+                {body || "No email body provided"}
+              </div>
+            )}
           </div>
 
-          {/* <EmailSignatureCard
-            name="Samuel Crona"
-            title="Investor Communications Designer"
-            email="samuel@walmart.com"
-            website="www.walmart.com"
-            phone="+1 234 568 8897"
-            company="Walmart"
-            avatar="/logo.png"
-          /> */}
+          {/* Attachment Pill */}
+          <div className="flex flex-col gap-2">
+            <span className="text-sm font-semibold text-[#2D468A]">Included Attachment:</span>
+            <div className="flex items-center gap-3 text-sm text-[#2D468A] bg-blue-50/50 border border-blue-200 px-4 py-3 rounded-xl w-fit shadow-sm">
+              <div className="bg-[#2D468A] text-white p-2 rounded-lg shadow-sm">
+                <FiPaperclip size={18} />
+              </div>
+              <span className="font-medium tracking-wide">
+                {candidate.name ? candidate.name.replace(/\s+/g, '_') + "_CV_Enhanced.pdf" : "CV_Enhanced.pdf"}
+              </span>
+            </div>
+          </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 pt-2">
+          {/* Send Button Area */}
+          <div className="pt-6 border-t border-gray-100">
             <button
               onClick={handleSend}
-              disabled={isSending}
-              className={`flex-1 text-white py-3 rounded-lg flex items-center justify-center gap-2 ${
-                isSending ? "bg-gray-400" : "bg-[#2D468A] hover:bg-[#243a73]"
+              disabled={isSending || isEditing}
+              className={`w-full text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 shadow-lg transition-all duration-300 ${
+                isSending || isEditing 
+                  ? "bg-gray-400 cursor-not-allowed transform-none" 
+                  : "bg-gradient-to-r from-[#2D468A] to-[#1a3060] hover:shadow-xl hover:-translate-y-1"
               }`}
             >
-              <FiSend />
+              <FiSend size={22} className={isSending ? "animate-pulse" : ""} />
               {isSending
-                ? "Sending..."
-                : `Send Via Mail to ${contactIds.length} Contact(s)`}
+                ? "Dispatching Emails in Background..."
+                : `Send Email to ${contactIds.length} Contact(s)`}
             </button>
+            {isEditing && (
+              <p className="text-center text-red-500 text-sm mt-3 font-medium">
+                Please save your edits before sending.
+              </p>
+            )}
           </div>
 
         </div>

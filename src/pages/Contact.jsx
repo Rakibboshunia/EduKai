@@ -11,6 +11,7 @@ import EditContactModal from "../components/EditContactModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import ImportExcelButton from "../components/ImportExcelButton";
 import ContactCard from "../components/ContactCard";
+import Pagination from "../components/Pagination";
 
 import axiosInstance from "../api/axiosInstance";
 
@@ -27,10 +28,16 @@ import { getOrganizations } from "../api/organizationApi";
 export default function Contact() {
   const [contacts, setContacts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [totalContacts, setTotalContacts] = useState(0);
 
   const [jobFilter, setJobFilter] = useState("");
   const [knownJobs, setKnownJobs] = useState(new Set());
+
+  const [phaseFilter, setPhaseFilter] = useState("");
+  const [townFilter, setTownFilter] = useState("");
+  const [genderFilter, setGenderFilter] = useState("");
+  const [laFilter, setLaFilter] = useState("");
 
   const [organizations, setOrganizations] = useState([]);
   const [selectedOrg, setSelectedOrg] = useState("");
@@ -49,13 +56,25 @@ export default function Contact() {
   const fetchContacts = async (pageNumber = 1) => {
     try {
       let url = `/api/organizations/contacts/?page=${pageNumber}&page_size=100`;
-      if (searchQuery) {
-        url += `&search=${encodeURIComponent(searchQuery)}`;
+      if (debouncedSearch) {
+        url += `&search=${encodeURIComponent(debouncedSearch)}`;
       }
       if (jobFilter) {
         url += `&job_title=${encodeURIComponent(jobFilter)}`;
       }
-      
+      if (phaseFilter) {
+        url += `&phase=${encodeURIComponent(phaseFilter)}`;
+      }
+      if (townFilter) {
+        url += `&town=${encodeURIComponent(townFilter)}`;
+      }
+      if (genderFilter) {
+        url += `&gender=${encodeURIComponent(genderFilter)}`;
+      }
+      if (laFilter) {
+        url += `&local_authority=${encodeURIComponent(laFilter)}`;
+      }
+
       const res = await getContacts(url);
 
       const results = res?.results || [];
@@ -66,9 +85,9 @@ export default function Contact() {
       setTotalPages(res?.pagination?.total_pages || 1);
       setTotalContacts(res?.pagination?.total || 0);
 
-      setKnownJobs(prev => {
+      setKnownJobs((prev) => {
         const next = new Set(prev);
-        results.forEach(r => r.job_title && next.add(r.job_title));
+        results.forEach((r) => r.job_title && next.add(r.job_title));
         return next;
       });
 
@@ -82,12 +101,14 @@ export default function Contact() {
   const fetchAllJobs = async () => {
     try {
       // 1. Fetch first page to get total pages
-      const res = await getContacts("/api/organizations/contacts/?page=1&page_size=100");
-      
+      const res = await getContacts(
+        "/api/organizations/contacts/?page=1&page_size=100",
+      );
+
       let jobs = new Set();
       const firstResults = res?.results || [];
-      firstResults.forEach(r => r.job_title && jobs.add(r.job_title));
-      
+      firstResults.forEach((r) => r.job_title && jobs.add(r.job_title));
+
       // Update with first page immediately
       setKnownJobs(new Set(jobs));
 
@@ -98,21 +119,26 @@ export default function Contact() {
         const maxPages = Math.min(totalPages, 50);
         const promises = [];
         for (let p = 2; p <= maxPages; p++) {
-          promises.push(getContacts(`/api/organizations/contacts/?page=${p}&page_size=100`));
+          promises.push(
+            getContacts(`/api/organizations/contacts/?page=${p}&page_size=100`),
+          );
         }
 
-        const responses = await Promise.all(promises.map(p => p.catch(() => null)));
-        
-        responses.forEach(response => {
+        const responses = await Promise.all(
+          promises.map((p) => p.catch(() => null)),
+        );
+
+        responses.forEach((response) => {
           if (response && response.results) {
-            response.results.forEach(r => r.job_title && jobs.add(r.job_title));
+            response.results.forEach(
+              (r) => r.job_title && jobs.add(r.job_title),
+            );
           }
         });
 
         // 3. Final update with all collected jobs
         setKnownJobs(new Set(jobs));
       }
-
     } catch (err) {
       console.error("Fetch All Jobs Error:", err);
     }
@@ -122,7 +148,7 @@ export default function Contact() {
   const fetchOrganizations = async () => {
     try {
       const res = await getOrganizations(
-        "/api/organizations/?page=1&page_size=100"
+        "/api/organizations/?page=1&page_size=100",
       );
 
       const data = res?.results || [];
@@ -143,34 +169,62 @@ export default function Contact() {
   }, []);
 
   useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  useEffect(() => {
     fetchContacts(page);
-  }, [page, jobFilter, searchQuery]);
+  }, [
+    page,
+    jobFilter,
+    debouncedSearch,
+    phaseFilter,
+    townFilter,
+    genderFilter,
+    laFilter,
+  ]);
 
   /* ================= IMPORT STATUS POLLING ================= */
   const checkImportStatus = async (taskId) => {
     try {
       const res = await axiosInstance.get(
-        `/api/organizations/import/status/${taskId}/`
+        `/api/organizations/import/status/${taskId}/`,
       );
 
       console.log("Polling status response:", res.data);
-      
+
       // Fallback to state or status and handle casing differences
       const status = res.data?.status || res.data?.state || "";
       const statusStr = status.toLowerCase();
 
-      if (statusStr === "completed" || statusStr === "success" || statusStr === "done") {
+      if (
+        statusStr === "completed" ||
+        statusStr === "success" ||
+        statusStr === "done"
+      ) {
         setImporting(false);
         const summary = res.data?.summary;
         if (summary && summary.contacts_skipped > 0) {
-           toast.error(`Import Finished: ${summary.contacts_created} created, ${summary.contacts_skipped} skipped.\n\nPlease fix the validation errors in your Excel file. Your backend rejected the rows.`, { duration: 6000 });
+          toast.error(
+            `Import Finished: ${summary.contacts_created} created, ${summary.contacts_skipped} skipped.\n\nPlease fix the validation errors in your Excel file. Your backend rejected the rows.`,
+            { duration: 6000 },
+          );
         } else {
-           toast.success("Import completed\n" + (res.data?.message || ""));
+          toast.success("Import completed\n" + (res.data?.message || ""));
         }
         fetchContacts(page);
-      } else if (statusStr === "failed" || statusStr === "failure" || statusStr === "error") {
+      } else if (
+        statusStr === "failed" ||
+        statusStr === "failure" ||
+        statusStr === "error"
+      ) {
         setImporting(false);
-        toast.error("Import failed\n" + (res.data?.error || res.data?.message || ""));
+        toast.error(
+          "Import failed\n" + (res.data?.error || res.data?.message || ""),
+        );
       } else {
         // Still processing (status: pending, processing, started, etc.)
         setTimeout(() => checkImportStatus(taskId), 2000);
@@ -178,7 +232,10 @@ export default function Contact() {
     } catch (err) {
       console.error("Polling error:", err);
       setImporting(false);
-      toast.error("Error checking import status. " + (err.response?.data?.error || err.message));
+      toast.error(
+        "Error checking import status. " +
+          (err.response?.data?.error || err.message),
+      );
     }
   };
 
@@ -199,8 +256,6 @@ export default function Contact() {
       toast.error("Import failed");
     }
   };
-
-
 
   /* ================= ADD ================= */
   const handleAddContact = async (formData) => {
@@ -253,122 +308,229 @@ export default function Contact() {
     }
   };
 
-  /* ================= JOB OPTIONS ================= */
+  /* ================= OPTIONS ================= */
   const jobOptions = [...knownJobs].sort();
+  const phaseOptions = [
+    ...new Set(organizations.map((o) => o.phase).filter(Boolean)),
+  ].sort();
+  const townOptions = [
+    ...new Set(organizations.map((o) => o.town).filter(Boolean)),
+  ].sort();
+  const laOptions = [
+    ...new Set(organizations.map((o) => o.local_authority).filter(Boolean)),
+  ].sort();
 
   return (
-    <div className="p-5">
-      {/* HEADER */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#2D468A]">
-            Contacts Management
-          </h1>
-          <p className="text-gray-600 mt-2 md:mt-4">
-            Total records in database: {totalContacts}
+    <div className="p-4 sm:p-8 max-w-[1800px] mx-auto space-y-8 mb-10">
+      {/* Header Section */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 bg-white/70 p-6 sm:p-8 rounded-2xl border border-blue-50 shadow-sm relative overflow-hidden">
+        {/* Subtle Background Decoration */}
+        <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full -z-10 opacity-60 pointer-events-none"></div>
+
+        <div className="flex flex-col md:flex-row justify-between w-full h-full relative z-10 gap-6">
+          <div className="space-y-4">
+            <div className="space-y-1">
+              <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#2D468A]">
+                Contacts Management
+              </h1>
+              <p className="text-gray-500 font-medium text-sm sm:text-base max-w-xl mt-5">
+                Maintain and structure all your key personnel and client
+                contacts.
+              </p>
+            </div>
+            <div className="z-10 bg-gradient-to-r from-blue-50 to-blue-100/50 text-[#2D468A] px-5 py-2.5 rounded-xl border border-blue-200 shadow-sm flex items-center gap-3 w-fit">
+              <div className="flex flex-col">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#2D468A]/70">
+                  Total Contacts
+                </span>
+                <span className="text-2xl font-extrabold leading-none">
+                  {totalContacts}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-end lg:items-center gap-3 w-full lg:w-auto h-fit mt-auto lg:pb-1">
+            <button
+              onClick={() => setOpenAdd(true)}
+              className="bg-gradient-to-r from-[#2D468A] to-[#1a3060] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-white font-medium px-5 py-3 rounded-xl flex items-center justify-center gap-2 shadow-md w-full sm:w-auto whitespace-nowrap"
+            >
+              <FiPlus size={18} /> Add Contact
+            </button>
+            <div className="w-full sm:w-auto">
+              <ImportExcelButton onFileUpload={handleImportContacts} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* IMPORT STATUS ALERT */}
+      {importing && (
+        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center gap-3 shadow-sm animate-pulse">
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#2D468A]"></div>
+          <p className="text-[#2D468A] font-semibold">
+            Importing your contacts... Please do not close the window.
           </p>
         </div>
-
-        <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2 sm:gap-3">
-          <button
-            onClick={() => setOpenAdd(true)}
-            className="bg-[#2D468B] hover:bg-[#1a3060] text-white px-4 py-2.5 sm:py-2 rounded-lg flex items-center justify-center gap-2 w-full sm:w-auto transition font-medium text-sm sm:text-base whitespace-nowrap"
-          >
-            <FiPlus /> Add Contact
-          </button>
-
-          <ImportExcelButton onFileUpload={handleImportContacts} />
-        </div>
-      </div>
-
-      {/* IMPORT STATUS */}
-      {importing && (
-        <p className="text-blue-600 mb-4 font-medium">
-          Importing... Please wait ⏳
-        </p>
       )}
 
-      {/* SEARCH + FILTER */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
-        <div className="relative w-full sm:w-1/2">
-          <FiSearch className="absolute left-3 top-[14px] text-gray-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Search contacts..."
-            className="w-full text-black pl-10 pr-4 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
-          />
+      {/* Main Content Area */}
+      <div className="bg-white/70 rounded-3xl border border-blue-50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col">
+        {/* Filters Area */}
+        <div className="p-10 border-b border-gray-100 bg-slate-50/50">
+          <label className="text-xs font-bold tracking-wider uppercase text-[#2D468A] mb-3 block">
+            Search & Filter Audience
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="relative">
+              <FiSearch
+                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                size={18}
+              />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="Search contacts..."
+                className="w-full text-gray-800 pl-10 pr-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm"
+              />
+            </div>
+
+            <select
+              value={jobFilter}
+              onChange={(e) => {
+                setJobFilter(e.target.value);
+                setPage(1);
+              }}
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+            >
+              <option value="">All Jobs</option>
+              {jobOptions.map((job) => (
+                <option key={job}>{job}</option>
+              ))}
+            </select>
+
+            <select
+              value={phaseFilter}
+              onChange={(e) => {
+                setPhaseFilter(e.target.value);
+                setPage(1);
+              }}
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+            >
+              <option value="">All Phases</option>
+              {phaseOptions.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={townFilter}
+              onChange={(e) => {
+                setTownFilter(e.target.value);
+                setPage(1);
+              }}
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+            >
+              <option value="">All Towns</option>
+              {townOptions.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={genderFilter}
+              onChange={(e) => {
+                setGenderFilter(e.target.value);
+                setPage(1);
+              }}
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+            >
+              <option value="">All Genders</option>
+              <option value="boys">Boys</option>
+              <option value="girls">Girls</option>
+              <option value="mixed">Mixed</option>
+            </select>
+
+            <select
+              value={laFilter}
+              onChange={(e) => {
+                setLaFilter(e.target.value);
+                setPage(1);
+              }}
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+            >
+              <option value="">All Local Authority</option>
+              {laOptions.map((la) => (
+                <option key={la} value={la}>
+                  {la}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        {/* ORGANIZATION FILTER */}
-        {/* <select
-          value={selectedOrg}
-          onChange={(e) => setSelectedOrg(e.target.value)}
-          className="text-black pl-4 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
-        >
-          <option value="">All Organizations</option>
-          {organizations.map((org) => (
-            <option key={org.id} value={org.id}>
-              {org.name || `Org ${org.id}`}
-            </option>
-          ))}
-        </select> */}
+        {/* Cards Grid */}
+        <div className="p-6 sm:p-8 bg-gray-50/30">
+          {contacts.length > 0 ? (
+            <div className="max-h-[90vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent pb-6">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                {contacts.map((contact) => (
+                  <ContactCard
+                    key={contact.id}
+                    data={contact}
+                    onEdit={handleEdit}
+                    onDelete={setDeleteId}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-dashed border-gray-300">
+              <div className="bg-gray-50 p-4 rounded-full mb-4">
+                <svg
+                  className="w-12 h-12 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold tracking-tight text-gray-700">
+                No Contacts Found
+              </h3>
+              <p className="text-gray-500 text-sm mt-2 max-w-sm">
+                There are no contacts matching the current filter or search
+                criteria.
+              </p>
+            </div>
+          )}
+        </div>
 
-        {/* JOB FILTER */}
-        <select
-          value={jobFilter}
-          onChange={(e) => {
-            setJobFilter(e.target.value);
-            setPage(1);
-          }}
-          className="w-full sm:w-1/2 text-black pl-4 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
-        >
-          <option value="">All Jobs</option>
-          {jobOptions.map((job) => (
-            <option key={job}>{job}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* CARDS */}
-      <div className="max-h-250 overflow-y-auto pr-2">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {contacts.map((contact) => (
-            <ContactCard
-              key={contact.id}
-              data={contact}
-              onEdit={handleEdit}
-              onDelete={setDeleteId}
+        {/* Pagination Footer */}
+        {totalPages > 1 && (
+          <div className="p-4 sm:p-6 border-t border-gray-100 bg-white/70 flex justify-center">
+            <Pagination
+              totalPages={totalPages}
+              currentPage={page}
+              onPageChange={setPage}
             />
-          ))}
-        </div>
-      </div>
-
-      {/* PAGINATION */}
-      <div className="mt-8 flex justify-center gap-3">
-        <button
-          disabled={page === 1}
-          onClick={() => setPage((prev) => prev - 1)}
-          className="bg-[#2D468A] hover:bg-[#1a3060] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed text-white"
-        >
-          Prev
-        </button>
-
-        <span className="text-[#2D468A] font-medium flex items-center">
-          Page {page} / {totalPages}
-        </span>
-
-        <button
-          disabled={page === totalPages}
-          onClick={() => setPage((prev) => prev + 1)}
-          className="bg-[#2D468A] hover:bg-[#1a3060] px-4 py-2 rounded-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed text-white"
-        >
-          Next
-        </button>
+          </div>
+        )}
       </div>
 
       {/* MODALS */}

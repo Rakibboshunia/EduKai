@@ -44,7 +44,7 @@ const UploadPDF = ({ onFileSelect }) => {
   };
 
   return (
-    <div className="bg-white/60 rounded-xl p-10">
+    <div className="bg-white/60 border border-gray-300 rounded-xl p-10">
 
       <div
         onDragOver={(e) => {
