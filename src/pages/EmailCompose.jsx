@@ -190,10 +190,10 @@ export default function EmailCompose() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-4 sm:p-8 space-y-10 w-full mb-10">
+    <div className="p-4 sm:p-8 space-y-10 w-full mb-6 max-w-[1800px] mx-auto">
 
       {/* Header Section */}
-      <div className="space-y-2">
+      <div className="space-y-2 flex flex-col bg-white/70 p-6 sm:p-8 rounded-2xl border border-blue-50 shadow-sm relative overflow-hidden">
         <h2 className="text-2xl sm:text-2xl lg:text-3xl font-semibold text-[#2D468A]">
           Email Submission
         </h2>
@@ -203,7 +203,7 @@ export default function EmailCompose() {
       </div>
 
       {/* Main Mail Editor Card */}
-      <div className="bg-white rounded-2xl border border-blue-100 shadow-xl max-w-5xl overflow-hidden mx-auto">
+      <div className="bg-white rounded-2xl border border-blue-100 shadow-xl max-w-8xl overflow-hidden mx-auto">
         
         {/* Card Header */}
         <div className="bg-slate-50 border-b border-gray-200 px-6 sm:px-8 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
