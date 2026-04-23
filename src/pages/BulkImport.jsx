@@ -3,10 +3,12 @@ import Breadcrumb from "../components/Breadcrumb";
 import UploadPDF from "../components/UploadPDF";
 import QualityCheck from "../components/QualityCheck";
 import { uploadCandidates } from "../api/candidateApi";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 
 const BulkImport = () => {
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState("upload");
   const [files, setFiles] = useState([]);
@@ -96,6 +98,7 @@ const BulkImport = () => {
       }
 
       toast.success(`${files.length} CV uploaded successfully`);
+      navigate("/cv/queue");
 
     } catch (error) {
 
@@ -113,18 +116,13 @@ const BulkImport = () => {
   return (
     <div className="p-4 sm:p-8 max-w-[1800px] mx-auto space-y-8 mb-10">
 
-      <Toaster position="top-right" />
-
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 bg-white/70 p-6 sm:p-8 rounded-2xl border border-blue-50 shadow-sm relative overflow-hidden">
+
         {/* Subtle Background Decoration */}
         <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full -z-10 opacity-60 pointer-events-none"></div>
         
         <div className="space-y-4 z-10 w-full">
-          {/* Ensure Breadcrumb formats nicely within the new header */}
-          {/* <div className="text-[#2D468A] [&_nav]:text-sm [&_ol]:flex [&_ol]:gap-2 [&_a]:text-blue-500 [&_a:hover]:underline">
-            <Breadcrumb />
-          </div> */}
           
           <div className="space-y-1">
             <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#2D468A]">

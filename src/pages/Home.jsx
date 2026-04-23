@@ -190,54 +190,61 @@ const Home = () => {
       </div>
     </div>
 
-      {/* Stats */}
+      {/* Main Content */}
       {loading ? (
-        <p className="mt-6">Loading...</p>
+        <div className="flex flex-col items-center justify-center py-24 text-center mt-8 bg-white/70 p-8 rounded-2xl border border-blue-50 shadow-sm">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D468A] mb-4"></div>
+          <h3 className="text-xl font-bold tracking-tight text-[#2D468A]">Loading Dashboard...</h3>
+          <p className="text-gray-500 text-sm mt-2">Please wait while we fetch the latest statistics and activities.</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-8 mt-8 bg-white/70 p-8 sm:p-8 rounded-2xl border border-blue-50 shadow-sm">
-          {stats.map((item, index) => (
-            <StatCard key={index} {...item} />
-          ))}
-        </div>
-      )}
+        <>
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-8 mt-8 bg-white/70 p-8 sm:p-8 rounded-2xl border border-blue-50 shadow-sm">
+            {stats.map((item, index) => (
+              <StatCard key={index} {...item} />
+            ))}
+          </div>
 
-      {/* Activities */}
-      <div className="mt-8 bg-white/70 p-8 sm:p-8 rounded-xl border border-[#E5E7EB]">
-        
-        <div className="flex justify-between items-center flex-wrap gap-3">
-          <h3 className="text-[#2D468A] text-xl sm:text-2xl font-semibold">
-            Recent Automated Activities
-          </h3>
-          <button 
-            onClick={handleMarkAsRead}
-            className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg border border-gray-300 transition shadow-sm cursor-pointer"
-          >
-            ✓ Mark all as read
-          </button>
-        </div>
+          {/* Activities */}
+          <div className="mt-8 bg-white/70 p-8 sm:p-8 rounded-xl border border-[#E5E7EB]">
+            
+            <div className="flex justify-between items-center flex-wrap gap-3">
+              <h3 className="text-[#2D468A] text-xl sm:text-2xl font-semibold">
+                Recent Automated Activities
+              </h3>
+              <button 
+                onClick={handleMarkAsRead}
+                className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg border border-gray-300 transition shadow-sm cursor-pointer"
+              >
+                ✓ Mark all as read
+              </button>
+            </div>
 
-        <div className="mt-6 flex flex-col gap-4">
-          {visibleActivities.map((activity, index) => (
-            <ActivitiesCard key={index} {...activity} />
-          ))}
-          {activities.length === 0 && (
-             <p className="text-gray-500 text-sm italic py-4">No recent activities found.</p>
-          )}
-        </div>
+            <div className="mt-6 flex flex-col gap-4">
+              {visibleActivities.map((activity, index) => (
+                <ActivitiesCard key={index} {...activity} />
+              ))}
+              {activities.length === 0 && (
+                 <p className="text-gray-500 text-sm italic py-4">No recent activities found.</p>
+              )}
+            </div>
 
-        {activities.length > 5 && (
-          <button 
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="mt-6 text-[#2D468A] flex items-center gap-2 font-semibold hover:underline cursor-pointer"
-          >
-            {isExpanded ? (
-               <>View Less</>
-            ) : (
-               <>See More <FaArrowRight /></>
+            {activities.length > 5 && (
+              <button 
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="mt-6 text-[#2D468A] flex items-center gap-2 font-semibold hover:underline cursor-pointer"
+              >
+                {isExpanded ? (
+                   <>View Less</>
+                ) : (
+                   <>See More <FaArrowRight /></>
+                )}
+              </button>
             )}
-          </button>
-        )}
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

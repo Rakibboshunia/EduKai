@@ -13,8 +13,8 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById("root")).render(
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
+      <Toaster position="top-center" containerStyle={{ zIndex: 999999 }} />
       <AuthProvider>
-        <Toaster />
         <RouterProvider router={router} />
       </AuthProvider>
     </QueryClientProvider>

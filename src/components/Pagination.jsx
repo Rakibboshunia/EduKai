@@ -51,21 +51,20 @@ export default function Pagination({
 
   return (
     <div className="flex justify-center items-center gap-2 mt-6">
-
       <button
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
-        className="p-2 flex items-center gap-2 text-[#364153] disabled:text-[#697077] cursor-pointer"
+        className="px-3 py-2 flex items-center gap-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
       >
-        <MdKeyboardArrowLeft className="w-6 h-6" />
-        Previous
+        <MdKeyboardArrowLeft className="w-5 h-5" />
+        <span className="hidden sm:inline">Prev</span>
       </button>
 
       {getPageNumbers().map((page, index) =>
         page === "..." ? (
           <span
             key={`dots-${index}`}
-            className="px-2 text-gray-400 select-none"
+            className="px-2 text-gray-400 select-none font-medium"
           >
             ...
           </span>
@@ -73,11 +72,11 @@ export default function Pagination({
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`px-3 py-1 rounded-md font-inter transition cursor-pointer
+            className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer shadow-sm
               ${
                 currentPage === page
-                  ? "bg-[#2D468A] text-white rounded-full"
-                  : "text-[#2D468A] hover:bg-[#F6A62D]/10"
+                  ? "bg-gradient-to-r from-[#2D468A] to-indigo-600 text-white shadow-md transform scale-105"
+                  : "bg-white text-gray-600 border border-gray-200 hover:border-[#2D468A]/30 hover:bg-blue-50 hover:text-[#2D468A]"
               }
             `}
           >
@@ -89,10 +88,10 @@ export default function Pagination({
       <button
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
-        className="p-2 flex items-center gap-2 text-[#364153] disabled:text-[#697077] cursor-pointer"
+        className="px-3 py-2 flex items-center gap-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
       >
-        Next
-        <MdKeyboardArrowRight className="w-6 h-6" />
+        <span className="hidden sm:inline">Next</span>
+        <MdKeyboardArrowRight className="w-5 h-5" />
       </button>
     </div>
   );

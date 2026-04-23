@@ -1,16 +1,13 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { FiPlus } from "react-icons/fi";
+import { FiPlus, FiSearch, FiBriefcase, FiLayers, FiMapPin, FiUsers, FiShield, FiChevronDown } from "react-icons/fi";
 import toast from "react-hot-toast";
-import { FiSearch } from "react-icons/fi";
 
 import DynamicSearch from "../components/DynamicSearch";
 import AddOrganizationModal from "../components/AddOrganizationModal";
 import EditContactModal from "../components/EditContactModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import ImportExcelButton from "../components/ImportExcelButton";
-import ContactCard from "../components/ContactCard";
+import ContactTable from "../components/ContactTable";
 import Pagination from "../components/Pagination";
 
 import axiosInstance from "../api/axiosInstance";
@@ -44,6 +41,7 @@ export default function Contact() {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   const [importing, setImporting] = useState(false);
 
@@ -55,6 +53,7 @@ export default function Contact() {
   /* ================= FETCH CONTACTS ================= */
   const fetchContacts = async (pageNumber = 1) => {
     try {
+      setLoading(true);
       let url = `/api/organizations/contacts/?page=${pageNumber}&page_size=100`;
       if (debouncedSearch) {
         url += `&search=${encodeURIComponent(debouncedSearch)}`;
@@ -92,8 +91,10 @@ export default function Contact() {
       });
 
       window.scrollTo({ top: 0, behavior: "smooth" });
+      setLoading(false);
     } catch (err) {
       console.error("Fetch Contacts Error:", err);
+      setLoading(false);
     }
   };
 
@@ -260,12 +261,12 @@ export default function Contact() {
   /* ================= ADD ================= */
   const handleAddContact = async (formData) => {
     try {
-      if (!selectedOrg) {
-        toast.error("Select organization first");
+      if (!formData.organization) {
+        toast.error("Please select an organization first");
         return;
       }
 
-      await createContact(selectedOrg, formData);
+      await createContact(formData.organization, formData);
       toast.success("Contact added successfully!");
 
       fetchContacts(page);
@@ -318,6 +319,9 @@ export default function Contact() {
   ].sort();
   const laOptions = [
     ...new Set(organizations.map((o) => o.local_authority).filter(Boolean)),
+  ].sort();
+  const genderOptions = [
+    ...new Set(organizations.map((o) => o.gender).filter(Boolean)),
   ].sort();
 
   return (
@@ -399,98 +403,136 @@ export default function Contact() {
               />
             </div>
 
-            <select
-              value={jobFilter}
-              onChange={(e) => {
-                setJobFilter(e.target.value);
-                setPage(1);
-              }}
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
-            >
-              <option value="">All Jobs</option>
-              {jobOptions.map((job) => (
-                <option key={job}>{job}</option>
-              ))}
-            </select>
+            <div className="relative">
+              <FiBriefcase
+                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                size={18}
+              />
+              <select
+                value={jobFilter}
+                onChange={(e) => {
+                  setJobFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+              >
+                <option value="">All Jobs</option>
+                {jobOptions.map((job) => (
+                  <option key={job}>{job}</option>
+                ))}
+              </select>
+              <FiChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+            </div>
 
-            <select
-              value={phaseFilter}
-              onChange={(e) => {
-                setPhaseFilter(e.target.value);
-                setPage(1);
-              }}
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
-            >
-              <option value="">All Phases</option>
-              {phaseOptions.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <FiLayers
+                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                size={18}
+              />
+              <select
+                value={phaseFilter}
+                onChange={(e) => {
+                  setPhaseFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+              >
+                <option value="">All Phases</option>
+                {phaseOptions.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+              </select>
+              <FiChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+            </div>
 
-            <select
-              value={townFilter}
-              onChange={(e) => {
-                setTownFilter(e.target.value);
-                setPage(1);
-              }}
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
-            >
-              <option value="">All Towns</option>
-              {townOptions.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <FiMapPin
+                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                size={18}
+              />
+              <select
+                value={townFilter}
+                onChange={(e) => {
+                  setTownFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+              >
+                <option value="">All Towns</option>
+                {townOptions.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+              <FiChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+            </div>
 
-            <select
-              value={genderFilter}
-              onChange={(e) => {
-                setGenderFilter(e.target.value);
-                setPage(1);
-              }}
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
-            >
-              <option value="">All Genders</option>
-              <option value="boys">Boys</option>
-              <option value="girls">Girls</option>
-              <option value="mixed">Mixed</option>
-            </select>
+            <div className="relative">
+              <FiUsers
+                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                size={18}
+              />
+              <select
+                value={genderFilter}
+                onChange={(e) => {
+                  setGenderFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+              >
+                <option value="">All Genders</option>
+                {genderOptions.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </select>
+              <FiChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+            </div>
 
-            <select
-              value={laFilter}
-              onChange={(e) => {
-                setLaFilter(e.target.value);
-                setPage(1);
-              }}
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
-            >
-              <option value="">All Local Authority</option>
-              {laOptions.map((la) => (
-                <option key={la} value={la}>
-                  {la}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <FiShield
+                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                size={18}
+              />
+              <select
+                value={laFilter}
+                onChange={(e) => {
+                  setLaFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+              >
+                <option value="">All Local Authority</option>
+                {laOptions.map((la) => (
+                  <option key={la} value={la}>
+                    {la}
+                  </option>
+                ))}
+              </select>
+              <FiChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+            </div>
           </div>
         </div>
 
         {/* Cards Grid */}
         <div className="p-6 sm:p-8 bg-gray-50/30">
-          {contacts.length > 0 ? (
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D468A] mb-4"></div>
+              <h3 className="text-xl font-bold tracking-tight text-[#2D468A]">Loading Contacts...</h3>
+              <p className="text-gray-500 text-sm mt-2">Please wait while we fetch the data.</p>
+            </div>
+          ) : contacts.length > 0 ? (
             <div className="max-h-[90vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent pb-6">
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-                {contacts.map((contact) => (
-                  <ContactCard
-                    key={contact.id}
-                    data={contact}
-                    onEdit={handleEdit}
-                    onDelete={setDeleteId}
-                  />
-                ))}
-              </div>
+              <ContactTable
+                data={contacts}
+                onEdit={handleEdit}
+                onDelete={setDeleteId}
+              />
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-dashed border-gray-300">

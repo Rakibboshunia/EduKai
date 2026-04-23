@@ -80,7 +80,7 @@ function Header({ onMenuClick }) {
 
         <div className="relative">
           <div
-            className="flex items-center gap-3 bg-[#2D468A] px-3 py-2 rounded-lg cursor-pointer"
+            className="flex items-center gap-3 bg-[#2D468A] px-4 py-3 rounded-lg cursor-pointer"
             onClick={toggleDropdown}
           >
             {/* USER IMAGE */}
@@ -88,7 +88,7 @@ function Header({ onMenuClick }) {
             <img
               src={user?.profile_pic_url || "/avatar.png"}
               alt="User Avatar"
-              className="w-9 h-9 rounded-full object-cover"
+              className="w-11 h-11 scale-[1.25] rounded-full object-cover"
               loading="lazy"
               onError={(e) => {
                 if (e.currentTarget.src.includes("avatar.png")) return;
@@ -99,7 +99,7 @@ function Header({ onMenuClick }) {
             {/* USER INFO */}
 
             <div className="hidden sm:block">
-              <p className="text-sm text-white font-medium">
+              <p className="text-md text-white font-medium">
                 {user?.full_name}
               </p>
 
@@ -118,7 +118,7 @@ function Header({ onMenuClick }) {
           {/* ================= DROPDOWN ================= */}
 
           {openDropdown && (
-            <div className="absolute right-0 mt-2 w-47 bg-white rounded-lg shadow-lg border border-gray-300 z-50">
+            <div className="absolute right-0 mt-2 w-54 bg-white rounded-lg shadow-lg border border-gray-300 z-50">
               <Link to="/settings">
                 <button className="flex w-full items-center gap-3 px-4 py-3 hover:bg-[#2D468A] hover:text-white">
                   <Icon icon="material-symbols:settings" width="18" />

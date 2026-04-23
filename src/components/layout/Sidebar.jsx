@@ -16,7 +16,7 @@ export default function Sidebar({ isOpen, onClose }) {
     { name: "Bulk Import", path: "/cv/automation/platform", icon: "iconoir:import" },
     { name: "Availability Check", path: "/availability", icon: "material-symbols:check-circle-outline" },
     { name: "CV Queue", path: "/cv/queue", icon: "radix-icons:file-text" },
-    { name: "AI Re-writer", path: "/ai/re-writer", icon: "lineicons:open-ai", isGroup: true },
+    // { name: "AI Re-writer", path: "/ai/re-writer", icon: "lineicons:open-ai", isGroup: true },
     { name: "Organizations", path: "/organizations", icon: "ph:building-office" },
     { name: "Contact", path: "/contact", icon: "ant-design:reload-time-outline" },
   ];
@@ -33,7 +33,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
       {/* SIDEBAR */}
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-64
+        className={`fixed inset-y-0 left-0 z-30 w-70 bg-gradient-to-b from-white/80 to-white/60
         bg-white/80 backdrop-blur-xl
         border-r border-gray-200 shadow-xl
         transform transition-all duration-300
@@ -71,7 +71,7 @@ export default function Sidebar({ isOpen, onClose }) {
                   key={item.path}
                   to={item.path}
                   onClick={() => window.innerWidth < 1536 && onClose()}
-                  className={`relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
+                  className={`relative flex items-center gap-3 px-4 py-3 rounded-xl text-lg font-medium transition-all duration-200
                   ${
                     active
                       ? "bg-gradient-to-r from-[#2D468A] to-[#4F6EDB] text-white shadow-md"

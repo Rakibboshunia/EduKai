@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { FiPlus, FiSearch } from "react-icons/fi";
+import { FiPlus, FiSearch, FiLayers, FiMapPin, FiUsers, FiShield, FiChevronDown } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 import DynamicSearch from "../components/DynamicSearch";
-import OrganizationCard from "../components/OrganizationCard";
+import OrganizationTable from "../components/OrganizationTable";
 import AddOrganizationModal from "../components/AddOrganizationModal";
 import EditOrganizationModal from "../components/EditOrganizationModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
@@ -33,6 +33,7 @@ export default function Organizations() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalOrganizations, setTotalOrganizations] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
@@ -42,10 +43,12 @@ export default function Organizations() {
   const [knownPhases, setKnownPhases] = useState(new Set());
   const [knownTowns, setKnownTowns] = useState(new Set());
   const [knownLas, setKnownLas] = useState(new Set());
+  const [knownGenders, setKnownGenders] = useState(new Set());
 
   /* ================= FETCH ================= */
   const fetchOrganizations = async (pageNumber = 1) => {
     try {
+      setLoading(true);
       let url = `/api/organizations/?page=${pageNumber}&page_size=100`;
 
       if (debouncedSearch)
@@ -82,8 +85,15 @@ export default function Organizations() {
         );
         return next;
       });
+      setKnownGenders((prev) => {
+        const next = new Set(prev);
+        results.forEach((r) => r.gender && next.add(r.gender));
+        return next;
+      });
+      setLoading(false);
     } catch (err) {
       console.error(err);
+      setLoading(false);
     }
   };
 
@@ -174,6 +184,7 @@ export default function Organizations() {
   const phaseOptions = useMemo(() => [...knownPhases].sort(), [knownPhases]);
   const townOptions = useMemo(() => [...knownTowns].sort(), [knownTowns]);
   const laOptions = useMemo(() => [...knownLas].sort(), [knownLas]);
+  const genderOptions = useMemo(() => [...knownGenders].sort(), [knownGenders]);
 
   return (
     <div className="p-4 sm:p-8 max-w-[1800px] mx-auto space-y-8 mb-10">
@@ -241,72 +252,103 @@ export default function Organizations() {
               />
             </div>
 
-            <select
-              value={phaseFilter}
-              onChange={(e) => setPhaseFilter(e.target.value)}
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
-            >
-              <option value="">All Phases</option>
-              {phaseOptions.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <FiLayers
+                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                size={18}
+              />
+              <select
+                value={phaseFilter}
+                onChange={(e) => setPhaseFilter(e.target.value)}
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+              >
+                <option value="">All Phases</option>
+                {phaseOptions.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+              </select>
+              <FiChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+            </div>
 
-            <select
-              value={townFilter}
-              onChange={(e) => setTownFilter(e.target.value)}
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
-            >
-              <option value="">All Towns</option>
-              {townOptions.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <FiMapPin
+                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                size={18}
+              />
+              <select
+                value={townFilter}
+                onChange={(e) => setTownFilter(e.target.value)}
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+              >
+                <option value="">All Towns</option>
+                {townOptions.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+              <FiChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+            </div>
 
-            <select
-              value={genderFilter}
-              onChange={(e) => setGenderFilter(e.target.value)}
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
-            >
-              <option value="">All Genders</option>
-              <option value="boys">Boys</option>
-              <option value="girls">Girls</option>
-              <option value="mixed">Mixed</option>
-            </select>
+            <div className="relative">
+              <FiUsers
+                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                size={18}
+              />
+              <select
+                value={genderFilter}
+                onChange={(e) => setGenderFilter(e.target.value)}
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+              >
+                <option value="">All Genders</option>
+                {genderOptions.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </select>
+              <FiChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+            </div>
 
-            <select
-              value={laFilter}
-              onChange={(e) => setLaFilter(e.target.value)}
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
-            >
-              <option value="">All Local Authority</option>
-              {laOptions.map((la) => (
-                <option key={la} value={la}>
-                  {la}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <FiShield
+                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                size={18}
+              />
+              <select
+                value={laFilter}
+                onChange={(e) => setLaFilter(e.target.value)}
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+              >
+                <option value="">All Local Authority</option>
+                {laOptions.map((la) => (
+                  <option key={la} value={la}>
+                    {la}
+                  </option>
+                ))}
+              </select>
+              <FiChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+            </div>
           </div>
         </div>
 
         {/* Cards Grid */}
         <div className="p-6 sm:p-8 bg-gray-50/30">
-          {organizations.length > 0 ? (
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D468A] mb-4"></div>
+              <h3 className="text-xl font-bold tracking-tight text-[#2D468A]">Loading Organizations...</h3>
+              <p className="text-gray-500 text-sm mt-2">Please wait while we fetch the data.</p>
+            </div>
+          ) : organizations.length > 0 ? (
             <div className="max-h-[90vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent pb-6">
-              <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {organizations.map((org) => (
-                  <OrganizationCard
-                    key={org.id}
-                    data={org}
-                    onEdit={handleEdit}
-                    onDelete={setDeleteId}
-                  />
-                ))}
-              </div>
+              <OrganizationTable
+                data={organizations}
+                onEdit={handleEdit}
+                onDelete={setDeleteId}
+              />
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-dashed border-gray-300">

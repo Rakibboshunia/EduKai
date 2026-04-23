@@ -96,51 +96,58 @@ const ProfileSection = () => {
   };
 
   return (
-    <div className=" rounded-xl p-6 space-y-6">
-      <h3 className="font-semibold text-lg text-black">Profile Information</h3>
-
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <div className="relative">
-            <img
-              src={previewImage || "/avatar.png"}
-              alt="avatar"
-              className="w-16 h-16 text-black rounded-full object-cover"
-              loading="lazy"
-            />
-
-            {isEdit && (
-              <label className="absolute bottom-0 right-0 bg-[#2D468A] p-1.5 rounded-full text-white cursor-pointer">
-                <FiEdit2 size={14} />
-
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageChange}
-                />
-              </label>
-            )}
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-black">{user?.full_name}</h4>
-
-            <p className="text-sm text-gray-500">{user?.email}</p>
-          </div>
-        </div>
-
+    <div className="p-8 sm:p-10 space-y-8">
+      <div className="flex items-center justify-between border-b border-gray-100 pb-6">
+        <h3 className="font-bold text-xl text-[#2D468A]">Profile Information</h3>
         {!isEdit && (
           <button
             onClick={() => setIsEdit(true)}
-            className="px-5 py-2 bg-[#2D468A] hover:bg-[#3a5ab3] text-white rounded-lg transition cursor-pointer"
+            className="px-6 py-2.5 bg-gradient-to-r from-[#2D468A] to-[#1a3060] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-white font-medium rounded-xl flex items-center gap-2 shadow-md cursor-pointer"
           >
-            Edit
+            Edit Profile
           </button>
         )}
       </div>
 
-      <div className="grid grid-cols-12 gap-6">
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-8 bg-slate-50/50 p-6 rounded-2xl border border-blue-50/50">
+        <div className="relative group">
+          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-[#2D468A] to-indigo-400 shadow-xl overflow-hidden">
+            <img
+              src={previewImage || "/avatar.png"}
+              alt="avatar"
+              className="w-full h-full rounded-full object-cover border-4 border-white"
+              loading="lazy"
+            />
+          </div>
+
+          {isEdit && (
+            <label className="absolute bottom-1 right-1 bg-white p-2 rounded-full text-[#2D468A] cursor-pointer shadow-lg hover:scale-110 transition-transform border border-blue-100">
+              <FiEdit2 size={16} />
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+            </label>
+          )}
+        </div>
+
+        <div className="flex-1 space-y-1 text-center md:text-left">
+          <h4 className="text-2xl font-bold text-[#2D468A]">{user?.full_name}</h4>
+          <p className="text-gray-500 font-medium">{user?.email}</p>
+          <div className="mt-3 flex flex-wrap justify-center md:justify-start gap-2">
+            <span className="px-3 py-1 bg-blue-100/50 text-[#2D468A] text-xs font-bold rounded-full border border-blue-200">
+              Active Member
+            </span>
+            <span className="px-3 py-1 bg-indigo-100/50 text-indigo-700 text-xs font-bold rounded-full border border-indigo-200">
+              {user?.role || "User"}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <InputField
           label="First Name"
           value={profileData.first_name}
@@ -152,7 +159,6 @@ const ProfileSection = () => {
             })
           }
           disabled={!isEdit}
-          className="col-span-12 md:col-span-6"
         />
 
         <InputField
@@ -166,7 +172,6 @@ const ProfileSection = () => {
             })
           }
           disabled={!isEdit}
-          className="col-span-12 md:col-span-6"
         />
 
         <InputField
@@ -180,7 +185,6 @@ const ProfileSection = () => {
             })
           }
           disabled={!isEdit}
-          className="col-span-12 md:col-span-6"
         />
 
         <InputField
@@ -194,15 +198,14 @@ const ProfileSection = () => {
             })
           }
           disabled={!isEdit}
-          className="col-span-12 md:col-span-6"
         />
       </div>
 
       {isEdit && (
-        <div className="flex justify-end gap-3">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-100">
           <button
             onClick={() => setIsEdit(false)}
-            className="px-6 py-2 border rounded-lg text-black cursor-pointer hover:bg-gray-100 hover:text-red-500 hover:border-red-500 transition-all duration-200"
+            className="w-full sm:w-auto px-8 py-3 border border-gray-200 rounded-xl text-gray-600 font-medium cursor-pointer hover:bg-gray-50 hover:text-red-500 hover:border-red-200 transition-all duration-300"
           >
             Cancel
           </button>
@@ -210,12 +213,12 @@ const ProfileSection = () => {
           <button
             onClick={handleProfileUpdate}
             disabled={loading}
-            className="px-4 py-2 bg-[#2D468A] text-white rounded-lg flex items-center gap-2 cursor-pointer hover:bg-[#3a5ab3] transition-all duration-200"
+            className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-[#2D468A] to-[#1a3060] text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70"
           >
             {loading ? (
               <>
                 <AiOutlineLoading3Quarters className="animate-spin" />
-                Saving...
+                Saving Changes...
               </>
             ) : (
               "Save Changes"

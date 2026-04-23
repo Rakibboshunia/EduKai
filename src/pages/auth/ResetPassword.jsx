@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import InputField from "../../components/InputField";
 import { useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { forgotPasswordApi } from "../../api/authApi";
 
 const ResetPassword = () => {
@@ -47,13 +47,11 @@ const ResetPassword = () => {
   };
 
   return (
-    <main className="bg-white grid justify-center items-center overflow-y-auto hide-scrollbar py-20 md:px-11 px-6 rounded-3xl">
-
-      <Toaster position="top-center" />
+    <main className="w-full max-w-md bg-white/80 backdrop-blur-xl border border-white/50 p-8 sm:p-10 rounded-3xl shadow-2xl relative animate-in fade-in zoom-in-95 duration-500">
 
       <form
         onSubmit={handleSubmit}
-        className="gap-5 flex flex-col items-center md:w-[450px] w-full"
+        className="gap-6 flex flex-col items-center w-full"
       >
 
         <h3 className="text-[#2D468A] font-semibold text-4xl">
@@ -80,11 +78,11 @@ const ResetPassword = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg mt-8 flex items-center justify-center cursor-pointer transition
+          className={`w-full py-3.5 rounded-xl mt-8 flex items-center justify-center transition-all duration-300
           ${
             loading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#2D468A] text-white hover:bg-[#354e90]"
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : "bg-gradient-to-r from-[#2D468A] to-[#1a3060] text-white hover:shadow-lg hover:-translate-y-0.5"
           }`}
         >
           {loading ? "Sending..." : "Send"}

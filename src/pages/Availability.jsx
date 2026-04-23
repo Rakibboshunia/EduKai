@@ -31,6 +31,7 @@ export default function Availability() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCandidates, setTotalCandidates] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchCandidates(page);
@@ -38,6 +39,7 @@ export default function Availability() {
 
   const fetchCandidates = async (pageNumber = 1) => {
     try {
+      setLoading(true);
       const res = await getCandidates({
         page: pageNumber,
         page_size: 100,
@@ -65,9 +67,10 @@ export default function Availability() {
       // 🔥 backend pagination
       setTotalPages(res?.pagination?.total_pages || 1);
       setTotalCandidates(res?.pagination?.total || 0);
-
+      setLoading(false);
     } catch (error) {
       console.error("Candidate fetch error:", error);
+      setLoading(false);
     }
   };
 
@@ -154,7 +157,13 @@ export default function Availability() {
         {/* Table Container */}
         <div className="w-full">
           <div className="max-h-[90vh] overflow-y-auto overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
-            {filteredData.length > 0 ? (
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D468A] mb-4"></div>
+                <h3 className="text-xl font-bold tracking-tight text-[#2D468A]">Loading Candidates...</h3>
+                <p className="text-gray-500 text-sm mt-2">Please wait while we fetch the data.</p>
+              </div>
+            ) : filteredData.length > 0 ? (
               <Table columns={columns} data={filteredData} />
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center">

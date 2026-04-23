@@ -169,7 +169,7 @@ export default function CVQueuePage() {
             </div>
           ) : tabFiltered.length > 0 ? (
             <div className="max-h-[90vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
                 {tabFiltered.map((cv) => (
                   <CVCard key={cv.id} data={cv} onDelete={handleCandidateDelete} />
                 ))}

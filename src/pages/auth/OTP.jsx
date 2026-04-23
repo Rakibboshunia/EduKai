@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { verifyOtpApi } from "../../api/authApi.js";
 
 const OTP = () => {
@@ -89,13 +89,11 @@ const OTP = () => {
   };
 
   return (
-    <main className="bg-white grid justify-center items-center py-10 md:px-11 px-12 rounded-3xl">
-
-      <Toaster position="top-center" />
+    <main className="w-full max-w-md bg-white/80 backdrop-blur-xl border border-white/50 p-8 sm:p-10 rounded-3xl shadow-2xl relative animate-in fade-in zoom-in-95 duration-500">
 
       <form
         onSubmit={handleSubmit}
-        className="gap-5 flex flex-col items-center md:w-md w-full"
+        className="gap-6 flex flex-col items-center w-full"
       >
 
         <h3 className="text-[#2D468A] font-semibold text-4xl">
@@ -111,7 +109,7 @@ const OTP = () => {
           Please check your email for the 6 digit code.
         </p>
 
-        <div className="flex gap-4 justify-center my-10">
+        <div className="flex gap-2 sm:gap-4 justify-center my-10 w-full">
 
           {[...Array(6)].map((_, i) => (
             <input
@@ -122,7 +120,7 @@ const OTP = () => {
               value={otp[i]}
               onChange={(e) => handleChange(e, i)}
               onKeyDown={(e) => handleKeyDown(e, i)}
-              className="w-11 h-12 border border-[#2D468A] rounded-[10px] text-center outline-none text-xl font-bold text-[#2D468A]"
+              className="w-10 sm:w-12 h-12 sm:h-14 border border-gray-300 rounded-xl text-center outline-none text-xl sm:text-2xl font-bold text-[#2D468A] focus:border-[#2D468A] focus:ring-4 focus:ring-[#2D468A]/10 transition-all duration-300 shadow-sm bg-white"
             />
           ))}
 
@@ -131,11 +129,11 @@ const OTP = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg flex items-center justify-center cursor-pointer transition
+          className={`w-full py-3.5 rounded-xl flex items-center justify-center transition-all duration-300
           ${
             loading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#2D468A] text-white hover:bg-[#354e90]"
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : "bg-gradient-to-r from-[#2D468A] to-[#1a3060] text-white hover:shadow-lg hover:-translate-y-0.5"
           }`}
         >
           {loading ? "Verifying..." : "Verify"}
