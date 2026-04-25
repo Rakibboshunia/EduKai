@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState, useMemo, useCallback } from "react";
+import { getProfileApi } from "../api/settingsApi";
 
 export const AuthContext = createContext(null);
 
@@ -7,10 +8,27 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const fetchUser = async () => {
+      // 1. First, check localStorage for immediate UI
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+
+      // 2. Then, fetch fresh data from API to ensure everything (like photo URL) is current
+      try {
+        const freshUser = await getProfileApi();
+        if (freshUser) {
+          setUser(freshUser);
+          localStorage.setItem("user", JSON.stringify(freshUser));
+        }
+      } catch (error) {
+        console.log("Failed to fetch fresh profile, might not be logged in or session expired.");
+        // If API fails with 401, axios interceptor will handle the logout if refresh fails
+      }
+    };
+
+    fetchUser();
   }, []);
 
   const loginUser = useCallback((userData) => {

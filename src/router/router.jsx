@@ -13,6 +13,7 @@ import CvQueue from "../pages/CvQueue";
 import AICVRewriter from "../pages/AICVRewriter";
 import EmailCompose from "../pages/EmailCompose";
 import MailSubmission from "../pages/MailSubmission";
+import Tracking from "../pages/Tracking";
 
 import LogIn from "../pages/auth/LogIn";
 import ResetPassword from "../pages/auth/ResetPassword";
@@ -50,6 +51,7 @@ const router = createBrowserRouter([
       { path: "cv/automation/platform", element: <BulkImport /> },
       { path: "cv/queue", element: <CvQueue /> },
       { path: "availability", element: <Availability /> },
+      // { path: "tracking", element: <Tracking /> },
       { path: "settings", element: <Settings /> },
       { path: "organizations", element: <Organizations /> },
       { path: "contact", element: <Contact /> },

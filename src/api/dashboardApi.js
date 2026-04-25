@@ -7,8 +7,8 @@ export const getDashboardStats = async () => {
 };
 
 // 🔹 Recent activity
-export const getRecentActivities = async () => {
-  const res = await axiosInstance.get("/api/auth/activity/");
+export const getRecentActivities = async (params = {}) => {
+  const res = await axiosInstance.get("/api/auth/activity/", { params });
   return res.data;
 };
 
