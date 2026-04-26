@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FiEdit2, FiPaperclip, FiSend, FiSave, FiX } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import EmailSignatureCard from "../components/EmailSignatureCard";
 import {
@@ -191,6 +192,16 @@ export default function EmailCompose() {
 
   return (
     <div className="p-4 sm:p-8 space-y-10 w-full mb-6 max-w-[1800px] mx-auto">
+
+      {/* Back Button */}
+      <div>
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 px-3 py-3 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-blue-50 hover:text-[#2D468A] hover:border-blue-200 transition-all shadow-sm"
+        >
+          <ArrowLeft size={14} /> Back to Mail Submission
+        </button>
+      </div>
 
       {/* Header Section */}
       <div className="space-y-2 flex flex-col bg-white/70 p-6 sm:p-8 rounded-2xl border border-blue-50 shadow-sm relative overflow-hidden">

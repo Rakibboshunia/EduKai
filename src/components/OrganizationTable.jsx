@@ -1,5 +1,6 @@
 import React from "react";
 import { FiEdit2, FiTrash2, FiMapPin, FiPhone, FiHash, FiLayers, FiUsers } from "react-icons/fi";
+import { HiOutlineOfficeBuilding } from "react-icons/hi";
 
 const OrganizationTable = ({ data = [], onEdit, onDelete }) => {
   return (
@@ -9,7 +10,8 @@ const OrganizationTable = ({ data = [], onEdit, onDelete }) => {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/80 border-b border-blue-100">
-              <th className="px-4 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Name & Local Authority</th>
+              <th className="px-4 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Organization Name</th>
+              <th className="px-4 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Local Authority</th>
               <th className="px-4 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">URN & Phase</th>
               <th className="px-4 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Contact & Gender</th>
               <th className="px-4 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Location & Postcode</th>
@@ -20,41 +22,46 @@ const OrganizationTable = ({ data = [], onEdit, onDelete }) => {
             {data.map((org) => (
               <tr key={org.id} className="hover:bg-blue-50/30 transition-colors group">
                 <td className="px-4 py-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-[#2D468A] shrink-0 border border-blue-100">
+                       <HiOutlineOfficeBuilding size={18} />
+                    </div>
+                    <span className="font-bold text-gray-900 text-[15px]">{org.name}</span>
+                  </div>
+                </td>
+                <td className="px-4 py-4">
+                   <span className="px-2.5 py-1 bg-blue-50 text-[#2D468A] font-bold tracking-wide text-[11px] rounded-lg border border-blue-100 uppercase">
+                     {org.local_authority || "N/A"}
+                   </span>
+                </td>
+                <td className="px-4 py-4">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2 text-[14px] text-gray-700 font-medium">
+                      <FiHash className="text-[#2D468A]" size={13} />
+                      <span>{org.urn || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[14px] text-gray-700 font-medium">
+                      <FiLayers className="text-[#2D468A]" size={13} />
+                      <span>{org.phase || "N/A"}</span>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-4 py-4">
+                   <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2 text-[14px] text-gray-700">
+                      <FiPhone className="text-[#2D468A]" size={13} />
+                      <span className="font-medium">{org.telephone || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[14px] text-gray-700">
+                      <FiUsers className="text-[#2D468A]" size={13} />
+                      <span className="font-medium">{org.gender || "Mixed"}</span>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-4 py-4">
                   <div className="flex flex-col">
-                    <span className="font-bold text-gray-900 text-base">{org.name}</span>
-                    <span className="text-[11px] text-gray-500 mt-0.5 flex items-center gap-1">
-                       <span className="px-1.5 py-0.5 bg-gray-100 rounded text-gray-600 font-medium">{org.local_authority || "N/A"}</span>
-                    </span>
-                  </div>
-                </td>
-                <td className="px-4 py-4">
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                      <FiHash className="text-blue-400" size={12} />
-                      <span className="font-medium">{org.urn || "N/A"}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                      <FiLayers className="text-blue-400" size={12} />
-                      <span className="font-medium">{org.phase || "N/A"}</span>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-4 py-4">
-                   <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                      <FiPhone className="text-blue-400" size={12} />
-                      <span>{org.telephone || "N/A"}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                      <FiUsers className="text-blue-400" size={12} />
-                      <span>{org.gender || "Mixed"}</span>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-4 py-4">
-                  <div className="flex flex-col text-sm text-gray-600">
-                    <span className="font-medium text-gray-800">{org.town || "N/A"}</span>
-                    <span className="text-[11px] text-gray-400 truncate max-w-[150px]">
+                    <span className="font-bold text-gray-800 text-[14px]">{org.town || "N/A"}</span>
+                    <span className="text-[12px] text-gray-500 mt-1 leading-relaxed max-w-[180px]">
                       {[org.street, org.address_line_1, org.postcode].filter(Boolean).join(", ")}
                     </span>
                   </div>

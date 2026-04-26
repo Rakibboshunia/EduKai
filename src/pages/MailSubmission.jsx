@@ -1,6 +1,8 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
-import { FiSearch, FiSend, FiMapPin, FiBriefcase, FiLayers, FiRadio } from "react-icons/fi";
+import { FiSearch, FiSend, FiMapPin, FiBriefcase, FiLayers, FiRadio, FiMail, FiUser } from "react-icons/fi";
+import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { useNavigate, useLocation } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { getNearbyContacts } from "../api/candidateApi";
 import Pagination from "../components/Pagination";
 import Table from "../components/Table";
@@ -148,28 +150,92 @@ export default function MailSubmission() {
       render: (_, row) => (
         <input
           type="checkbox"
+          className="w-4 h-4 rounded border-gray-300 text-[#2D468A] focus:ring-[#2D468A]/20 cursor-pointer"
           checked={selectedIds.includes(row.id)}
           onChange={() => toggleSelect(row.id)}
         />
       ),
     },
-    { header: "Organization Name", accessor: "name" },
-    { header: "Email", accessor: "email" },
-    { header: "Contact Person", accessor: "contact_person" },
-    { header: "Job Title", accessor: "job_title" },
-    { header: "Industry", accessor: "industry" },
-    { header: "Location", accessor: "location" },
-    {
-      header: "Radius (KM)",
-      accessor: "radius",
-      render: (val) => (val !== null ? `${val} KM` : "N/A"),
+    { 
+      header: "Organization", 
+      accessor: "name",
+      render: (val, row) => (
+        <div className="flex flex-col gap-1 min-w-[150px]">
+          <div className="flex items-center gap-2">
+            <HiOutlineOfficeBuilding className="text-[#2D468A]" size={14} />
+            <span className="font-bold text-gray-900 text-[14px] leading-tight">{val}</span>
+          </div>
+          <span className="text-[10px] text-gray-400 font-medium">{row.industry}</span>
+        </div>
+      )
     },
-    { header: "Phase", accessor: "phase" },
+    { 
+      header: "Phase", 
+      accessor: "phase",
+      render: (val) => (
+        <span className="px-2 py-1 bg-blue-50 text-[#2D468A] rounded text-[11px] font-bold uppercase border border-blue-100">
+          {val}
+        </span>
+      )
+    },
+    { 
+      header: "Contact Details", 
+      accessor: "contact_person",
+      render: (val, row) => (
+        <div className="flex flex-col gap-1 min-w-[160px]">
+          <div className="flex items-center gap-1.5 text-gray-800 font-bold text-[13px]">
+            <FiUser className="text-[#2D468A]/70" size={12} />
+            <span>{val}</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-gray-500 text-[11px] font-medium">
+            <FiBriefcase size={11} />
+            <span>{row.job_title}</span>
+          </div>
+        </div>
+      )
+    },
+    { 
+      header: "Communication", 
+      accessor: "email",
+      render: (val, row) => (
+        <div className="flex flex-col gap-1 min-w-[160px]">
+          <div className="flex items-center gap-1.5 text-blue-600 text-[13px] font-medium">
+            <FiMail size={12} />
+            <span className="truncate max-w-[150px]">{val}</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-gray-400 text-[11px]">
+            <FiMapPin size={11} />
+            <span className="truncate max-w-[150px]">{row.location}</span>
+          </div>
+        </div>
+      )
+    },
+    {
+      header: "Radius",
+      accessor: "radius",
+      render: (val) => (
+        <div className="flex items-center gap-1 text-[13px]">
+          <FiRadio className="text-orange-500" size={12} />
+          <span className="font-bold text-[#2D468A]">{val !== null ? `${val} KM` : "N/A"}</span>
+        </div>
+      ),
+    }
   ];
 
   /* ================= UI ================= */
   return (
     <div className="p-6 space-y-6 max-w-[1800px] mx-auto mb-10 text-black">
+
+      {/* Back Button */}
+      <div>
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 px-3 py-3 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-blue-50 hover:text-[#2D468A] hover:border-blue-200 transition-all shadow-sm"
+        >
+          <ArrowLeft size={14} /> Back to AI Re-writer
+        </button>
+      </div>
+
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 bg-white p-6 sm:p-8 rounded-2xl border border-blue-50 shadow-sm relative overflow-hidden">
         {/* Background Decoration */}

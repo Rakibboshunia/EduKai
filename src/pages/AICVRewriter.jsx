@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import {
   FiUser,
   FiSend,
@@ -168,7 +169,17 @@ export default function AICVRewriter() {
 
   return (
     <div className="p-4 sm:p-8 max-w-[1800px] mx-auto space-y-8 mb-10">
-      
+
+      {/* Back Button */}
+      <div>
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 px-3 py-3 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-blue-50 hover:text-[#2D468A] hover:border-blue-200 transition-all shadow-sm"
+        >
+          <ArrowLeft size={14} /> Back to Candidate Profile
+        </button>
+      </div>
+
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 bg-white/70 p-6 sm:p-8 rounded-2xl border border-blue-50 shadow-sm relative overflow-hidden">
         {/* Subtle Background Decoration */}

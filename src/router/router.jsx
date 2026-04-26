@@ -10,6 +10,7 @@ import BulkImport from "../pages/BulkImport";
 import Availability from "../pages/Availability";
 import Organizations from "../pages/Organizations";
 import CvQueue from "../pages/CvQueue";
+import CandidateProfile from "../pages/CandidateProfile";
 import AICVRewriter from "../pages/AICVRewriter";
 import EmailCompose from "../pages/EmailCompose";
 import MailSubmission from "../pages/MailSubmission";
@@ -50,6 +51,7 @@ const router = createBrowserRouter([
 
       { path: "cv/automation/platform", element: <BulkImport /> },
       { path: "cv/queue", element: <CvQueue /> },
+      { path: "cv/queue/:id", element: <CandidateProfile /> },
       { path: "availability", element: <Availability /> },
       // { path: "tracking", element: <Tracking /> },
       { path: "settings", element: <Settings /> },

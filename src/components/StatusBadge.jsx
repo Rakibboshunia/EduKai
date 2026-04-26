@@ -96,7 +96,8 @@ export default function StatusBadge({
               <button
                 key={key}
                 onClick={() => handleChange(key)}
-                className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-900 hover:bg-gray-100 transition-colors text-left font-semibold border-b border-gray-50 last:border-0"
+                style={{ color: '#111827' }}
               >
                 <ItemIcon size={14} />
                 {item.label}

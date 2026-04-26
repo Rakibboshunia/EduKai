@@ -52,7 +52,7 @@ export default function Table({ columns = [], data = [], perPage = 100 }) {
                     {columns.map((col, colIndex) => (
                       <td
                         key={colIndex}
-                        className={`px-6 py-4 align-middle text-md font-medium text-gray-700 ${
+                        className={`px-6 py-4 align-middle text-[14px] font-semibold text-gray-700 ${
                           col.align === "right" ? "text-right" : ""
                         } ${col.className ?? ""}`}
                       >
