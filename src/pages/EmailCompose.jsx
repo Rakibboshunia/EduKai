@@ -23,6 +23,7 @@ export default function EmailCompose() {
 
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
+  const [cvUrl, setCvUrl] = useState(null);
 
   const [draftSubject, setDraftSubject] = useState("");
   const [draftBody, setDraftBody] = useState("");
@@ -40,6 +41,12 @@ export default function EmailCompose() {
           if (data.email_body) {
             setBody(data.email_body);
             setDraftBody(data.email_body);
+          }
+          // Prioritize Enhanced CV for submission
+          if (data.enhanced_cv_url) {
+            setCvUrl(data.enhanced_cv_url);
+          } else if (data.original_cv_url) {
+            setCvUrl(data.original_cv_url);
           }
         } catch (error) {
           console.error("Failed to fetch candidate email data:", error);
@@ -302,13 +309,30 @@ export default function EmailCompose() {
           {/* Attachment Pill */}
           <div className="flex flex-col gap-2">
             <span className="text-sm font-semibold text-brand-primary">Included Attachment:</span>
-            <div className="flex items-center gap-3 text-brand-primary bg-blue-50/50 border border-blue-200 px-4 py-3 rounded-xl w-fit shadow-sm">
-              <div className="bg-brand-primary text-white p-2 rounded-lg shadow-sm">
+            <div 
+              onClick={() => cvUrl && window.open(cvUrl, "_blank")}
+              className={`flex items-center gap-3 text-brand-primary bg-blue-50/50 border border-blue-200 px-4 py-3 rounded-xl w-fit shadow-sm transition-all ${cvUrl ? 'cursor-pointer hover:bg-blue-100 hover:border-brand-primary/30 group' : ''}`}
+            >
+              {/* <div className="bg-brand-primary text-white p-2 rounded-lg shadow-sm group-hover:scale-110 transition-transform">
                 <FiPaperclip size={18} />
+              </div> */}
+              <div className="flex flex-col">
+                <span className="font-medium tracking-wide">
+                  {candidate.name ? candidate.name.replace(/\s+/g, '_') + "_CV_Enhanced.pdf" : "CV_Enhanced.pdf"}
+                </span>
+                <div className="flex items-center gap-2">
+                   {cvUrl && (
+                    <span className="text-[10px] text-brand-primary/60 font-bold uppercase tracking-widest flex items-center gap-1">
+                      Click to preview
+                    </span>
+                  )}
+                  {cvUrl?.includes('enhanced') && (
+                    <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter shadow-sm border border-green-200">
+                      Enhanced
+                    </span>
+                  )}
+                </div>
               </div>
-              <span className="font-medium tracking-wide">
-                {candidate.name ? candidate.name.replace(/\s+/g, '_') + "_CV_Enhanced.pdf" : "CV_Enhanced.pdf"}
-              </span>
             </div>
           </div>
 
