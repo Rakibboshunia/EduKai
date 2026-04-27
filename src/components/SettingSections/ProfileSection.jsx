@@ -111,7 +111,7 @@ const ProfileSection = () => {
 
       <div className="flex flex-col md:flex-row items-center md:items-start gap-8 bg-slate-50/50 p-6 rounded-2xl border border-blue-50/50">
         <div className="relative group">
-          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-brand-primary to-brand-accent shadow-xl overflow-hidden">>
+          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-brand-primary to-brand-accent shadow-xl overflow-hidden">
             <img
               src={previewImage || "/avatar.png"}
               alt="avatar"
