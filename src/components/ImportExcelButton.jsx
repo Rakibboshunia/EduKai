@@ -31,7 +31,7 @@ export default function ImportExcelButton({ onFileUpload }) {
   };
 
   return (
-    <label className="border border-[#2D468A] px-4 py-2.5 sm:py-2 rounded-lg flex items-center justify-center gap-2 cursor-pointer bg-white text-black hover:bg-[#2D468A] hover:text-white transition w-full sm:w-auto font-medium text-sm sm:text-base whitespace-nowrap">
+    <label className="border border-brand-primary/20 px-4 py-2.5 sm:py-2 rounded-lg flex items-center justify-center gap-2 cursor-pointer bg-gradient-to-r from-brand-primary to-brand-accent text-white hover:shadow-lg transition-all w-full sm:w-auto font-bold text-sm sm:text-base whitespace-nowrap shadow-md">
       <FiUpload className="shrink-0" />
       <span>Import From Excel File</span>
 

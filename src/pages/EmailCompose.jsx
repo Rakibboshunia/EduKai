@@ -180,7 +180,7 @@ export default function EmailCompose() {
 
         <button
           onClick={() => navigate("/ai/ai-rewriter")}
-          className="bg-[#2D468A] text-white px-6 py-2 border rounded-lg hover:bg-[#243a73]"
+          className="bg-gradient-to-r from-brand-primary to-brand-accent text-white px-6 py-2 border rounded-lg hover:shadow-lg transition-all"
         >
           Go to AI Re-writer
         </button>
@@ -197,15 +197,15 @@ export default function EmailCompose() {
       <div>
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 px-3 py-3 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-blue-50 hover:text-[#2D468A] hover:border-blue-200 transition-all shadow-sm"
+          className="flex items-center gap-2 px-3 py-3 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-blue-50 hover:text-brand-primary hover:border-blue-200 transition-all shadow-sm"
         >
-          <ArrowLeft size={14} /> Back to Mail Submission
+          <ArrowLeft size={14} /> Mail Submission
         </button>
       </div>
 
       {/* Header Section */}
       <div className="space-y-2 flex flex-col bg-white/70 p-6 sm:p-8 rounded-2xl border border-blue-50 shadow-sm relative overflow-hidden">
-        <h2 className="text-2xl sm:text-2xl lg:text-3xl font-semibold text-[#2D468A]">
+        <h2 className="text-2xl sm:text-2xl lg:text-3xl font-semibold text-brand-primary">
           Email Submission
         </h2>
         <p className="text-sm sm:text-base text-gray-600 mt-5">
@@ -219,10 +219,10 @@ export default function EmailCompose() {
         {/* Card Header */}
         <div className="bg-slate-50 border-b border-gray-200 px-6 sm:px-8 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="bg-[#2D468A]/10 p-2 rounded-lg text-[#2D468A]">
+            <div className="bg-brand-primary/10 p-2 rounded-lg text-brand-primary">
               <FiSend size={20} />
             </div>
-            <h3 className="text-xl font-bold text-[#2D468A]">
+            <h3 className="text-xl font-bold text-brand-primary">
               Compose Email
             </h3>
           </div>
@@ -231,7 +231,7 @@ export default function EmailCompose() {
             <button
               onClick={handleEdit}
               disabled={isSending}
-              className="flex w-full sm:w-auto items-center justify-center px-4 py-2 gap-2 text-sm font-medium text-[#2D468A] bg-white border border-[#2D468A] rounded-xl hover:bg-blue-50 transition-colors shadow-sm disabled:opacity-50"
+              className="flex w-full sm:w-auto items-center justify-center px-4 py-2 gap-2 text-sm font-medium text-brand-primary bg-white border border-brand-primary rounded-xl hover:bg-blue-50 transition-colors shadow-sm disabled:opacity-50"
             >
               <FiEdit2 />
               Edit Email
@@ -262,7 +262,7 @@ export default function EmailCompose() {
           
           {/* Subject Field */}
           <div>
-            <label className="text-sm font-semibold text-[#2D468A] mb-2 block">
+            <label className="text-sm font-semibold text-brand-primary mb-2 block">
               Subject :
             </label>
 
@@ -271,7 +271,7 @@ export default function EmailCompose() {
                 value={draftSubject}
                 onChange={(e) => setDraftSubject(e.target.value)}
                 autoFocus
-                className="w-full border border-blue-300 rounded-xl px-4 py-3 text-sm bg-white text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2D468A]/50 transition-shadow"
+                className="w-full border border-blue-300 rounded-xl px-4 py-3 text-sm bg-white text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-shadow"
               />
             ) : (
               <div className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-gray-50 text-gray-800 shadow-inner">
@@ -282,7 +282,7 @@ export default function EmailCompose() {
 
           {/* Message Body Field */}
           <div>
-            <label className="text-sm font-semibold text-[#2D468A] mb-2 block">
+            <label className="text-sm font-semibold text-brand-primary mb-2 block">
               Message Body :
             </label>
             {isEditing ? (
@@ -290,7 +290,7 @@ export default function EmailCompose() {
                 value={draftBody}
                 onChange={(e) => setDraftBody(e.target.value)}
                 rows={16}
-                className="w-full border border-blue-300 rounded-xl p-5 text-sm text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2D468A]/50 transition-shadow resize-none leading-relaxed"
+                className="w-full border border-blue-300 rounded-xl p-5 text-sm text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-shadow resize-none leading-relaxed"
               />
             ) : (
               <div className="w-full border border-gray-200 rounded-xl p-5 text-sm text-gray-800 bg-gray-50 shadow-inner whitespace-pre-line leading-relaxed min-h-[300px]">
@@ -301,9 +301,9 @@ export default function EmailCompose() {
 
           {/* Attachment Pill */}
           <div className="flex flex-col gap-2">
-            <span className="text-sm font-semibold text-[#2D468A]">Included Attachment:</span>
-            <div className="flex items-center gap-3 text-sm text-[#2D468A] bg-blue-50/50 border border-blue-200 px-4 py-3 rounded-xl w-fit shadow-sm">
-              <div className="bg-[#2D468A] text-white p-2 rounded-lg shadow-sm">
+            <span className="text-sm font-semibold text-brand-primary">Included Attachment:</span>
+            <div className="flex items-center gap-3 text-brand-primary bg-blue-50/50 border border-blue-200 px-4 py-3 rounded-xl w-fit shadow-sm">
+              <div className="bg-brand-primary text-white p-2 rounded-lg shadow-sm">
                 <FiPaperclip size={18} />
               </div>
               <span className="font-medium tracking-wide">
@@ -320,7 +320,7 @@ export default function EmailCompose() {
               className={`w-full text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 shadow-lg transition-all duration-300 ${
                 isSending || isEditing 
                   ? "bg-gray-400 cursor-not-allowed transform-none" 
-                  : "bg-gradient-to-r from-[#2D468A] to-[#1a3060] hover:shadow-xl hover:-translate-y-1"
+                  : "bg-gradient-to-r from-brand-primary to-brand-accent hover:shadow-xl hover:-translate-y-1"
               }`}
             >
               <FiSend size={22} className={isSending ? "animate-pulse" : ""} />

@@ -27,7 +27,7 @@ const InputField = ({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className={`outline-none p-3 text-black placeholder:text-black/40 rounded-xl transition-all duration-300 focus:ring-4 focus:ring-[#2D468A]/10 focus:border-[#2D468A] bg-white border border-gray-200 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed shadow-sm ${inputClass}`}
+        className={`outline-none p-3 text-black placeholder:text-black/40 rounded-xl transition-all duration-300 focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary bg-white border border-gray-200 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed shadow-sm ${inputClass}`}
       />
     </div>
   );

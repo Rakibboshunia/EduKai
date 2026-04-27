@@ -19,7 +19,7 @@ export default function Table({ columns = [], data = [], perPage = 100 }) {
                 {columns.map((col, i) => (
                   <th
                     key={i}
-                    className={`px-6 py-4 text-[13px] font-bold text-[#2D468A] uppercase tracking-wider ${
+                    className={`px-4 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider ${
                       col.align === "right" ? "text-right" : ""
                     } ${col.className ?? ""}`}
                   >
@@ -52,7 +52,7 @@ export default function Table({ columns = [], data = [], perPage = 100 }) {
                     {columns.map((col, colIndex) => (
                       <td
                         key={colIndex}
-                        className={`px-6 py-4 align-middle text-[14px] font-semibold text-gray-700 ${
+                        className={`px-4 py-3 align-middle text-[14px] font-semibold text-gray-700 ${
                           col.align === "right" ? "text-right" : ""
                         } ${col.className ?? ""}`}
                       >
@@ -83,10 +83,10 @@ export default function Table({ columns = [], data = [], perPage = 100 }) {
           paginatedData.map((row, rowIndex) => (
             <div
               key={row.id ?? rowIndex}
-              className="group bg-white rounded-2xl shadow-sm border border-gray-200 p-5 hover:shadow-xl hover:border-[#2D468A]/30 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
+              className="group bg-white rounded-2xl shadow-sm border border-gray-200 p-5 hover:shadow-xl hover:border-brand-primary/30 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
             >
               {/* Accent Line */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#2D468A] to-[#4B6EC5] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-primary to-brand-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
               <div className="flex flex-col gap-2 pt-1">
                 {columns.map((col, colIndex) => {
@@ -100,9 +100,9 @@ export default function Table({ columns = [], data = [], perPage = 100 }) {
                   return (
                     <div
                       key={colIndex}
-                      className="flex flex-col gap-1.5 p-3 rounded-xl bg-gray-50/80 border border-gray-100 hover:bg-white hover:shadow-md hover:border-[#2D468A]/20 transition-all duration-300 group/item"
+                      className="flex flex-col gap-1.5 p-3 rounded-xl bg-gray-50/80 border border-gray-100 hover:bg-white hover:shadow-md hover:border-brand-primary/20 transition-all duration-300 group/item"
                     >
-                      <div className="flex items-center gap-1.5 text-gray-500 group-hover/item:text-[#2D468A] transition-colors">
+                      <div className="flex items-center gap-1.5 text-gray-500 group-hover/item:text-brand-primary transition-colors">
                         <span className="text-[10px] font-bold uppercase tracking-wider">{col.header}</span>
                       </div>
 

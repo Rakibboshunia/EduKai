@@ -23,7 +23,7 @@ const Settings = () => {
 
         <div className="space-y-4">
           <div className="space-y-1">
-            <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#2D468A]">
+            <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-brand-primary">
               Account Settings
             </h1>
             <p className="text-gray-500 font-medium text-sm sm:text-base max-w-xl mt-5">

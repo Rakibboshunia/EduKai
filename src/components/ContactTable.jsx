@@ -10,49 +10,51 @@ const ContactTable = ({ data = [], onEdit, onDelete }) => {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/80 border-b border-blue-100">
-              <th className="px-6 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Contact Person</th>
-              <th className="px-6 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Job Title</th>
-              <th className="px-6 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Organization</th>
-              <th className="px-6 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Local Authority</th>
-              <th className="px-6 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider text-right">Actions</th>
+              <th className="px-4 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider">Contact Person & Mail</th>
+              
+              <th className="px-4 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider">Organization Name</th>
+              <th className="px-4 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider">Job Title</th>
+              <th className="px-4 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider">Local Authority</th>
+              <th className="px-4 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-blue-50">
             {data.map((contact) => (
               <tr key={contact.id} className="hover:bg-blue-50/30 transition-colors group">
-                <td className="px-6 py-4">
+                <td className="px-4 py-3">
                   <div className="flex flex-col">
-                    <span className="font-bold text-gray-900 text-[15px]">{contact.contact_person || contact.name}</span>
+                    <span className="font-bold text-gray-900 text-[14px]">{contact.contact_person || contact.name}</span>
                     <div className="flex items-center gap-1.5 mt-1 text-gray-500">
-                      <FiMail size={13} className="text-[#2D468A]" />
-                      <span className="text-[13px] font-medium">{contact.work_email || contact.email || "No email"}</span>
+                      <FiMail size={13} className="text-brand-primary" />
+                      <span className="text-[12px] font-medium">{contact.work_email || contact.email || "No email"}</span>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4">
+                
+                <td className="px-4 py-3">
                   <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2 text-[14px] text-gray-700 font-bold">
-                      <FiBriefcase className="text-[#2D468A]" size={14} />
+                    <div className="flex items-center gap-2 text-[12px] font-bold text-gray-800">
+                      <HiOutlineOfficeBuilding className="text-brand-primary" size={16} />
+                      <span>{contact.organization_name || contact.organization?.name || "N/A"}</span>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2 text-[12px] text-gray-700 font-bold">
+                      <FiBriefcase className="text-brand-primary" size={14} />
                       <span>{contact.job_title || "N/A"}</span>
                     </div>
                     {contact.whatsapp_number && (
-                      <div className="flex items-center gap-2 text-[12px] text-gray-500 font-medium">
-                        <FiPhone className="text-[#2D468A]" size={12} />
+                      <div className="flex items-center gap-2 text-[11px] text-gray-500 font-medium">
+                        <FiPhone className="text-brand-primary" size={12} />
                         <span>{contact.whatsapp_number}</span>
                       </div>
                     )}
                   </div>
                 </td>
-                <td className="px-6 py-4">
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2 text-[14px] font-bold text-gray-800">
-                      <HiOutlineOfficeBuilding className="text-[#2D468A]" size={16} />
-                      <span>{contact.organization_name || contact.organization?.name || "N/A"}</span>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                   <span className="px-2.5 py-1 bg-blue-50 text-[#2D468A] font-bold tracking-wide text-[11px] rounded-lg border border-blue-100 uppercase">
+                <td className="px-4 py-3">
+                   <span className="px-2.5 py-1 bg-blue-50 text-brand-primary font-bold tracking-wide text-[11px] rounded-lg border border-blue-100 uppercase">
                      {contact.local_authority || contact.organization?.local_authority || "N/A"}
                    </span>
                 </td>
@@ -60,7 +62,7 @@ const ContactTable = ({ data = [], onEdit, onDelete }) => {
                   <div className="flex items-center justify-end gap-2 transition-opacity">
                     <button
                       onClick={() => onEdit && onEdit(contact.id)}
-                      className="p-2 text-gray-400 hover:text-[#2D468A] hover:bg-blue-50 rounded-lg transition-all"
+                      className="p-2 text-gray-400 hover:text-brand-primary hover:bg-blue-50 rounded-lg transition-all"
                       title="Edit"
                     >
                       <FiEdit2 size={16} />

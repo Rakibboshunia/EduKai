@@ -22,7 +22,7 @@ export default function Sidebar({ isOpen, onClose }) {
       label: "CV Automation",
       links: [
         { name: "Bulk Import", path: "/cv/automation/platform", icon: "iconoir:import" },
-        { name: "CV Queue", path: "/cv/queue", icon: "radix-icons:file-text" },
+        { name: "Candidate CV Queue", path: "/cv/queue", icon: "radix-icons:file-text" },
         { name: "Availability Check", path: "/availability", icon: "material-symbols:check-circle-outline" },
       ]
     },
@@ -63,7 +63,7 @@ export default function Sidebar({ isOpen, onClose }) {
         {/* CLOSE BUTTON */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-4 z-40 p-2 rounded-lg bg-[#2D468A] text-white 2xl:hidden"
+          className="absolute top-6 right-4 z-40 p-2 rounded-lg bg-brand-primary text-white 2xl:hidden"
         >
           <FiX size={20} />
         </button>
@@ -97,8 +97,8 @@ export default function Sidebar({ isOpen, onClose }) {
                         className={`relative flex items-center gap-3 px-4 py-3 rounded-xl text-md font-medium transition-all duration-200 group
                         ${
                           active
-                            ? "bg-gradient-to-r from-[#2D468A] to-[#4F6EDB] text-white shadow-md shadow-blue-900/10"
-                            : "text-gray-600 hover:bg-gray-100/80 hover:text-[#2D468A]"
+                            ? "bg-gradient-to-r from-brand-primary to-brand-accent text-white shadow-md shadow-blue-900/10"
+                            : "text-gray-600 hover:bg-gray-100/80 hover:text-brand-primary"
                         }`}
                       >
                         {active && (
@@ -107,7 +107,7 @@ export default function Sidebar({ isOpen, onClose }) {
                         <Icon icon={item.icon} width="20" />
                         <span className="flex-1">{item.name}</span>
                         {!active && (
-                          <span className="opacity-0 group-hover:translate-x-1 group-hover:opacity-100 transition-all text-[#2D468A]">
+                          <span className="opacity-0 group-hover:translate-x-1 group-hover:opacity-100 transition-all text-brand-primary">
                             →
                           </span>
                         )}

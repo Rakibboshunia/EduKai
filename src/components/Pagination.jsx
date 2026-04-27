@@ -73,11 +73,11 @@ export default function Pagination({
             key={page}
             onClick={() => onPageChange(page)}
             className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer shadow-sm
-              ${
-                currentPage === page
-                  ? "bg-gradient-to-r from-[#2D468A] to-indigo-600 text-white shadow-md transform scale-105"
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-[#2D468A]/30 hover:bg-blue-50 hover:text-[#2D468A]"
-              }
+               ${
+                 currentPage === page
+                   ? "bg-gradient-to-r from-brand-primary to-brand-accent text-white shadow-md transform scale-105"
+                   : "bg-white text-gray-600 border border-gray-200 hover:border-brand-primary/30 hover:bg-blue-50 hover:text-brand-primary"
+               }
             `}
           >
             {page}

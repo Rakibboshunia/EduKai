@@ -73,7 +73,7 @@ const EditOrganizationModal = ({
 
         {/* Header */}
         <div className="flex justify-between mb-6">
-          <h2 className="text-2xl font-semibold text-[#2D468A]">
+          <h2 className="text-2xl font-semibold text-brand-primary">
             Edit Organization
           </h2>
 
@@ -119,7 +119,7 @@ const EditOrganizationModal = ({
 
             <button
               type="submit"
-              className="px-4 py-2 bg-[#2D468B] text-white rounded-md"
+              className="px-6 py-2 bg-gradient-to-r from-brand-primary to-brand-accent text-white rounded-md hover:shadow-lg transition font-bold"
             >
               Save Changes
             </button>

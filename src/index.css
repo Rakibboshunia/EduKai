@@ -1,5 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import "tailwindcss";
+@theme {
+  --color-brand-primary: #2D468A;
+  --color-brand-primary-dark: #1a3060;
+  --color-brand-accent: #4F6EDB;
+  --color-brand-success: #00C950;
+  --color-brand-error: #FB2C36;
+  --color-brand-warning: #F0B100;
+  --color-bg-dashboard: #F1F5F9;
+  --color-bg-unread: #E8EDFB;
+}
+
 
 .hide-scrollbar {
   -ms-overflow-style: none;

@@ -66,7 +66,7 @@ const Dropdown = ({
           readOnly
           value={selected}
           placeholder={placeholder}
-          className="w-full outline-none px-4 py-2.5 bg-white rounded-xl border border-gray-200 focus:border-[#2D468A] focus:ring-4 focus:ring-[#2D468A]/10 shadow-sm transition-all text-sm text-gray-800 cursor-pointer group-hover:border-gray-300"
+          className="w-full outline-none px-4 py-2.5 bg-white rounded-xl border border-gray-200 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 shadow-sm transition-all text-sm text-gray-800 cursor-pointer group-hover:border-gray-300"
         />
 
         <div className="absolute top-1/2 -translate-y-1/2 right-4 text-gray-400 group-hover:text-gray-600 transition-colors">
@@ -87,7 +87,7 @@ const Dropdown = ({
               <div
                 key={index}
                 onClick={() => handleSelect(item)}
-                className="px-4 py-2.5 cursor-pointer text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-[#2D468A] transition-colors"
+                className="px-4 py-2.5 cursor-pointer text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-brand-primary transition-colors"
               >
                 {label}
               </div>

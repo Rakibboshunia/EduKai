@@ -54,11 +54,11 @@ const ResetPassword = () => {
         className="gap-6 flex flex-col items-center w-full"
       >
 
-        <h3 className="text-[#2D468A] font-semibold text-4xl">
+        <h3 className="text-brand-primary font-semibold text-4xl">
           Edukai
         </h3>
 
-        <h3 className="text-[32px] text-[#2D468A] font-medium">
+        <h3 className="text-[32px] text-brand-primary font-medium">
           Forgot Password?
         </h3>
 
@@ -72,7 +72,7 @@ const ResetPassword = () => {
           placeholder="Enter your email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          inputClass="rounded-lg border border-[#2D468A]"
+          inputClass="rounded-lg border border-brand-primary"
         />
 
         <button
@@ -82,7 +82,7 @@ const ResetPassword = () => {
           ${
             loading
               ? "bg-gray-400 text-white cursor-not-allowed"
-              : "bg-gradient-to-r from-[#2D468A] to-[#1a3060] text-white hover:shadow-lg hover:-translate-y-0.5"
+              : "bg-gradient-to-r from-brand-primary to-brand-accent text-white hover:shadow-lg hover:-translate-y-0.5"
           }`}
         >
           {loading ? "Sending..." : "Send"}

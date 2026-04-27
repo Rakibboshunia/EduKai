@@ -38,7 +38,7 @@ function Card({ children, className = "" }) {
 function CardHeader({ icon: Icon, title }) {
   return (
     <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2.5">
-      <Icon size={15} className="text-[#2D468A]" />
+      <Icon size={15} className="text-brand-primary" />
       <h2 className="text-sm font-bold text-gray-800 tracking-wide">{title}</h2>
     </div>
   );
@@ -65,7 +65,7 @@ function EditField({ label, field, type = "text", form, set }) {
         type={type}
         value={form[field] || ""}
         onChange={e => set(field, e.target.value)}
-        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#2D468A]/25 focus:border-[#2D468A] transition bg-gray-50 hover:bg-white"
+        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-primary/25 focus:border-brand-primary transition bg-gray-50 hover:bg-white"
       />
     </div>
   );
@@ -73,11 +73,11 @@ function EditField({ label, field, type = "text", form, set }) {
 
 function ActionButton({ onClick, disabled, variant = "default", children }) {
   const variants = {
-    primary:  "bg-[#2D468A] hover:bg-[#243872] text-white shadow-md hover:shadow-lg",
-    indigo:   "bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white shadow-md hover:shadow-lg",
+    primary:  "bg-gradient-to-r from-brand-primary to-brand-accent text-white shadow-md hover:shadow-lg",
+    indigo:   "bg-gradient-to-r from-brand-primary to-brand-accent text-white shadow-md hover:shadow-lg",
     outline:  "border border-gray-200 bg-white hover:bg-gray-50 text-gray-700",
     danger:   "border border-red-200 bg-red-50 hover:bg-red-100 text-red-600",
-    success:  "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-md hover:shadow-lg",
+    success:  "bg-gradient-to-r from-brand-primary to-brand-accent text-white shadow-md hover:shadow-lg",
   };
   return (
     <button
@@ -125,7 +125,6 @@ export default function CandidateProfile() {
           photo: res.profile_photo_url || null,
           location: res.location || "",
           job_titles: toArr(res.job_titles),
-          bio: res.bio || res.description || "",
           createdAt: res.created_at ? new Date(res.created_at) : null,
           updatedAt: res.updated_at ? new Date(res.updated_at) : null,
           original_cv_url: res.original_cv_url || null,
@@ -133,7 +132,6 @@ export default function CandidateProfile() {
         setCandidate(d);
         setForm(d);
       } catch (err) {
-        console.error(err);
         toast.error("Failed to load candidate");
       } finally {
         setLoading(false);
@@ -166,7 +164,6 @@ export default function CandidateProfile() {
       if (form.phone !== candidate.phone) payload.whatsapp_number = form.phone;
       if (Number(form.experience) !== Number(candidate.experience)) payload.years_of_experience = form.experience;
       if (form.location !== candidate.location) payload.location = form.location;
-      if (form.bio !== candidate.bio) payload.bio = form.bio;
       if (form.skills.join(",") !== candidate.skills.join(",")) payload.skills = form.skills;
       if (form.job_titles.join(",") !== candidate.job_titles.join(",")) payload.job_titles = form.job_titles;
       if (Object.keys(payload).length > 0) await updateCandidateStatus(id, payload);
@@ -257,7 +254,7 @@ export default function CandidateProfile() {
   /* ── Loading / Error ── */
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D468A]" />
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary" />
       <p className="text-gray-500 font-medium text-sm">Loading candidate profile…</p>
     </div>
   );
@@ -265,7 +262,7 @@ export default function CandidateProfile() {
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
       <XCircle size={48} className="text-red-400" />
       <p className="text-gray-600 font-semibold">Candidate not found.</p>
-      <button onClick={() => navigate("/cv/queue")} className="px-5 py-2 rounded-xl bg-[#2D468A] text-white text-sm font-bold">← Back to Queue</button>
+      <button onClick={() => navigate("/cv/queue")} className="px-5 py-2 rounded-xl bg-gradient-to-r from-brand-primary to-brand-accent text-white text-sm font-bold">← Back to Queue</button>
     </div>
   );
 
@@ -276,7 +273,7 @@ export default function CandidateProfile() {
       <div className="flex items-center gap-2">
         <button
           onClick={() => navigate("/cv/queue")}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-blue-50 hover:text-[#2D468A] hover:border-blue-200 transition-all shadow-sm"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-blue-50 hover:text-brand-primary hover:border-blue-200 transition-all shadow-sm"
         >
           <ArrowLeft size={14} /> CV Queue
         </button>
@@ -298,10 +295,10 @@ export default function CandidateProfile() {
                 <img
                   src={currentPhoto}
                   alt={form.name}
-                  className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-4 ring-[#2D468A]/10 shadow-md ${editing ? "group-hover:opacity-70 transition-opacity" : ""}`}
+                  className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-4 ring-brand-primary/10 shadow-md ${editing ? "group-hover:opacity-70 transition-opacity" : ""}`}
                 />
               ) : (
-                <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-[#2D468A] to-indigo-400 text-white text-3xl font-black flex items-center justify-center shadow-md ${editing ? "group-hover:opacity-70 transition-opacity" : ""}`}>
+                <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-brand-primary to-brand-accent text-white text-3xl font-black flex items-center justify-center shadow-md ${editing ? "group-hover:opacity-70 transition-opacity" : ""}`}>
                   {form.name?.charAt(0)?.toUpperCase()}
                 </div>
               )}
@@ -321,13 +318,13 @@ export default function CandidateProfile() {
               {editing ? (
                 <div className="space-y-2">
                   <input value={form.name} onChange={e => set("name", e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-lg font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#2D468A]/25 focus:border-[#2D468A] bg-gray-50"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-lg font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-primary/25 focus:border-brand-primary bg-gray-50"
                     placeholder="Full name" />
                   <input value={form.name_without_surname || ""} onChange={e => set("name_without_surname", e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#2D468A]/25 focus:border-[#2D468A] bg-gray-50"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-primary/25 focus:border-brand-primary bg-gray-50"
                     placeholder="Name without surname" />
                   <input value={form.job_titles.join(", ")} onChange={e => setArr2("job_titles", e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#2D468A]/25 focus:border-[#2D468A] bg-gray-50"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-primary/25 focus:border-brand-primary bg-gray-50"
                     placeholder="Job titles (comma separated)" />
                 </div>
               ) : (
@@ -338,7 +335,7 @@ export default function CandidateProfile() {
                     <StatusBadge value={form.availability} options={availabilityOptions} onChange={handleAvail} />
                   </div>
                   {form.job_titles.length > 0 && (
-                    <p className="text-[#2D468A] font-semibold text-sm mb-2">{form.job_titles.join(", ")}</p>
+                    <p className="text-brand-primary font-semibold text-sm mb-2">{form.job_titles.join(", ")}</p>
                   )}
                   <div className="flex flex-wrap gap-4 text-xs text-gray-500">
                     {form.location && <span className="flex items-center gap-1.5"><MapPin size={12} className="text-gray-400" />{form.location}</span>}
@@ -381,18 +378,7 @@ export default function CandidateProfile() {
                 )}
               </InfoGrid>
             )}
-            {editing && (
-              <div className="px-6 pb-6">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block">Bio</label>
-                <textarea
-                  value={form.bio || ""}
-                  onChange={e => set("bio", e.target.value)}
-                  rows={3}
-                  placeholder="Write a short bio…"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#2D468A]/25 focus:border-[#2D468A] transition bg-gray-50 hover:bg-white resize-none"
-                />
-              </div>
-            )}
+            
           </Card>
 
           {/* Technical Expertise */}
@@ -406,13 +392,13 @@ export default function CandidateProfile() {
                     value={form.skills.join(", ")}
                     onChange={e => setArr2("skills", e.target.value)}
                     placeholder="e.g. React, Node.js, Python"
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#2D468A]/25 focus:border-[#2D468A] transition bg-gray-50"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-primary/25 focus:border-brand-primary transition bg-gray-50"
                   />
                 </div>
               ) : form.skills.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {form.skills.map((skill, i) => (
-                    <span key={i} className="px-3 py-1.5 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-blue-50 hover:text-[#2D468A] hover:border-blue-200 transition-colors cursor-default">
+                    <span key={i} className="px-3 py-1.5 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-blue-50 hover:text-brand-primary hover:border-blue-200 transition-colors cursor-default">
                       {skill}
                     </span>
                   ))}
@@ -507,8 +493,8 @@ export default function CandidateProfile() {
               <div className="mx-4 mb-4 px-4 py-3 rounded-xl bg-gray-50 border border-gray-100">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1.5">Last Modified</p>
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-[#2D468A]/10 flex items-center justify-center flex-shrink-0">
-                    <User size={11} className="text-[#2D468A]" />
+                  <div className="w-6 h-6 rounded-full bg-brand-primary/10 flex items-center justify-center flex-shrink-0">
+                    <User size={11} className="text-brand-primary" />
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-gray-700">Modified by Admin</p>

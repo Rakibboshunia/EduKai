@@ -19,7 +19,7 @@ export default function DashboardLayout() {
         <Header onMenuClick={() => setIsSidebarOpen(true)} />
 
 
-        <main className="flex-1 overflow-y-auto bg-[#E3E8F5] p-4 md:p-6 text-white relative overflow-auto hide-scrollbar">
+        <main className="flex-1 overflow-y-auto bg-bg-dashboard p-4 md:p-6 text-slate-900 relative overflow-auto hide-scrollbar">
           <Outlet />
         </main>
       </div>

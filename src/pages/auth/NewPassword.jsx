@@ -76,11 +76,11 @@ const NewPassword = () => {
         className="gap-6 flex flex-col items-center w-full"
       >
 
-        <h3 className="text-[#2D468A] font-semibold text-4xl">
+        <h3 className="text-brand-primary font-semibold text-4xl">
           Edukai
         </h3>
 
-        <h3 className="font-medium text-[32px] text-[#2D468A]">
+        <h3 className="font-medium text-[32px] text-brand-primary">
           Set a New Password
         </h3>
 
@@ -93,7 +93,7 @@ const NewPassword = () => {
           label="Email Address"
           value={email || ""}
           disabled
-          inputClass="rounded-lg border border-[#2D468A]"
+          inputClass="rounded-lg border border-brand-primary"
         />
 
         <Password
@@ -101,7 +101,7 @@ const NewPassword = () => {
           placeholder="Enter your new password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          inputClass="rounded-lg border border-[#2D468A]"
+          inputClass="rounded-lg border border-brand-primary"
         />
 
         <Password
@@ -109,7 +109,7 @@ const NewPassword = () => {
           placeholder="Confirm your new password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          inputClass="rounded-lg border border-[#2D468A]"
+          inputClass="rounded-lg border border-brand-primary"
         />
 
         <button
@@ -119,7 +119,7 @@ const NewPassword = () => {
           ${
             loading
               ? "bg-gray-400 text-white cursor-not-allowed"
-              : "bg-gradient-to-r from-[#2D468A] to-[#1a3060] text-white hover:shadow-lg hover:-translate-y-0.5"
+              : "bg-gradient-to-r from-brand-primary to-brand-accent text-white hover:shadow-lg hover:-translate-y-0.5"
           }`}
         >
           {loading ? "Resetting..." : "Reset Password"}

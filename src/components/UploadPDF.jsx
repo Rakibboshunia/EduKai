@@ -44,7 +44,7 @@ const UploadPDF = ({ onFileSelect }) => {
   };
 
   return (
-    <div className="bg-white/60 border border-gray-300 rounded-xl p-10">
+    <div className="bg-white/60 border border-brand-primary rounded-xl p-10">
 
       <div
         onDragOver={(e) => {
@@ -54,7 +54,7 @@ const UploadPDF = ({ onFileSelect }) => {
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
         className={`border-2 border-dashed rounded-lg p-10 flex flex-col items-center justify-center gap-2 transition bg-[#F9FAFB]
-        ${isDragging ? "border-[#2D468A] bg-blue-50" : "border-[#A0A0A0]"}`}
+        ${isDragging ? "border-brand-primary bg-blue-50" : "border-[#A0A0A0]"}`}
       >
 
         <FaFilePdf className="w-12 h-12 text-[#A0A0A0]" />
@@ -74,9 +74,9 @@ const UploadPDF = ({ onFileSelect }) => {
         <button
           type="button"
           onClick={() => inputRef.current.click()}
-          className="bg-[#2D468A] text-white px-10 py-2 rounded-md flex items-center gap-2 hover:bg-[#354e92] cursor-pointer"
+          className="bg-gradient-to-r from-brand-primary to-brand-accent text-white px-10 py-2 rounded-md flex items-center gap-2 hover:shadow-lg transition cursor-pointer font-bold"
         >
-          <HiOutlineDocumentDownload className="w-6 h-6 hover:bg-[#1a3060]" />
+          <HiOutlineDocumentDownload className="w-6 h-6" />
           Select PDF
         </button>
 

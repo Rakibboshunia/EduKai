@@ -121,7 +121,7 @@ export default function Availability() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full -z-10 opacity-50 pointer-events-none"></div>
         
         <div className="space-y-2 z-10">
-          <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#2D468A]">
+          <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-brand-primary">
             Availability Check
           </h1>
           <p className="text-gray-500 font-medium text-sm sm:text-base max-w-xl mt-5">
@@ -129,19 +129,19 @@ export default function Availability() {
           </p>
         </div>
 
-        <div className="z-10 bg-gradient-to-r from-blue-50 to-blue-100/50 text-[#2D468A] px-6 py-3 rounded-xl border border-blue-200 shadow-sm flex items-center gap-4 w-fit">
-          <div className="bg-[#2D468A] text-white p-2 rounded-lg shadow-sm">
+        <div className="z-10 bg-gradient-to-r from-blue-50 to-blue-100/50 text-brand-primary px-6 py-3 rounded-xl border border-blue-200 shadow-sm flex items-center gap-4 w-fit">
+          <div className="bg-brand-primary text-white p-2 rounded-lg shadow-sm">
             <MailCheck size={20} />
           </div>
           <div className="flex flex-col">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#2D468A]/70">Total Candidates</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-brand-primary/70">Total Candidates</span>
             <span className="text-2xl font-extrabold leading-none">{totalCandidates}</span>
           </div>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="bg-white/70 rounded-3xl border border-blue-50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col">
+      <div className="bg-white/70 rounded-3xl border border-blue-50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col border-t-4 border-t-brand-primary">
         
         {/* Search Bar Area */}
         <div className="p-6 border-b border-gray-100 bg-slate-50/50">
@@ -159,8 +159,8 @@ export default function Availability() {
           <div className="max-h-[90vh] overflow-y-auto overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D468A] mb-4"></div>
-                <h3 className="text-xl font-bold tracking-tight text-[#2D468A]">Loading Candidates...</h3>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mb-4"></div>
+                <h3 className="text-xl font-bold tracking-tight text-brand-primary">Loading Candidates...</h3>
                 <p className="text-gray-500 text-sm mt-2">Please wait while we fetch the data.</p>
               </div>
             ) : filteredData.length > 0 ? (

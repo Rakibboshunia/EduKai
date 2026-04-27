@@ -16,7 +16,7 @@ const AddOrganizationModal = ({
         {/* Header */}
         <div className="flex items-center justify-between mb-6 sticky -top-6 sm:-top-8 bg-white/95 backdrop-blur z-10 py-4 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#2D468A] shadow-inner">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-brand-primary shadow-inner">
               <span className="text-xl">{type === "organization" ? "🏢" : "👤"}</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900">

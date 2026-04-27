@@ -31,7 +31,7 @@ const Password = ({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className={`w-full outline-none p-3 pr-10 text-black border border-gray-200 placeholder:text-black/40 font-inter text-[16px] rounded-xl transition-all duration-300 focus:ring-4 focus:ring-[#2D468A]/10 focus:border-[#2D468A] bg-white shadow-sm ${inputClass}`}
+          className={`w-full outline-none p-3 pr-10 text-black border border-gray-200 placeholder:text-black/40 font-inter text-[16px] rounded-xl transition-all duration-300 focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary bg-white shadow-sm ${inputClass}`}
           aria-label={label || "password"}
           autoComplete="new-password"
         />

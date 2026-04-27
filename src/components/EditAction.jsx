@@ -9,7 +9,7 @@ const EditAction = ({ organization, onUpdate }) => {
     <>
       <button
         onClick={() => setOpenEdit(true)}
-        className="text-[#2D468A] hover:text-blue-700 transition text-xl cursor-pointer"
+        className="text-brand-primary hover:text-brand-accent transition text-xl cursor-pointer"
         title="Edit"
       >
         <FiEdit2 />

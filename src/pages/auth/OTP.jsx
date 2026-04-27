@@ -96,11 +96,11 @@ const OTP = () => {
         className="gap-6 flex flex-col items-center w-full"
       >
 
-        <h3 className="text-[#2D468A] font-semibold text-4xl">
+        <h3 className="text-brand-primary font-semibold text-4xl">
           Edukai
         </h3>
 
-        <h3 className="font-inter font-medium text-[32px] text-[#2D468A]">
+        <h3 className="font-inter font-medium text-[32px] text-brand-primary">
           Enter your OTP
         </h3>
 
@@ -120,7 +120,7 @@ const OTP = () => {
               value={otp[i]}
               onChange={(e) => handleChange(e, i)}
               onKeyDown={(e) => handleKeyDown(e, i)}
-              className="w-10 sm:w-12 h-12 sm:h-14 border border-gray-300 rounded-xl text-center outline-none text-xl sm:text-2xl font-bold text-[#2D468A] focus:border-[#2D468A] focus:ring-4 focus:ring-[#2D468A]/10 transition-all duration-300 shadow-sm bg-white"
+              className="w-10 sm:w-12 h-12 sm:h-14 border border-gray-300 rounded-xl text-center outline-none text-xl sm:text-2xl font-bold text-brand-primary focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all duration-300 shadow-sm bg-white"
             />
           ))}
 
@@ -133,7 +133,7 @@ const OTP = () => {
           ${
             loading
               ? "bg-gray-400 text-white cursor-not-allowed"
-              : "bg-gradient-to-r from-[#2D468A] to-[#1a3060] text-white hover:shadow-lg hover:-translate-y-0.5"
+              : "bg-gradient-to-r from-brand-primary to-brand-accent text-white hover:shadow-lg hover:-translate-y-0.5"
           }`}
         >
           {loading ? "Verifying..." : "Verify"}

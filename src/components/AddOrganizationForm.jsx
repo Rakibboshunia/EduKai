@@ -91,7 +91,7 @@ const AddOrganizationForm = ({
             name="phase"
             value={formData.phase}
             onChange={handleChange}
-            className="w-full h-[42px] px-3 border border-gray-300 rounded-md text-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#2D468B]"
+            className="w-full h-[42px] px-3 border border-gray-300 rounded-md text-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary"
           >
             <option value="">Select Phase</option>
             <option value="nursery">Nursery</option>
@@ -111,7 +111,7 @@ const AddOrganizationForm = ({
             name="gender"
             value={formData.gender}
             onChange={handleChange}
-            className="w-full h-[42px] px-3 border border-gray-300 rounded-md text-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#2D468B]"
+            className="w-full h-[42px] px-3 border border-gray-300 rounded-md text-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary"
           >
             <option value="">Select Gender</option>
             <option value="mixed">Mixed</option>
@@ -200,7 +200,7 @@ const AddOrganizationForm = ({
       <div className="flex items-center justify-between pt-4">
         <button
           type="submit"
-          className="bg-[#2D468B] text-white px-6 py-3 rounded-md flex items-center gap-2 hover:bg-[#354e90] transition cursor-pointer"
+          className="bg-gradient-to-r from-brand-primary to-brand-accent text-white px-6 py-3 rounded-md flex items-center gap-2 hover:shadow-lg transition cursor-pointer font-bold"
         >
           <FiPlus />
           {submitLabel}
@@ -209,7 +209,7 @@ const AddOrganizationForm = ({
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-3 rounded-md border border-gray-300 text-black hover:bg-[#2D468B] hover:text-white transition cursor-pointer"
+          className="px-6 py-3 rounded-md border border-gray-300 text-black hover:bg-gray-100 transition cursor-pointer"
         >
           Cancel
         </button>

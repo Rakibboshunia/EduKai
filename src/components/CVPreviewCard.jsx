@@ -14,7 +14,7 @@ const CVPreviewCard = ({
     <div
       className={`bg-white/60 rounded-2xl flex flex-col overflow-hidden transition-all duration-300 h-full w-full
         ${selected 
-            ? "border-2 border-[#2D468A] shadow-lg shadow-blue-900/10 scale-[1.01]" 
+            ? "border-2 border-brand-primary shadow-lg shadow-blue-900/10 scale-[1.01]" 
             : "border border-gray-200 shadow-sm hover:shadow-md hover:border-blue-200"
         }
       `}
@@ -22,7 +22,7 @@ const CVPreviewCard = ({
       <div className="px-5 py-4 bg-gradient-to-r from-gray-50 flex flex-col gap-2 border-b border-gray-100">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-base font-bold text-[#2D468A]">
+            <h3 className="text-base font-bold text-brand-primary">
               {title}
             </h3>
             {subtitle && (
@@ -32,7 +32,7 @@ const CVPreviewCard = ({
             )}
           </div>
           {status && (
-            <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-50 text-[#2D468A] text-[10px] font-bold tracking-wide uppercase border border-blue-100">
+            <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-50 text-brand-primary text-[10px] font-bold tracking-wide uppercase border border-blue-100">
               {status}
             </div>
           )}

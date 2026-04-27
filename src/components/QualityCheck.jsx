@@ -13,8 +13,7 @@ const QualityCheck = ({
 
   return (
     <div className="bg-white/60 p-8 rounded-xl border border-gray-300">
-
-      <h3 className="text-[#2D468A] text-2xl font-semibold">
+      <h3 className="text-brand-primary text-2xl font-semibold">
         Automated Quality Check Rules
       </h3>
 
@@ -54,7 +53,7 @@ const QualityCheck = ({
         <input
           type="checkbox"
           defaultChecked
-          className="w-4 h-4 accent-[#2D468A]"
+          className="w-4 h-4 accent-brand-primary"
         />
 
         <p className="text-black text-sm">

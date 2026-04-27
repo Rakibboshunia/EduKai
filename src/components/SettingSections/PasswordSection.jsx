@@ -66,12 +66,12 @@ const PasswordSection = ({ openSection, toggleSection }) => {
         onClick={() => toggleSection("password")}
         className={`w-full flex justify-between items-center px-8 py-6 font-bold text-lg transition-all duration-300 cursor-pointer ${
           openSection === "password" 
-            ? "bg-slate-50 text-[#2D468A] border-b border-gray-100" 
+            ? "bg-slate-50 text-brand-primary border-b border-gray-100" 
             : "text-gray-700 hover:bg-gray-50"
         }`}
       >
         <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg ${openSection === "password" ? "bg-[#2D468A] text-white" : "bg-gray-100 text-gray-400"}`}>
+          <div className={`p-2 rounded-lg ${openSection === "password" ? "bg-brand-primary text-white" : "bg-gray-100 text-gray-400"}`}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
@@ -131,7 +131,7 @@ const PasswordSection = ({ openSection, toggleSection }) => {
             <button
               onClick={handlePasswordUpdate}
               disabled={loading}
-              className="w-full sm:w-auto px-10 py-3.5 bg-gradient-to-r from-[#2D468A] to-[#1a3060] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 cursor-pointer"
+              className="px-6 py-2.5 bg-gradient-to-r from-brand-primary to-brand-accent hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-white font-medium rounded-xl flex items-center gap-2 shadow-md cursor-pointer"
             >
               {loading ? "Updating Security..." : "Update Password"}
             </button>

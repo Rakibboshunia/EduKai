@@ -261,7 +261,7 @@ export default function CVCard({ data, onStatusChange, onAvailabilityChange, onD
                   className={`w-10 h-10 rounded-full object-cover border ${isEditing ? "group-hover:opacity-70 transition-opacity" : ""}`}
                 />
               ) : (
-                <div className={`w-10 h-10 rounded-full bg-[#2D468A] text-white flex items-center justify-center ${isEditing ? "group-hover:opacity-70 transition-opacity" : ""}`}>
+                <div className={`w-10 h-10 rounded-full bg-brand-primary text-white flex items-center justify-center ${isEditing ? "group-hover:opacity-70 transition-opacity" : ""}`}>
                   {name?.charAt(0)?.toUpperCase() || "U"}
                 </div>
               )}
@@ -301,7 +301,7 @@ export default function CVCard({ data, onStatusChange, onAvailabilityChange, onD
                 </>
               ) : (
                 <>
-                  <h3 className="text-blue-600 font-semibold">{name}</h3>
+                  <h3 className="text-brand-primary font-semibold">{name}</h3>
 
                   {name_without_surname && (
                     <p className="text-xs text-gray-500">
@@ -458,7 +458,7 @@ export default function CVCard({ data, onStatusChange, onAvailabilityChange, onD
       {showGenerateCV && (
         <button
           onClick={handleGenerateCV}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm bg-gradient-to-r from-[#2D468A] to-indigo-600 text-white shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm bg-gradient-to-r from-brand-primary to-brand-accent text-white shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer"
         >
           ⚡ Generate CV
         </button>

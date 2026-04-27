@@ -6,15 +6,17 @@ import Table from "../components/Table";
 import Tabs from "../components/Tabs";
 import StatusBadge from "../components/StatusBadge";
 import Pagination from "../components/Pagination";
+import { useUIState } from "../provider/UIStateProvider";
 
 export default function Tracking() {
-  const [activeTab, setActiveTab] = useState("all");
+  const { tracking, updateTracking } = useUIState();
+  const [activeTab, setActiveTab] = useState(tracking.activeTab || "all");
   const [activities, setActivities] = useState([]);
   const [statsData, setStatsData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(tracking.searchQuery || "");
+  const [debouncedSearch, setDebouncedSearch] = useState(tracking.searchQuery || "");
+  const [currentPage, setCurrentPage] = useState(tracking.page || 1);
   const [totalPages, setTotalPages] = useState(1);
 
   const fetchData = async (pageNumber = 1) => {
@@ -70,6 +72,15 @@ export default function Tracking() {
   useEffect(() => {
     fetchData(currentPage);
   }, [currentPage, debouncedSearch]);
+
+  // ✅ Persist state on change
+  useEffect(() => {
+    updateTracking({
+      searchQuery,
+      activeTab,
+      page: currentPage
+    });
+  }, [searchQuery, activeTab, currentPage, updateTracking]);
 
   const handleStatusChange = async (id, newStatus) => {
     try {
@@ -183,7 +194,7 @@ export default function Tracking() {
         <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full -z-10 opacity-60 pointer-events-none"></div>
         
         <div className="space-y-2 z-10">
-          <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#2D468A]">
+          <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-brand-primary">
             Activity Tracking
           </h1>
           <p className="text-gray-500 font-medium text-sm sm:text-base max-w-xl mt-5">
@@ -191,9 +202,9 @@ export default function Tracking() {
           </p>
         </div>
 
-        <div className="z-10 bg-gradient-to-r from-blue-50 to-blue-100/50 text-[#2D468A] px-6 py-3 rounded-xl border border-blue-200 shadow-sm flex items-center gap-4 w-fit">
+        <div className="z-10 bg-gradient-to-r from-blue-50 to-blue-100/50 text-brand-primary px-6 py-3 rounded-xl border border-blue-200 shadow-sm flex items-center gap-4 w-fit">
           <div className="flex flex-col text-right">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#2D468A]/70">Current System Status</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-brand-primary/70">Current System Status</span>
             <span className="text-lg font-extrabold text-green-600 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
               Operational
@@ -204,9 +215,9 @@ export default function Tracking() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-2xl border border-blue-50 shadow-sm flex flex-col gap-1 border-t-4 border-t-[#2D468A]">
+        <div className="bg-white p-6 rounded-2xl border border-blue-50 shadow-sm flex flex-col gap-1 border-t-4 border-t-brand-primary">
           <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Total CV Imports</span>
-          <span className="text-3xl font-black text-[#2D468A]">{statsData?.summary?.total_candidates || 0}</span>
+          <span className="text-3xl font-black text-brand-primary">{statsData?.summary?.total_candidates || 0}</span>
           <div className="mt-2 text-[10px] text-green-600 font-bold bg-green-50 px-2 py-0.5 rounded-full w-fit">Database</div>
         </div>
 
@@ -238,20 +249,20 @@ export default function Tracking() {
         <div className="p-6 border-b border-gray-100 bg-slate-50/50 space-y-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="relative w-full md:max-w-md">
-              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[#2D468A]/50" />
+              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-primary/50" />
               <input
                 type="text"
                 placeholder="Search logs, candidates, or status..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 text-black bg-white border border-blue-200 rounded-2xl focus:ring-4 focus:ring-[#2D468A]/10 focus:border-[#2D468A] outline-none transition-all text-sm shadow-sm"
+                className="w-full pl-12 pr-4 py-3 text-black bg-white border border-blue-200 rounded-2xl focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all text-sm shadow-sm"
               />
             </div>
             
             <div className="flex items-center gap-3 w-full md:w-auto">
                <button 
                 onClick={fetchData}
-                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white border border-blue-200 rounded-2xl text-sm font-bold text-[#2D468A] hover:bg-blue-50 transition-all shadow-sm"
+                 className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-brand-primary to-brand-accent rounded-2xl text-sm font-bold text-white hover:shadow-lg transition-all shadow-sm"
                >
                  Refresh Logs
                </button>
@@ -266,7 +277,7 @@ export default function Tracking() {
         <div className="w-full">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D468A]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
               <p className="text-gray-500 font-medium mt-4">Fetching tracking logs...</p>
             </div>
           ) : (

@@ -6,17 +6,19 @@ import { ArrowLeft } from "lucide-react";
 import { getNearbyContacts } from "../api/candidateApi";
 import Pagination from "../components/Pagination";
 import Table from "../components/Table";
+import { useUIState } from "../provider/UIStateProvider";
 
 export default function MailSubmission() {
   const navigate = useNavigate();
   const location = useLocation();
   const candidate = location.state?.candidate || {};
 
-  const [filters, setFilters] = useState({});
-  const [orgSearch, setOrgSearch] = useState("");
-  const [selectedIds, setSelectedIds] = useState([]);
+  const { mailSubmission, updateMailSubmission } = useUIState();
+  const [filters, setFilters] = useState(mailSubmission.filters || {});
+  const [orgSearch, setOrgSearch] = useState(mailSubmission.orgSearch || "");
+  const [selectedIds, setSelectedIds] = useState(mailSubmission.selectedIds || []);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(mailSubmission.page || 1);
   const [organizations, setOrganizations] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -142,6 +144,16 @@ export default function MailSubmission() {
     }
   };
 
+  // ✅ Persist state on change
+  useEffect(() => {
+    updateMailSubmission({ 
+      selectedIds, 
+      filters, 
+      orgSearch, 
+      page: currentPage 
+    });
+  }, [selectedIds, filters, orgSearch, currentPage, updateMailSubmission]);
+
   /* ================= TABLE ================= */
   const columns = [
     {
@@ -150,44 +162,36 @@ export default function MailSubmission() {
       render: (_, row) => (
         <input
           type="checkbox"
-          className="w-4 h-4 rounded border-gray-300 text-[#2D468A] focus:ring-[#2D468A]/20 cursor-pointer"
+          className="w-4 h-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary/20 cursor-pointer"
           checked={selectedIds.includes(row.id)}
           onChange={() => toggleSelect(row.id)}
         />
       ),
     },
     { 
-      header: "Organization", 
+      header: "Organization & Local Authority", 
       accessor: "name",
       render: (val, row) => (
-        <div className="flex flex-col gap-1 min-w-[150px]">
+        <div className="flex flex-col gap-1 min-w-[200px]">
           <div className="flex items-center gap-2">
-            <HiOutlineOfficeBuilding className="text-[#2D468A]" size={14} />
+            <HiOutlineOfficeBuilding className="text-brand-primary" size={14} />
             <span className="font-bold text-gray-900 text-[14px] leading-tight">{val}</span>
           </div>
-          <span className="text-[10px] text-gray-400 font-medium">{row.industry}</span>
+          <span className="text-[12px] text-gray-500 font-medium">{row.industry}</span>
         </div>
       )
     },
+    
     { 
-      header: "Phase", 
-      accessor: "phase",
-      render: (val) => (
-        <span className="px-2 py-1 bg-blue-50 text-[#2D468A] rounded text-[11px] font-bold uppercase border border-blue-100">
-          {val}
-        </span>
-      )
-    },
-    { 
-      header: "Contact Details", 
+      header: "Contact Person & Job Title", 
       accessor: "contact_person",
       render: (val, row) => (
-        <div className="flex flex-col gap-1 min-w-[160px]">
-          <div className="flex items-center gap-1.5 text-gray-800 font-bold text-[13px]">
-            <FiUser className="text-[#2D468A]/70" size={12} />
+        <div className="flex flex-col gap-1 min-w-[180px]">
+          <div className="flex items-center gap-1.5 text-gray-800 font-bold text-[12px]">
+            <FiUser className="text-brand-primary/70" size={12} />
             <span>{val}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-gray-500 text-[11px] font-medium">
+          <div className="flex items-center gap-1.5 text-gray-500 text-[12px] font-medium">
             <FiBriefcase size={11} />
             <span>{row.job_title}</span>
           </div>
@@ -195,28 +199,36 @@ export default function MailSubmission() {
       )
     },
     { 
-      header: "Communication", 
+      header: "Email & Location", 
       accessor: "email",
       render: (val, row) => (
-        <div className="flex flex-col gap-1 min-w-[160px]">
-          <div className="flex items-center gap-1.5 text-blue-600 text-[13px] font-medium">
+        <div className="flex flex-col gap-1 min-w-[220px]">
+          <div className="flex items-center gap-1.5 text-black text-[12px] font-medium">
             <FiMail size={12} />
-            <span className="truncate max-w-[150px]">{val}</span>
+            <span className="">{val}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-gray-400 text-[11px]">
+          <div className="flex items-center gap-1.5 text-gray-500 text-[12px]">
             <FiMapPin size={11} />
-            <span className="truncate max-w-[150px]">{row.location}</span>
+            <span className="">{row.location}</span>
           </div>
         </div>
+      )
+    },
+    { 
+      header: "Phase", 
+      accessor: "phase",
+      render: (val) => (
+        <span className="px-2 py-1 bg-blue-50 text-brand-primary rounded text-[12px] font-bold uppercase border border-blue-100">
+          {val}
+        </span>
       )
     },
     {
       header: "Radius",
       accessor: "radius",
       render: (val) => (
-        <div className="flex items-center gap-1 text-[13px]">
-          <FiRadio className="text-orange-500" size={12} />
-          <span className="font-bold text-[#2D468A]">{val !== null ? `${val} KM` : "N/A"}</span>
+        <div className="flex items-center gap-1 text-[12px]">
+          <span className="font-bold text-brand-primary">{val !== null ? `${val} KM` : "N/A"}</span>
         </div>
       ),
     }
@@ -224,15 +236,15 @@ export default function MailSubmission() {
 
   /* ================= UI ================= */
   return (
-    <div className="p-6 space-y-6 max-w-[1800px] mx-auto mb-10 text-black">
+    <div className="p-4 sm:p-6 space-y-6 max-w-[1800px] mx-auto mb-10 text-black">
 
       {/* Back Button */}
       <div>
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 px-3 py-3 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-blue-50 hover:text-[#2D468A] hover:border-blue-200 transition-all shadow-sm"
+          className="flex items-center gap-2 px-3 py-3 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-blue-50 hover:text-brand-primary hover:border-blue-200 transition-all shadow-sm"
         >
-          <ArrowLeft size={14} /> Back to AI Re-writer
+          <ArrowLeft size={14} />AI Re-writer
         </button>
       </div>
 
@@ -243,7 +255,7 @@ export default function MailSubmission() {
 
         <div className="flex flex-col md:flex-row justify-between w-full relative z-10 gap-6">
           <div className="space-y-2">
-            <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-[#2D468A]">
+            <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-brand-primary">
               Mail Submission Queue
             </h1>
             <p className="text-gray-500 font-medium text-sm sm:text-base max-w-xl mt-4">
@@ -252,9 +264,9 @@ export default function MailSubmission() {
             </p>
           </div>
 
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100/50 text-[#2D468A] px-5 py-3 rounded-xl border border-blue-200 shadow-sm flex items-center justify-between gap-6 w-full sm:w-auto">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100/50 text-brand-primary px-5 py-3 rounded-xl border border-blue-200 shadow-sm flex items-center justify-between gap-6 w-full sm:w-auto">
             <div className="flex flex-col">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#2D468A]/70">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-brand-primary/70">
                 Loaded Contacts
               </span>
               <span className="text-xl font-extrabold leading-none">
@@ -265,7 +277,7 @@ export default function MailSubmission() {
             <div className="w-px h-8 bg-blue-200/50 hidden sm:block"></div>
 
             <div className="flex flex-col">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#2D468A]/70">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-brand-primary/70">
                 Selected
               </span>
               <span className="text-xl font-extrabold leading-none text-green-600">
@@ -279,7 +291,7 @@ export default function MailSubmission() {
       {/* Filters */}
       <div className="bg-white rounded-2xl border border-blue-50 shadow-md overflow-hidden flex flex-col">
         <div className="p-6 border-b border-gray-100 bg-slate-50/50">
-          <label className="text-xs font-bold tracking-wider uppercase text-[#2D468A] mb-3 block">
+          <label className="text-xs font-bold tracking-wider uppercase text-brand-primary mb-3 block">
             Search & Filter Audience
           </label>
 
@@ -287,7 +299,7 @@ export default function MailSubmission() {
             {/* SEARCH */}
             <div className="relative">
               <FiSearch
-                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                className="absolute left-3.5 top-[14px] text-brand-primary/60"
                 size={18}
               />
               <input
@@ -295,7 +307,7 @@ export default function MailSubmission() {
                 placeholder="Search keywords..."
                 value={orgSearch}
                 onChange={(e) => setOrgSearch(e.target.value)}
-                className="w-full text-gray-800 pl-10 pr-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm"
+                className="w-full text-gray-800 pl-10 pr-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/40 focus:border-brand-primary shadow-sm transition-all text-sm"
               />
             </div>
 
@@ -305,7 +317,7 @@ export default function MailSubmission() {
               onChange={(e) =>
                 setFilters((prev) => ({ ...prev, city: e.target.value }))
               }
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm text-sm cursor-pointer"
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/40 focus:border-brand-primary shadow-sm text-sm cursor-pointer"
             >
               <option value="">All Locations</option>
               {cityOptions.map((c) => (
@@ -319,7 +331,7 @@ export default function MailSubmission() {
               onChange={(e) =>
                 setFilters((prev) => ({ ...prev, job: e.target.value }))
               }
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm text-sm cursor-pointer"
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/40 focus:border-brand-primary shadow-sm text-sm cursor-pointer"
             >
               <option value="">All Job Titles</option>
               {jobOptions.map((j) => (
@@ -333,7 +345,7 @@ export default function MailSubmission() {
               onChange={(e) =>
                 setFilters((prev) => ({ ...prev, phase: e.target.value }))
               }
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm text-sm cursor-pointer"
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/40 focus:border-brand-primary shadow-sm text-sm cursor-pointer"
             >
               <option value="">All Phases</option>
               {phaseOptions.map((p) => (
@@ -347,7 +359,7 @@ export default function MailSubmission() {
               onChange={(e) =>
                 setFilters((prev) => ({ ...prev, radius: e.target.value }))
               }
-              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm text-sm cursor-pointer"
+              className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/40 focus:border-brand-primary shadow-sm text-sm cursor-pointer"
             >
               <option value="">All Radius Data</option>
               {radiusOptions.map((r) => (
@@ -362,9 +374,9 @@ export default function MailSubmission() {
 
       {/* Table Section */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
-        <div className="p-7 space-y-5">
+        <div className="p-5 sm:p-7 space-y-5">
           {/* SELECT ALL */}
-          <label className="flex items-center gap-3 text-sm font-bold text-[#2D468A] border border-blue-100 px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-50 transition w-max">
+          <label className="flex items-center gap-3 text-sm font-bold text-brand-primary border border-blue-100 px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-50 transition w-max">
             <input type="checkbox" onChange={toggleSelectAll} />
             Select All
           </label>
@@ -373,8 +385,8 @@ export default function MailSubmission() {
           <div className="max-h-[90vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent pb-6">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D468A] mb-4"></div>
-                <h3 className="text-xl font-bold tracking-tight text-[#2D468A]">Loading Contacts...</h3>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mb-4"></div>
+                <h3 className="text-xl font-bold tracking-tight text-brand-primary">Loading Contacts...</h3>
                 <p className="text-gray-500 text-sm mt-2">Please wait while we fetch the data.</p>
               </div>
             ) : (
@@ -403,7 +415,7 @@ export default function MailSubmission() {
               className={`w-full lg:w-auto px-10 py-3.5 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-300
               ${
                 selectedIds.length
-                  ? "bg-gradient-to-r from-[#2D468A] to-[#1a3060] text-white hover:scale-[1.02] hover:shadow-lg shadow-md"
+                  ? "bg-gradient-to-r from-brand-primary to-brand-accent text-white hover:scale-[1.02] hover:shadow-lg shadow-md"
                   : "bg-gray-200 text-gray-400 cursor-not-allowed"
               }`}
             >

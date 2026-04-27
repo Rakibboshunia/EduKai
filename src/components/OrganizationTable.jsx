@@ -10,67 +10,71 @@ const OrganizationTable = ({ data = [], onEdit, onDelete }) => {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/80 border-b border-blue-100">
-              <th className="px-4 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Organization Name</th>
-              <th className="px-4 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Local Authority</th>
-              <th className="px-4 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">URN & Phase</th>
-              <th className="px-4 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Contact & Gender</th>
-              <th className="px-4 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Location & Postcode</th>
-              <th className="px-4 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider text-right">Actions</th>
+              <th className="px-3 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider">Organization Name</th>
+              
+              
+              <th className="px-3 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider">Contact & Gender</th>
+              <th className="px-3 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider">Location & Postcode</th>
+              <th className="px-3 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider">URN & Phase</th>
+              <th className="px-3 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider">Local Authority</th>
+              <th className="px-3 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-blue-50">
             {data.map((org) => (
               <tr key={org.id} className="hover:bg-blue-50/30 transition-colors group">
-                <td className="px-4 py-4">
+                <td className="px-3 py-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-[#2D468A] shrink-0 border border-blue-100">
+                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-brand-primary shrink-0 border border-blue-100">
                        <HiOutlineOfficeBuilding size={18} />
                     </div>
-                    <span className="font-bold text-gray-900 text-[15px]">{org.name}</span>
+                    <span className="font-bold text-gray-900 text-[14px]">{org.name}</span>
                   </div>
                 </td>
-                <td className="px-4 py-4">
-                   <span className="px-2.5 py-1 bg-blue-50 text-[#2D468A] font-bold tracking-wide text-[11px] rounded-lg border border-blue-100 uppercase">
-                     {org.local_authority || "N/A"}
-                   </span>
-                </td>
-                <td className="px-4 py-4">
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2 text-[14px] text-gray-700 font-medium">
-                      <FiHash className="text-[#2D468A]" size={13} />
-                      <span>{org.urn || "N/A"}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-[14px] text-gray-700 font-medium">
-                      <FiLayers className="text-[#2D468A]" size={13} />
-                      <span>{org.phase || "N/A"}</span>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-4 py-4">
+                
+                
+                <td className="px-3 py-3">
                    <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2 text-[14px] text-gray-700">
-                      <FiPhone className="text-[#2D468A]" size={13} />
+                    <div className="flex items-center gap-2 text-[12px] text-gray-700">
+                       <FiPhone className="text-brand-primary" size={13} />
                       <span className="font-medium">{org.telephone || "N/A"}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-[14px] text-gray-700">
-                      <FiUsers className="text-[#2D468A]" size={13} />
+                    <div className="flex items-center gap-2 text-[12px] text-gray-700">
+                       <FiUsers className="text-brand-primary" size={13} />
                       <span className="font-medium">{org.gender || "Mixed"}</span>
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-4">
+                <td className="px-3 py-3">
                   <div className="flex flex-col">
-                    <span className="font-bold text-gray-800 text-[14px]">{org.town || "N/A"}</span>
-                    <span className="text-[12px] text-gray-500 mt-1 leading-relaxed max-w-[180px]">
+                    <span className="font-bold text-gray-800 text-[12px]">{org.town || "N/A"}</span>
+                    <span className="text-[11px] text-gray-500 mt-1 leading-relaxed max-w-[180px]">
                       {[org.street, org.address_line_1, org.postcode].filter(Boolean).join(", ")}
                     </span>
                   </div>
                 </td>
-                <td className="px-4 py-4 text-right">
+                <td className="px-3 py-3">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2 text-[12px] text-gray-700 font-medium">
+                       <FiHash className="text-brand-primary" size={13} />
+                      <span>{org.urn || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[12px] text-gray-700 font-medium">
+                       <FiLayers className="text-brand-primary" size={13} />
+                      <span>{org.phase || "N/A"}</span>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-3 py-3">
+                    <span className="px-2.5 py-1 bg-blue-50 text-brand-primary font-bold tracking-wide text-[11px] rounded-lg border border-blue-100 uppercase">
+                     {org.local_authority || "N/A"}
+                   </span>
+                </td>
+                <td className="px-3 py-3 text-right">
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => onEdit && onEdit(org.id)}
-                      className="p-2 text-gray-400 hover:text-[#2D468A] hover:bg-blue-50 rounded-lg transition-all"
+                       className="p-2 text-gray-400 hover:text-brand-primary hover:bg-blue-50 rounded-lg transition-all"
                     >
                       <FiEdit2 size={16} />
                     </button>

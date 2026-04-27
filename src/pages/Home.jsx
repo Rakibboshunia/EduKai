@@ -47,11 +47,11 @@ const ActivitiesCard = ({
   title,
   name,
   time,
-  dotColor = "bg-[#00C950]",
+  dotColor = "bg-brand-success",
   is_read = true,
 }) => {
   return (
-    <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl transition ${is_read ? "bg-[#f4f7fc]" : "bg-[#E8EDFB] border border-[#d6e0f5]"}`}>
+    <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl transition ${is_read ? "bg-slate-50" : "bg-bg-unread border border-blue-100"}`}>
       <div className="flex items-start sm:items-center gap-4">
         <span className={`w-2 h-2 mt-2 sm:mt-0 rounded-full ${dotColor}`} />
         <div>
@@ -85,7 +85,7 @@ const Home = () => {
           title: item.title || item.message,
           name: item.user_name || "System",
           time: item.time_ago || formatTimeAgo(item.created_at),
-          dotColor: item.severity === "error" ? "bg-[#FB2C36]" : "bg-[#00C950]",
+          dotColor: item.severity === "error" ? "bg-brand-error" : "bg-brand-success",
           is_read: item.is_read !== false // assumes true if missing
         })),
       );
@@ -108,37 +108,37 @@ const Home = () => {
             title: "Total CV Import",
             value: dashboard?.summary?.total_candidates || 0,
             icon: IoDocumentTextOutline,
-            iconBg: "bg-[#2B7FFF]",
+            iconBg: "bg-blue-500",
           },
           {
             title: "Quality Passed",
             value: dashboard?.quality?.passed || 0,
             icon: FaRegCircleCheck,
-            iconBg: "bg-[#00C950]",
+            iconBg: "bg-brand-success",
           },
           {
             title: "Quality Failed",
             value: dashboard?.quality?.failed || 0,
             icon: MdOutlineCancel,
-            iconBg: "bg-[#FB2C36]",
+            iconBg: "bg-brand-error",
           },
           {
             title: "Pending Review",
             value: dashboard?.quality?.pending || 0,
             icon: FaClockRotateLeft,
-            iconBg: "bg-[#F0B100]",
+            iconBg: "bg-brand-warning",
           },
           {
             title: "CV Submitted",
             value: dashboard?.summary?.total_processed || 0,
             icon: FiSend,
-            iconBg: "bg-[#AD46FF]",
+            iconBg: "bg-purple-500",
           },
           {
             title: "Success Rate",
             value: `${dashboard?.summary?.success_rate || 0}%`,
             icon: GoGraph,
-            iconBg: "bg-[#2B7FFF]",
+            iconBg: "bg-blue-500",
           },
         ]);
 
@@ -173,7 +173,7 @@ const Home = () => {
       {/* Header */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 ">
         <div>
-          <h3 className="text-[#2D468A] text-2xl sm:text-2xl lg:text-3xl font-semibold">
+          <h3 className="text-brand-primary text-2xl sm:text-2xl lg:text-3xl font-semibold">
             Dashboard Overview
           </h3>
           <p className="text-[#4A5565] text-sm sm:text-base mt-1.5 max-w-xl">
@@ -182,7 +182,7 @@ const Home = () => {
         </div>
 
         <Link to="cv/automation/platform">
-          <button className="bg-[#2D468B] hover:bg-[#1a3060] text-white px-6 py-3.5 rounded-md flex items-center gap-2 transition shadow-sm">
+          <button className="bg-gradient-to-r from-brand-primary to-brand-accent text-white px-6 py-3.5 rounded-md flex items-center gap-2 transition shadow-sm hover:shadow-lg hover:-translate-y-0.5">
             <CiImport className="w-6 h-6" />
             Bulk Import
           </button>
@@ -192,9 +192,9 @@ const Home = () => {
 
       {/* Main Content */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center mt-8 bg-white/70 p-8 rounded-2xl border border-blue-50 shadow-sm">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D468A] mb-4"></div>
-          <h3 className="text-xl font-bold tracking-tight text-[#2D468A]">Loading Dashboard...</h3>
+        <div className="flex flex-col items-center justify-center py-24 text-center mt-8 bg-white/70 p-8 rounded-2xl border border-blue-50 shadow-sm border-t-4 border-t-brand-primary">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mb-4"></div>
+          <h3 className="text-xl font-bold tracking-tight text-brand-primary">Loading Dashboard...</h3>
           <p className="text-gray-500 text-sm mt-2">Please wait while we fetch the latest statistics and activities.</p>
         </div>
       ) : (
@@ -207,10 +207,10 @@ const Home = () => {
           </div>
 
           {/* Activities */}
-          <div className="mt-8 bg-white/70 p-8 sm:p-8 rounded-xl border border-[#E5E7EB]">
+          <div className="mt-8 bg-white/70 p-8 sm:p-8 rounded-xl border border-[#E5E7EB] shadow-sm">
             
             <div className="flex justify-between items-center flex-wrap gap-3">
-              <h3 className="text-[#2D468A] text-xl sm:text-2xl font-semibold">
+              <h3 className="text-brand-primary text-xl sm:text-2xl font-semibold">
                 Recent Automated Activities
               </h3>
               <button 
@@ -233,7 +233,7 @@ const Home = () => {
             {activities.length > 5 && (
               <button 
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="mt-6 text-[#2D468A] flex items-center gap-2 font-semibold hover:underline cursor-pointer"
+                className="mt-6 text-brand-primary flex items-center gap-2 font-semibold hover:underline cursor-pointer"
               >
                 {isExpanded ? (
                    <>View Less</>

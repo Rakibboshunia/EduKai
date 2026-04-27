@@ -11,7 +11,7 @@ const Success = () => {
           <FaCheckCircle className="text-green-500 text-5xl" />
         </div>
 
-        <h3 className="font-semibold text-[32px] text-[#2D468A]">
+        <h3 className="font-semibold text-[32px] text-brand-primary">
           Password Updated Successfully!
         </h3>
 
@@ -22,7 +22,7 @@ const Success = () => {
 
         <Link to="/auth/login" className="w-full mt-4">
 
-          <button className="w-full bg-[#2D468A] hover:bg-[#243a73] transition duration-200 text-white text-lg py-3 rounded-lg shadow-md cursor-pointer">
+          <button className="w-full bg-gradient-to-r from-brand-primary to-brand-accent transition duration-200 text-white text-lg py-3 rounded-lg shadow-md cursor-pointer hover:shadow-lg hover:-translate-y-0.5">
             Go to Login
           </button>
 

@@ -77,7 +77,7 @@ const OrganizationSelect = ({ value, onChange }) => {
       <span>
         {parts.map((part, i) =>
           part.toLowerCase() === search.toLowerCase() ? (
-            <span key={i} className="text-blue-600 font-semibold">
+            <span key={i} className="text-brand-primary font-semibold">
               {part}
             </span>
           ) : (

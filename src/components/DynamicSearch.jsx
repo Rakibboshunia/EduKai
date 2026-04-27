@@ -6,17 +6,20 @@ const DynamicSearch = ({
   searchKeys = [],
   onFilter,
   placeholder = "Search...",
+  initialSearch = "",
+  onSearchChange,
 }) => {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialSearch);
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(query);
+      if (onSearchChange) onSearchChange(query);
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [query]);
+  }, [query, onSearchChange]);
 
   const getValue = (obj, key) => {
     try {
@@ -71,7 +74,7 @@ const DynamicSearch = ({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className="w-full text-black pl-10 pr-10 py-3 bg-white/60 border border-[#2D468A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D468A]"
+        className="w-full text-black pl-10 pr-10 py-3 bg-white/60 border border-brand-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary"
       />
 
       {query && (

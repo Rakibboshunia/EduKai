@@ -30,57 +30,27 @@ function Header({ onMenuClick }) {
 
   }, [logOutUser, navigate]);
 
-  /* ================= CLOSE NOTIFICATIONS ================= */
-
-  // const handleCloseNotifications = useCallback(() => {
-  //   setOpenNotifications(false);
-  // }, []);
-
-  /* ================= TOGGLE NOTIFICATIONS ================= */
-
-  // const toggleNotifications = useCallback(() => {
-  //   setOpenNotifications((prev) => !prev);
-  //   setOpenDropdown(false);
-  // }, []);
-
-  /* ================= TOGGLE USER DROPDOWN ================= */
-
   const toggleDropdown = useCallback(() => {
     setOpenDropdown((prev) => !prev);
     setOpenNotifications(false);
   }, []);
 
   return (
-    <header className="bg-[#E3E8F5] flex items-center px-4 sm:px-6 py-3 sm:py-4">
+    <header className="bg-bg-dashboard flex items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200">
       {/* ================= MENU BUTTON ================= */}
 
       <button
         onClick={onMenuClick}
-        className="2xl:hidden p-2 rounded bg-[#2D468A] text-white"
+        className="2xl:hidden p-2 rounded bg-brand-primary text-white"
       >
         <FiMenu size={22} />
       </button>
 
       <div className="flex items-center justify-end ml-auto gap-4">
-        {/* ================= NOTIFICATION ================= */}
-
-        {/* <div className="relative">
-          <IoNotifications
-            className="w-8 h-8 text-[#2D468A] cursor-pointer"
-            onClick={toggleNotifications}
-          />
-
-          <NotificationsDropdown
-            open={openNotifications}
-            onClose={handleCloseNotifications}
-          />
-        </div> */}
-
-        {/* ================= USER PROFILE ================= */}
 
         <div className="relative">
           <div
-            className="flex items-center gap-3 bg-[#2D468A] px-4 py-3 rounded-lg cursor-pointer"
+            className="flex items-center gap-3 bg-gradient-to-r from-brand-primary to-brand-accent px-4 py-3 rounded-lg cursor-pointer"
             onClick={toggleDropdown}
           >
             {/* USER IMAGE */}
@@ -120,7 +90,7 @@ function Header({ onMenuClick }) {
           {openDropdown && (
             <div className="absolute right-0 mt-2 w-54 bg-white rounded-lg shadow-lg border border-gray-300 z-50">
               <Link to="/settings">
-                <button className="flex w-full items-center gap-3 px-4 py-3 hover:bg-[#2D468A] hover:text-white">
+                <button className="flex w-full items-center gap-3 px-4 py-3 hover:bg-brand-primary hover:text-white transition-colors">
                   <Icon icon="material-symbols:settings" width="18" />
                   Settings
                 </button>
@@ -128,7 +98,7 @@ function Header({ onMenuClick }) {
 
               <button
                 onClick={handleLogout}
-                className="flex w-full items-center gap-3 px-4 py-3 text-red-600 hover:bg-[#2D468A] hover:text-white"
+                className="flex w-full items-center gap-3 px-4 py-3 text-red-600 hover:bg-brand-primary hover:text-white transition-colors"
               >
                 <Icon icon="material-symbols:logout" width="18" />
                 Log Out

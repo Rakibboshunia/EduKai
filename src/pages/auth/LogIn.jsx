@@ -71,11 +71,11 @@ const LogIn = () => {
         onSubmit={handleLogin}
         className="gap-6 flex flex-col items-center w-full"
       >
-        <h3 className="text-[#2D468A] font-semibold text-4xl">
+        <h3 className="text-brand-primary font-semibold text-4xl">
           Edukai
         </h3>
 
-        <h3 className="text-[32px] text-[#2D468A] font-medium">
+        <h3 className="text-[32px] text-brand-primary font-medium">
           Login to Account
         </h3>
 
@@ -116,7 +116,7 @@ const LogIn = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3.5 rounded-xl mt-6 flex items-center justify-center gap-2 bg-gradient-to-r from-[#2D468A] to-[#1a3060] text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
+          className="w-full py-3.5 rounded-xl mt-6 flex items-center justify-center gap-2 bg-gradient-to-r from-brand-primary to-brand-accent text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
         >
           <MdLogin />
           {loading ? "Signing in..." : "Sign in"}

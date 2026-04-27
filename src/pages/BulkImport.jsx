@@ -125,7 +125,7 @@ const BulkImport = () => {
         <div className="space-y-4 z-10 w-full">
           
           <div className="space-y-1">
-            <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#2D468A]">
+            <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-brand-primary">
               Bulk CV Import
             </h1>
             <p className="text-gray-500 font-medium text-sm sm:text-base max-w-xl mt-5">
@@ -136,13 +136,13 @@ const BulkImport = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="bg-white/70 rounded-3xl border border-blue-50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col p-6 sm:p-10 space-y-10">
+      <div className="bg-white/70 rounded-3xl border border-blue-50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col p-6 sm:p-10 space-y-10 border-t-4 border-t-brand-primary">
         
         {/* Upload Container */}
         <div>
           <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
-             <div className="bg-[#2D468A]/10 p-2 rounded-lg text-[#2D468A] font-bold text-lg">1</div>
-             <h2 className="text-xl font-bold tracking-tight text-[#2D468A]">Upload Documents</h2>
+             <div className="bg-brand-primary/10 p-2 rounded-lg text-brand-primary font-bold text-lg">1</div>
+             <h2 className="text-xl font-bold tracking-tight text-brand-primary">Upload Documents</h2>
           </div>
           {activeTab === "upload" && (
             <UploadPDF
@@ -155,10 +155,10 @@ const BulkImport = () => {
         </div>
 
         {/* Quality Check Controls */}
-        <div>
+        {/* <div>
           <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
-             <div className="bg-[#2D468A]/10 p-2 rounded-lg text-[#2D468A] font-bold text-lg">2</div>
-             <h2 className="text-xl font-bold tracking-tight text-[#2D468A]">Configure Quality Checks</h2>
+             <div className="bg-brand-primary/10 p-2 rounded-lg text-brand-primary font-bold text-lg">2</div>
+             <h2 className="text-xl font-bold tracking-tight text-brand-primary">Configure Quality Checks</h2>
           </div>
           <div className="bg-gray-50/50 rounded-2xl">
             <QualityCheck
@@ -170,20 +170,20 @@ const BulkImport = () => {
               setJobRole={setJobRole}
             />
           </div>
-        </div>
+        </div> */}
 
         {/* Upload Progress UI */}
         {loading && (
           <div className="w-full max-w-2xl mx-auto bg-blue-50/50 p-6 rounded-2xl border border-blue-100 flex flex-col gap-3 font-medium">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-[#2D468A] flex items-center gap-2">
+              <span className="text-brand-primary flex items-center gap-2">
                 <AiOutlineLoading3Quarters className="animate-spin" /> {uploadStatus}
               </span>
-              <span className="text-[#2D468A] font-bold">{progress}%</span>
+              <span className="text-brand-primary font-bold">{progress}%</span>
             </div>
             <div className="w-full bg-white rounded-full h-3 border border-blue-100 overflow-hidden shadow-inner">
               <div
-                className="bg-gradient-to-r from-[#5a7bd4] to-[#2D468A] h-full transition-all duration-300 rounded-full"
+                className="bg-gradient-to-r from-brand-accent to-brand-primary h-full transition-all duration-300 rounded-full"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -197,7 +197,7 @@ const BulkImport = () => {
             className={`w-full sm:w-auto px-12 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 shadow-lg transition-all duration-300 ${
               loading 
                 ? "bg-gray-400 text-white cursor-not-allowed shadow-none" 
-                : "bg-gradient-to-r from-[#2D468A] to-[#1a3060] text-white hover:shadow-xl hover:-translate-y-1"
+                : "bg-gradient-to-r from-brand-primary to-brand-accent text-white hover:shadow-xl hover:-translate-y-1"
             }`}
             onClick={handleSubmit}
             disabled={loading}

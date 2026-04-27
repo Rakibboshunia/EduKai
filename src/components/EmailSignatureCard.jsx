@@ -21,7 +21,7 @@ export default function EmailSignatureCard({
         />
 
         <div>
-          <p className="text-sm font-semibold text-[#2D468A]">
+          <p className="text-sm font-semibold text-brand-primary">
             {name}
           </p>
 
@@ -34,7 +34,7 @@ export default function EmailSignatureCard({
 
       {/* Right Section */}
       <div className="text-right">
-        <p className="text-blue-600 font-semibold text-sm">
+        <p className="text-brand-primary font-semibold text-sm">
           {company} ✨
         </p>
       </div>

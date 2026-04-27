@@ -174,9 +174,9 @@ export default function AICVRewriter() {
       <div>
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 px-3 py-3 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-blue-50 hover:text-[#2D468A] hover:border-blue-200 transition-all shadow-sm"
+          className="flex items-center gap-2 px-3 py-3 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-blue-50 hover:text-brand-primary hover:border-blue-200 transition-all shadow-sm"
         >
-          <ArrowLeft size={14} /> Back to Candidate Profile
+          <ArrowLeft size={14} /> Candidate Profile
         </button>
       </div>
 
@@ -187,7 +187,7 @@ export default function AICVRewriter() {
         
         <div className="flex flex-col md:flex-row justify-between w-full h-full relative z-10 gap-6">
           <div className="space-y-2">
-            <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#2D468A]">
+            <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-brand-primary">
               AI CV Rewriter
             </h1>
             <p className="text-gray-500 font-medium text-sm sm:text-base max-w-xl mt-5">
@@ -195,12 +195,12 @@ export default function AICVRewriter() {
             </p>
           </div>
           
-          <div className="z-10 bg-[#2D468A]/5 text-[#2D468A] px-5 py-4 rounded-xl border border-blue-200 flex items-center gap-4 min-w-[280px]">
+          <div className="z-10 bg-brand-primary/5 text-brand-primary px-5 py-4 rounded-xl border border-blue-200 flex items-center gap-4 min-w-[280px]">
             {/* <div className="bg-blue-100/50 p-2.5 rounded-full text-[#2D468A]">
               <FiUser size={20} />
             </div> */}
-            <div className="flex flex-col border-l border-[#2D468A]/20 pl-4">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#2D468A]/60">Candidate Profile</span>
+            <div className="flex flex-col border-l border-brand-primary/20 pl-4">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-brand-primary/60">Candidate Profile</span>
               <span className="text-base sm:text-lg font-bold truncate max-w-[200px]">{candidate.name || "Unknown Candidate"}</span>
             </div>
           </div>
@@ -219,14 +219,14 @@ export default function AICVRewriter() {
                className={`px-8 py-3.5 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-300 w-full sm:w-auto shadow-md ${
                  isRewriting
                    ? "bg-gray-400 text-white cursor-not-allowed shadow-none"
-                   : "bg-gradient-to-r from-[#2D468A] to-[#1a3060] text-white hover:scale-[1.02] hover:shadow-lg"
+                   : "bg-gradient-to-r from-brand-primary to-brand-accent text-white hover:scale-[1.02] hover:shadow-lg"
                }`}
              >
                <SiOpenai size={18} className={isRewriting ? "animate-spin" : ""} />
                {isRewriting ? "AI is Processing..." : "Rewrite Profile with AI"}
              </button>
              {isRewriting && (
-               <span className="text-sm font-medium text-[#2D468A] animate-pulse">
+               <span className="text-sm font-medium text-brand-primary animate-pulse">
                  Optimizing resume format and content...
                </span>
              )}
@@ -266,8 +266,8 @@ export default function AICVRewriter() {
           <div className="flex flex-col gap-3 group relative">
              <div className="flex items-center gap-2 px-1 justify-between">
                <div className="flex items-center gap-2">
-                 <div className="h-2 w-2 rounded-full bg-[#2D468A] animate-pulse"></div>
-                 <h3 className="text-[#2D468A] font-bold tracking-tight text-sm uppercase">AI Enhanced Version</h3>
+                  <div className="h-2 w-2 rounded-full bg-brand-primary animate-pulse"></div>
+                  <h3 className="text-brand-primary font-bold tracking-tight text-sm uppercase">AI Enhanced Version</h3>
                </div>
                
                {/* Edit Output Control */}
@@ -309,7 +309,7 @@ export default function AICVRewriter() {
                </div> */}
              </div>
              
-             <div className="flex-1 border-2 border-blue-100 rounded-2xl bg-white overflow-hidden shadow-md shadow-blue-900/5 transition-all group-hover:shadow-xl group-hover:border-[#2D468A]/30 relative min-h-[700px]">
+              <div className="flex-1 border-2 border-blue-100 rounded-2xl bg-white overflow-hidden shadow-md shadow-blue-900/5 transition-all group-hover:shadow-xl group-hover:border-brand-primary/30 relative min-h-[700px]">
                {isEditingPDF && (
                   <div className="absolute inset-0 bg-white z-20 flex flex-col">
                     <textarea
@@ -353,16 +353,16 @@ export default function AICVRewriter() {
         <div className="flex flex-col sm:flex-row justify-center  gap-4 pt-8 mt-2 border-t border-gray-100">
            <button
              onClick={handleDownload}
-             className="flex-1 sm:flex-none border-2 border-[#2D468A]/10 text-[#2D468A] bg-gray-50 hover:bg-[#2D468A] hover:text-white hover:border-[#2D468A] px-10 py-3 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all shadow-sm"
+             className="flex-1 sm:flex-none border-2 border-brand-primary/10 text-brand-primary bg-gray-50 hover:bg-gradient-to-r hover:from-brand-primary hover:to-brand-accent hover:text-white hover:border-transparent px-10 py-3 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all shadow-sm"
            >
              <FiDownload size={18} /> Download Processed CV
            </button>
-           <button
-             onClick={() => navigate("/ai/mail-submission", { state: { candidate } })}
-             className="flex-1 sm:flex-none bg-gradient-to-r from-[#2D468B] to-[#1a3060] hover:scale-[1.02] hover:shadow-lg text-white px-10 py-3 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all shadow-md"
-           >
-             <FiSend size={18} /> Proceed to Mail Submission
-           </button>
+            <button
+              onClick={() => navigate("/ai/mail-submission", { state: { candidate } })}
+              className="flex-1 sm:flex-none bg-gradient-to-r from-brand-primary to-brand-accent hover:scale-[1.02] hover:shadow-lg text-white px-10 py-3 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all shadow-md"
+            >
+              <FiSend size={18} /> Proceed to Mail Submission
+            </button>
         </div>
 
       </div>

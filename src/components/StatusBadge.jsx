@@ -19,7 +19,7 @@ export default function StatusBadge({
     options[currentValue] || {
       label: "Unknown",
       icon: Clock,
-      className: "bg-gray-200 text-gray-600",
+      className: "bg-slate-100 text-slate-600",
     };
 
   const Icon = current.icon;
@@ -86,7 +86,7 @@ export default function StatusBadge({
 
       {open && (
         <div
-          className={`absolute left-0 mt-2 ${width} bg-white border border-gray-200 rounded-md shadow-lg z-50 overflow-hidden`}
+          className={`absolute left-0 mt-2 ${width} bg-white border border-slate-200 rounded-md shadow-lg z-50 overflow-hidden`}
         >
           {Object.entries(options).map(([key, item]) => {
 
@@ -96,8 +96,7 @@ export default function StatusBadge({
               <button
                 key={key}
                 onClick={() => handleChange(key)}
-                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-900 hover:bg-gray-100 transition-colors text-left font-semibold border-b border-gray-50 last:border-0"
-                style={{ color: '#111827' }}
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-slate-900 hover:bg-slate-50 transition-colors text-left font-semibold border-b border-slate-50 last:border-0"
               >
                 <ItemIcon size={14} />
                 {item.label}

@@ -18,10 +18,9 @@ import {
 } from "lucide-react";
 
 import { getCandidates, updateCandidateStatus } from "../api/candidateApi";
+import { useUIState } from "../provider/UIStateProvider";
 
-/* ─────────────────────────────────────────────────────────────
-   Status option maps
-───────────────────────────────────────────────────────────── */
+
 const qualityOptions = {
   pending: { label: "Pending",        icon: Clock,        className: "bg-gray-100 text-gray-700" },
   passed:  { label: "Quality Passed", icon: CheckCircle,  className: "bg-green-100 text-green-700" },
@@ -34,9 +33,7 @@ const availabilityOptions = {
   not_available: { label: "Not Available", icon: XCircle,     className: "bg-red-100 text-red-700"   },
 };
 
-/* ─────────────────────────────────────────────────────────────
-   Avatar helper
-───────────────────────────────────────────────────────────── */
+
 function CandidateAvatar({ photo, name, size = "w-10 h-10" }) {
   if (photo) {
     return (
@@ -49,7 +46,7 @@ function CandidateAvatar({ photo, name, size = "w-10 h-10" }) {
   }
   return (
     <div
-      className={`${size} rounded-xl bg-gradient-to-br from-[#2D468A] to-indigo-500 text-white font-bold text-base flex items-center justify-center flex-shrink-0 shadow-sm`}
+      className={`${size} rounded-xl bg-gradient-to-br from-brand-primary to-brand-accent text-white font-bold text-base flex items-center justify-center flex-shrink-0 shadow-sm`}
     >
       {name?.charAt(0)?.toUpperCase() || "?"}
     </div>
@@ -62,12 +59,13 @@ function CandidateAvatar({ photo, name, size = "w-10 h-10" }) {
 export default function CVQueuePage() {
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState("all");
+  const { cvQueue, updateCvQueue } = useUIState();
+  const [activeTab, setActiveTab] = useState(cvQueue.activeTab || "all");
   const [cvs, setCVs] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(cvQueue.page || 1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCvs, setTotalCvs] = useState(0);
 
@@ -174,6 +172,11 @@ export default function CVQueuePage() {
   /* ─── Navigate to profile ─── */
   const goToProfile = (id) => navigate(`/cv/queue/${id}`);
 
+  // Update global state whenever tab or page changes
+  useEffect(() => {
+    updateCvQueue({ activeTab, page });
+  }, [activeTab, page, updateCvQueue]);
+
   /* ─────────────────────────────────────────────────────────
      RENDER
   ───────────────────────────────────────────────────────── */
@@ -185,7 +188,7 @@ export default function CVQueuePage() {
         <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full -z-10 opacity-60 pointer-events-none" />
 
         <div className="space-y-2 z-10">
-          <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#2D468A]">
+          <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-brand-primary">
             CV Processing Queue
           </h1>
           <p className="text-gray-500 font-medium text-sm sm:text-base max-w-xl mt-5">
@@ -193,12 +196,12 @@ export default function CVQueuePage() {
           </p>
         </div>
 
-        <div className="z-10 bg-gradient-to-r from-blue-50 to-blue-100/50 text-[#2D468A] px-6 py-3 rounded-xl border border-blue-200 shadow-sm flex items-center gap-4 w-fit">
-          <div className="bg-[#2D468A] text-white p-2 rounded-lg shadow-sm">
+        <div className="z-10 bg-gradient-to-r from-blue-50 to-blue-100/50 text-brand-primary px-6 py-3 rounded-xl border border-blue-200 shadow-sm flex items-center gap-4 w-fit">
+          <div className="bg-brand-primary text-white p-2 rounded-lg shadow-sm">
             <Users size={20} />
           </div>
           <div className="flex flex-col">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#2D468A]/70">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-brand-primary/70">
               Total Candidates
             </span>
             <span className="text-2xl font-extrabold leading-none">{totalCvs}</span>
@@ -207,7 +210,7 @@ export default function CVQueuePage() {
       </div>
 
       {/* ── Controls + List ── */}
-      <div className="bg-white/70 rounded-3xl border border-blue-50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col">
+      <div className="bg-white/70 rounded-3xl border border-blue-50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col border-t-4 border-t-brand-primary">
 
         {/* Search & Tabs */}
         <div className="p-6 border-b border-gray-100 bg-slate-50/50 space-y-5">
@@ -216,6 +219,8 @@ export default function CVQueuePage() {
               data={cvs}
               searchKeys={["name", "email", "phone"]}
               onFilter={setSearchData}
+              initialSearch={cvQueue.searchTerm}
+              onSearchChange={(val) => updateCvQueue({ searchTerm: val })}
             />
           </div>
           <Tabs tabs={tabs} active={activeTab} onChange={setActiveTab} />
@@ -225,7 +230,7 @@ export default function CVQueuePage() {
         <div className="p-4 sm:p-6 bg-gray-50/30">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D468A]" />
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary" />
               <p className="text-gray-500 font-medium mt-4">Loading candidates…</p>
             </div>
           ) : tabFiltered.length > 0 ? (
@@ -236,11 +241,11 @@ export default function CVQueuePage() {
                 <table className="w-full text-left border-collapse">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-5 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider w-[260px]">Candidate</th>
-                      <th className="px-5 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Job Title</th>
-                      <th className="px-5 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Quality</th>
-                      <th className="px-5 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider">Availability</th>
-                      <th className="px-5 py-4 text-[12px] font-bold text-[#2D468A] uppercase tracking-wider text-right"></th>
+                      <th className="px-4 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider w-[260px]">Candidate Name</th>
+                      <th className="px-4 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider">Job Title</th>
+                      <th className="px-4 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider">Quality Check</th>
+                      <th className="px-4 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider">Availability Check</th>
+                      <th className="px-4 py-3 text-[12px] font-bold text-brand-primary uppercase tracking-wider text-right"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -251,11 +256,11 @@ export default function CVQueuePage() {
                         onClick={() => goToProfile(cv.id)}
                       >
                         {/* Candidate */}
-                        <td className="px-5 py-4">
+                        <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <CandidateAvatar photo={cv.photo} name={cv.name} />
                             <div className="min-w-0">
-                              <p className="font-bold text-gray-800 text-sm leading-tight truncate">{cv.name}</p>
+                              <p className="font-bold text-gray-800 text-[14px] leading-tight truncate">{cv.name}</p>
                               {cv.name_without_surname && (
                                 <p className="text-xs text-gray-400 truncate">({cv.name_without_surname})</p>
                               )}
@@ -265,11 +270,11 @@ export default function CVQueuePage() {
                         </td>
 
                         {/* Job Title */}
-                        <td className="px-5 py-4">
+                        <td className="px-4 py-3">
                           {cv.job_titles.length > 0 ? (
                             <div className="flex flex-wrap gap-1 max-w-[180px]">
                               {cv.job_titles.slice(0, 2).map((t) => (
-                                <span key={t} className="px-2 py-0.5 bg-blue-50 text-[#2D468A] text-xs font-semibold rounded-full border border-blue-100">
+                                <span key={t} className="px-2 py-0.5 bg-blue-50 text-brand-primary text-xs font-semibold rounded-full border border-blue-100">
                                   {t}
                                 </span>
                               ))}
@@ -303,10 +308,10 @@ export default function CVQueuePage() {
                         </td>
 
                         {/* View Profile */}
-                        <td className="px-5 py-4 text-right">
+                        <td className="px-4 py-3 text-right">
                           <button
                             onClick={(e) => { e.stopPropagation(); goToProfile(cv.id); }}
-                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#2D468A]/5 border border-[#2D468A]/20 text-[#2D468A] text-xs font-bold hover:bg-[#2D468A] hover:text-white transition-all duration-200 group-hover:shadow-md"
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-primary to-brand-accent text-white text-xs font-bold hover:shadow-lg transition-all duration-200 group-hover:shadow-md"
                           >
                             View
                             <ArrowRight size={13} />
@@ -324,9 +329,9 @@ export default function CVQueuePage() {
                   <div
                     key={cv.id}
                     onClick={() => goToProfile(cv.id)}
-                    className="group bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md hover:border-[#2D468A]/30 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer relative overflow-hidden"
+                    className="group bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md hover:border-brand-primary/30 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer relative overflow-hidden"
                   >
-                    <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#2D468A] to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-brand-primary to-brand-accent opacity-0 group-hover:opacity-100 transition-opacity" />
 
                     <div className="flex items-start gap-3">
                       <CandidateAvatar photo={cv.photo} name={cv.name} size="w-12 h-12" />
@@ -338,13 +343,13 @@ export default function CVQueuePage() {
                               <p className="text-xs text-gray-400">({cv.name_without_surname})</p>
                             )}
                           </div>
-                          <ArrowRight size={16} className="text-gray-300 group-hover:text-[#2D468A] transition-colors flex-shrink-0 mt-0.5" />
+                          <ArrowRight size={16} className="text-gray-300 group-hover:text-brand-primary transition-colors flex-shrink-0 mt-0.5" />
                         </div>
 
                         {cv.job_titles.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-1.5">
                             {cv.job_titles.slice(0, 2).map((t) => (
-                              <span key={t} className="px-2 py-0.5 bg-blue-50 text-[#2D468A] text-[11px] font-semibold rounded-full border border-blue-100">
+                              <span key={t} className="px-2 py-0.5 bg-blue-50 text-brand-primary text-[11px] font-semibold rounded-full border border-blue-100">
                                 {t}
                               </span>
                             ))}

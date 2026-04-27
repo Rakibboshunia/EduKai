@@ -19,18 +19,20 @@ import {
   deleteOrganization,
   importOrganizations,
 } from "../api/organizationApi";
+import { useUIState } from "../provider/UIStateProvider";
 
 export default function Organizations() {
+  const { orgs, updateOrgs } = useUIState();
   const [organizations, setOrganizations] = useState([]);
-  const [phaseFilter, setPhaseFilter] = useState("");
-  const [townFilter, setTownFilter] = useState("");
-  const [genderFilter, setGenderFilter] = useState("");
-  const [laFilter, setLaFilter] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [phaseFilter, setPhaseFilter] = useState(orgs.phaseFilter || "");
+  const [townFilter, setTownFilter] = useState(orgs.townFilter || "");
+  const [genderFilter, setGenderFilter] = useState(orgs.genderFilter || "");
+  const [laFilter, setLaFilter] = useState(orgs.laFilter || "");
+  const [searchQuery, setSearchQuery] = useState(orgs.searchQuery || "");
+  const [debouncedSearch, setDebouncedSearch] = useState(orgs.searchQuery || "");
 
   const [jobFilter, setJobFilter] = useState("");
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(orgs.page || 1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalOrganizations, setTotalOrganizations] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -105,7 +107,7 @@ export default function Organizations() {
   }, [searchQuery]);
 
   useEffect(() => {
-    fetchOrganizations(1);
+    fetchOrganizations(page);
   }, [
     debouncedSearch,
     phaseFilter,
@@ -113,7 +115,20 @@ export default function Organizations() {
     genderFilter,
     laFilter,
     jobFilter,
+    page,
   ]);
+
+  // ✅ Persist state on change
+  useEffect(() => {
+    updateOrgs({
+      searchQuery,
+      phaseFilter,
+      townFilter,
+      genderFilter,
+      laFilter,
+      page
+    });
+  }, [searchQuery, phaseFilter, townFilter, genderFilter, laFilter, page, updateOrgs]);
 
   /* ================= SEARCH ================= */
   const handleSearchChange = (e) => {
@@ -189,14 +204,14 @@ export default function Organizations() {
   return (
     <div className="p-4 sm:p-8 max-w-[1800px] mx-auto space-y-8 mb-10">
       {/* Header Section */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 bg-white/70 p-6 sm:p-8 rounded-2xl border border-blue-50 shadow-sm relative overflow-hidden">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 bg-white/70 p-6 sm:p-8 rounded-2xl border border-blue-50 shadow-sm relative overflow-hidden ">
         {/* Subtle Background Decoration */}
         <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full -z-10 opacity-60 pointer-events-none"></div>
 
         <div className="flex flex-col md:flex-row justify-between w-full h-full relative z-10 gap-6">
           <div className="space-y-4">
             <div className="space-y-1">
-              <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#2D468A]">
+              <h1 className="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-brand-primary">
                 Organization Management
               </h1>
               <p className="text-gray-500 font-medium text-sm sm:text-base max-w-xl mt-5">
@@ -204,9 +219,9 @@ export default function Organizations() {
                 organizations.
               </p>
             </div>
-            <div className="z-10 bg-gradient-to-r from-blue-50 to-blue-100/50 text-[#2D468A] px-5 py-2.5 rounded-xl border border-blue-200 shadow-sm flex items-center gap-3 w-fit">
+            <div className="z-10 bg-gradient-to-r from-brand-primary/5 to-brand-primary/10 text-brand-primary px-6 py-3 rounded-xl border border-brand-primary/20 shadow-sm flex items-center gap-4 w-fit">
               <div className="flex flex-col">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#2D468A]/70">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-brand-primary/70">
                   Total Organizations
                 </span>
                 <span className="text-2xl font-extrabold leading-none">
@@ -219,7 +234,7 @@ export default function Organizations() {
           <div className="flex flex-col sm:flex-row items-end lg:items-center gap-3 w-full lg:w-auto h-fit mt-auto lg:pb-1">
             <button
               onClick={() => setOpenAdd(true)}
-              className="bg-gradient-to-r from-[#2D468A] to-[#1a3060] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-white font-medium px-5 py-3 rounded-xl flex items-center justify-center gap-2 shadow-md w-full sm:w-auto whitespace-nowrap"
+              className="bg-gradient-to-r from-brand-primary to-brand-accent hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-white font-medium px-5 py-3 rounded-xl flex items-center justify-center gap-2 shadow-md w-full sm:w-auto whitespace-nowrap"
             >
               <FiPlus size={18} /> Add Organization
             </button>
@@ -231,16 +246,16 @@ export default function Organizations() {
       </div>
 
       {/* Main Content Area */}
-      <div className="bg-white/70 rounded-3xl border border-blue-50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col">
+      <div className="bg-white rounded-2xl border border-blue-50 shadow-sm flex flex-col gap-1 border-t-4 border-t-brand-primary">
         {/* Filters Area */}
         <div className="p-10 border-b border-gray-100 bg-slate-50/50">
-          <label className="text-xs font-bold tracking-wider uppercase text-[#2D468A] mb-3 block">
+          <label className="text-xs font-bold tracking-wider uppercase text-brand-primary mb-3 block">
             Search & Filter Audience
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             <div className="relative">
               <FiSearch
-                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                className="absolute left-3.5 top-[14px] text-brand-primary/60"
                 size={18}
               />
               <input
@@ -248,19 +263,19 @@ export default function Organizations() {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 placeholder="Search organizations..."
-                className="w-full text-gray-800 pl-10 pr-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm"
+                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white border border-blue-200 rounded-2xl text-sm font-bold text-brand-primary hover:bg-blue-50 transition-all shadow-sm"
               />
             </div>
 
             <div className="relative">
               <FiLayers
-                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                className="absolute left-3.5 top-[14px] text-brand-primary/60"
                 size={18}
               />
               <select
                 value={phaseFilter}
                 onChange={(e) => setPhaseFilter(e.target.value)}
-                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/40 focus:border-brand-primary shadow-sm transition-all text-sm appearance-none cursor-pointer"
               >
                 <option value="">All Phases</option>
                 {phaseOptions.map((p) => (
@@ -274,13 +289,13 @@ export default function Organizations() {
 
             <div className="relative">
               <FiMapPin
-                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                className="absolute left-3.5 top-[14px] text-brand-primary/60"
                 size={18}
               />
               <select
                 value={townFilter}
                 onChange={(e) => setTownFilter(e.target.value)}
-                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/40 focus:border-brand-primary shadow-sm transition-all text-sm appearance-none cursor-pointer"
               >
                 <option value="">All Towns</option>
                 {townOptions.map((t) => (
@@ -294,13 +309,13 @@ export default function Organizations() {
 
             <div className="relative">
               <FiUsers
-                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                className="absolute left-3.5 top-[14px] text-brand-primary/60"
                 size={18}
               />
               <select
                 value={genderFilter}
                 onChange={(e) => setGenderFilter(e.target.value)}
-                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/40 focus:border-brand-primary shadow-sm transition-all text-sm appearance-none cursor-pointer"
               >
                 <option value="">All Genders</option>
                 {genderOptions.map((g) => (
@@ -314,13 +329,13 @@ export default function Organizations() {
 
             <div className="relative">
               <FiShield
-                className="absolute left-3.5 top-[14px] text-[#2D468A]/60"
+                className="absolute left-3.5 top-[14px] text-brand-primary/60"
                 size={18}
               />
               <select
                 value={laFilter}
                 onChange={(e) => setLaFilter(e.target.value)}
-                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D468A]/40 focus:border-[#2D468A] shadow-sm transition-all text-sm appearance-none cursor-pointer"
+                className="w-full text-gray-800 pl-10 pr-10 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/40 focus:border-brand-primary shadow-sm transition-all text-sm appearance-none cursor-pointer"
               >
                 <option value="">All Local Authority</option>
                 {laOptions.map((la) => (
@@ -338,8 +353,8 @@ export default function Organizations() {
         <div className="p-6 sm:p-8 bg-gray-50/30">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2D468A] mb-4"></div>
-              <h3 className="text-xl font-bold tracking-tight text-[#2D468A]">Loading Organizations...</h3>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mb-4"></div>
+              <h3 className="text-xl font-bold tracking-tight text-brand-primary">Loading Organizations...</h3>
               <p className="text-gray-500 text-sm mt-2">Please wait while we fetch the data.</p>
             </div>
           ) : organizations.length > 0 ? (

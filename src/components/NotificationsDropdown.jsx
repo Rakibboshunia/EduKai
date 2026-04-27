@@ -30,7 +30,7 @@ export default function NotificationsDropdown({ open, onClose }) {
       "
     >
       {/* ================= HEADER ================= */}
-      <div className="bg-[#2D468A] text-white flex items-center justify-center gap-2 py-3 text-base sm:text-lg font-medium">
+      <div className="bg-gradient-to-r from-brand-primary to-brand-accent text-white flex items-center justify-center gap-2 py-3 text-base sm:text-lg font-bold">
         <IoNotifications />
         Notifications
       </div>
