@@ -330,17 +330,16 @@ export default function CandidateProfile() {
               ) : (
                 <>
                   <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <h1 className="text-xl sm:text-2xl font-black text-gray-900">{form.name}</h1>
-                    <StatusBadge value={form.status} options={qualityOptions} onChange={handleQuality} />
-                    <StatusBadge value={form.availability} options={availabilityOptions} onChange={handleAvail} />
+                    <h1 className="text-xl sm:text-2xl font-black text-gray-900">{form.name}</h1>  
                   </div>
                   {form.job_titles.length > 0 && (
                     <p className="text-brand-primary font-semibold text-sm mb-2">{form.job_titles.join(", ")}</p>
                   )}
+
+                  <StatusBadge value={form.status} options={qualityOptions} onChange={handleQuality} />
+                  <StatusBadge value={form.availability} options={availabilityOptions} onChange={handleAvail} />
+
                   <div className="flex flex-wrap gap-4 text-xs text-gray-500">
-                    {form.location && <span className="flex items-center gap-1.5"><MapPin size={12} className="text-gray-400" />{form.location}</span>}
-                    <span className="flex items-center gap-1.5"><Briefcase size={12} className="text-gray-400" />{form.experience}+ Years Experience</span>
-                    {form.email && <span className="flex items-center gap-1.5"><Mail size={12} className="text-gray-400" />{form.email}</span>}
                   </div>
                 </>
               )}
@@ -370,6 +369,8 @@ export default function CandidateProfile() {
                 <InfoItem label="Email Address"  value={form.email} />
                 <InfoItem label="Phone Number"   value={form.phone} />
                 <InfoItem label="Total Experience" value={`${form.experience} Year${form.experience !== 1 ? "s" : ""}`} />
+                <InfoItem label="Location"       value={form.location} />
+
                 {form.bio && (
                   <div className="sm:col-span-2">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Bio</p>

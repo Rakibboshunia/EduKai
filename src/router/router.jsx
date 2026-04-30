@@ -15,6 +15,8 @@ import AICVRewriter from "../pages/AICVRewriter";
 import EmailCompose from "../pages/EmailCompose";
 import MailSubmission from "../pages/MailSubmission";
 import Tracking from "../pages/Tracking";
+import OrganizationDetail from "../pages/OrganizationDetail";
+import ContactDetail from "../pages/ContactDetail";
 
 import LogIn from "../pages/auth/LogIn";
 import ResetPassword from "../pages/auth/ResetPassword";
@@ -56,7 +58,9 @@ const router = createBrowserRouter([
       // { path: "tracking", element: <Tracking /> },
       { path: "settings", element: <Settings /> },
       { path: "organizations", element: <Organizations /> },
+      { path: "organizations/:id", element: <OrganizationDetail /> },
       { path: "contact", element: <Contact /> },
+      { path: "contact/:id", element: <ContactDetail /> },
 
       {
         path: "ai",

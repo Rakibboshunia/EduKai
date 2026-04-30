@@ -8,6 +8,11 @@ export const getOrganizations = async (
   return res.data;
 };
 
+export const getOrganizationById = async (id) => {
+  const res = await axiosInstance.get(`/api/organizations/${id}/`);
+  return res.data;
+};
+
 /* ================= CREATE ================= */
 export const createOrganization = async (data) => {
   return axiosInstance.post("/api/organizations/", data);

@@ -80,14 +80,14 @@ export default function MailSubmission() {
   const jobOptions = getUnique("job_title");
   const phaseOptions = getUnique("phase");
 
-  const radiusOptions = [
-    ...new Set(
-      organizations
-        .map((o) => o.radius)
-        .filter((r) => r !== null && !isNaN(r))
-        .map((r) => Math.ceil(r))
-    ),
-  ].sort((a, b) => a - b);
+  const radiusOptions = useMemo(() => {
+    const staticValues = [1, 3, 5, 7];
+    const everyFive = [];
+    for (let i = 10; i <= 1000; i += 5) {
+      everyFive.push(i);
+    }
+    return [...staticValues, ...everyFive];
+  }, []);
 
   /* ================= FILTER LOGIC ================= */
   const filteredOrganizations = useMemo(() => {
@@ -361,10 +361,10 @@ export default function MailSubmission() {
               }
               className="w-full text-gray-800 px-4 py-3 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/40 focus:border-brand-primary shadow-sm text-sm cursor-pointer"
             >
-              <option value="">All Radius Data</option>
+              <option value="">All Radius</option>
               {radiusOptions.map((r) => (
                 <option key={r} value={r}>
-                  Up to {r} KM
+                  {r} KM
                 </option>
               ))}
             </select>

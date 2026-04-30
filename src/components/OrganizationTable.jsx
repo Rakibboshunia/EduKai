@@ -1,8 +1,9 @@
-import React from "react";
-import { FiEdit2, FiTrash2, FiMapPin, FiPhone, FiHash, FiLayers, FiUsers } from "react-icons/fi";
+import { FiEdit2, FiTrash2, FiMapPin, FiPhone, FiHash, FiLayers, FiUsers, FiEye } from "react-icons/fi";
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 
 const OrganizationTable = ({ data = [], onEdit, onDelete }) => {
+  const navigate = useNavigate();
   return (
     <div className="w-full">
       {/* Desktop View */}
@@ -73,6 +74,13 @@ const OrganizationTable = ({ data = [], onEdit, onDelete }) => {
                 <td className="px-3 py-3 text-right">
                   <div className="flex items-center justify-end gap-2">
                     <button
+                      onClick={() => navigate(`/organizations/${org.id}`)}
+                      className="p-2 text-gray-400 hover:text-brand-primary hover:bg-blue-50 rounded-lg transition-all"
+                      title="View Contacts"
+                    >
+                      <FiEye size={16} />
+                    </button>
+                    <button
                       onClick={() => onEdit && onEdit(org.id)}
                        className="p-2 text-gray-400 hover:text-brand-primary hover:bg-blue-50 rounded-lg transition-all"
                     >
@@ -102,6 +110,13 @@ const OrganizationTable = ({ data = [], onEdit, onDelete }) => {
                 <p className="text-xs text-gray-500 mt-1">{org.local_authority}</p>
               </div>
               <div className="flex gap-2">
+                <button
+                  onClick={() => navigate(`/organizations/${org.id}`)}
+                  className="p-2 text-brand-primary bg-blue-50 rounded-lg"
+                  title="View Contacts"
+                >
+                  <FiEye size={16} />
+                </button>
                 <button onClick={() => onEdit(org.id)} className="p-2 text-blue-600 bg-blue-50 rounded-lg">
                   <FiEdit2 size={16} />
                 </button>

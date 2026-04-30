@@ -8,6 +8,11 @@ export const getContacts = async (
   return res.data;
 };
 
+export const getContactById = async (id) => {
+  const res = await axiosInstance.get(`/api/organizations/contacts/${id}/`);
+  return res.data;
+};
+
 /* ================= CREATE ================= */
 export const createContact = async (orgId, payload) => {
   if (!orgId) throw new Error("Organization ID missing ❌");
