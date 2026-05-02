@@ -19,48 +19,120 @@ export default function MailSubmission() {
   const [selectedIds, setSelectedIds] = useState(mailSubmission.selectedIds || []);
 
   const [currentPage, setCurrentPage] = useState(mailSubmission.page || 1);
+  const [pageSize, setPageSize] = useState(mailSubmission.pageSize || 100);
   const [organizations, setOrganizations] = useState([]);
+  const [totalEntries, setTotalEntries] = useState(0); 
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  const PER_PAGE = 100;
+  // ১. সার্চের জন্য ডিবোন্সড ভ্যালু
+  const [debouncedSearch, setDebouncedSearch] = useState(orgSearch);
+  const [isGlobalSelected, setIsGlobalSelected] = useState(false);
+  const [allOptions, setAllOptions] = useState({ cities: [], jobs: [], phases: [] });
 
-  /* ================= API CALL ================= */
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(orgSearch);
+    }, 500); 
+    return () => clearTimeout(handler);
+  }, [orgSearch]);
+
+  // ২. ড্রপডাউন অপশনগুলো ডাটাবেজ থেকে একবার সংগ্রহ করা (Global Filtering Experience এর জন্য)
+  useEffect(() => {
+    const fetchAllOptions = async () => {
+      if (!candidate.id) return;
+      try {
+        const res = await getNearbyContacts(candidate.id, { page: 1, page_size: 1000 });
+        const results = res?.results || [];
+        setAllOptions({
+          cities: [...new Set(results.map(o => o.organization_town).filter(Boolean))].sort(),
+          jobs: [...new Set(results.map(o => o.contact_job_title).filter(Boolean))].sort(),
+          phases: [...new Set(results.map(o => o.organization_phase).filter(Boolean))].sort(),
+        });
+      } catch (err) {
+        console.error("Option fetch error:", err);
+      }
+    };
+    fetchAllOptions();
+  }, [candidate.id]);
+
+  /* ================= API CALL (Professional Backend Filtering) ================= */
+  const updateTableData = useCallback((results, startIndex, totalEntriesCount) => {
+    const BACKEND_LIMIT = 100;
+    const relativeOffset = startIndex % BACKEND_LIMIT;
+    const finalResults = results.slice(relativeOffset, relativeOffset + pageSize);
+
+    const mapped = finalResults.map((item) => ({
+      id: `${item.contact_id}-${item.contact_email}`,
+      name: item.organization_name || "N/A",
+      email: item.contact_email || "N/A",
+      contact_person: item.contact_person || "N/A",
+      job_title: item.contact_job_title || "N/A",
+      industry: item.organization_local_authority || "N/A",
+      location: item.organization_town || "N/A",
+      radius: item.distance_km !== null ? Number(item.distance_km) : null,
+      phase: item.organization_phase || "N/A",
+    }));
+
+    setOrganizations(mapped);
+    setTotalEntries(totalEntriesCount);
+    setTotalPages(Math.ceil(totalEntriesCount / pageSize) || 1);
+  }, [pageSize]);
+
   const fetchContacts = useCallback(async () => {
     if (!candidate.id) return;
+    
+    const controller = new AbortController();
 
     try {
       setLoading(true);
-      const res = await getNearbyContacts(candidate.id, {
-        page: currentPage,
-        page_size: PER_PAGE,
-        radius: filters.radius || undefined, // ✅ backend filtering
-      });
+      const BACKEND_LIMIT = 100;
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = currentPage * pageSize - 1;
 
-      const mapped = (res?.results || []).map((item) => ({
-        id: `${item.contact_id}-${item.contact_email}`,
-        name: item.organization_name || "N/A",
-        email: item.contact_email || "N/A",
-        contact_person: item.contact_person || "N/A",
-        job_title: item.contact_job_title || "N/A",
-        industry: item.organization_local_authority || "N/A",
-        location: item.organization_town || "N/A",
-        radius:
-          item.distance_km !== null && item.distance_km !== undefined
-            ? Number(item.distance_km)
-            : null, // ✅ always number or null
-        phase: item.organization_phase || "N/A",
-      }));
+      const startBackendPage = Math.floor(startIndex / BACKEND_LIMIT) + 1;
+      const endBackendPage = Math.floor(endIndex / BACKEND_LIMIT) + 1;
 
-      setOrganizations(mapped);
-      setTotalPages(res?.pagination?.total_pages || 1);
+      const queryParams = {
+        page: startBackendPage,
+        page_size: BACKEND_LIMIT,
+        search: debouncedSearch || undefined,
+        town: filters.city || undefined,
+        job_title: filters.job || undefined,
+        phase: filters.phase || undefined,
+        radius_km: filters.radius || undefined,
+      };
+
+      const firstRes = await getNearbyContacts(candidate.id, queryParams, controller.signal);
+
+      let allResults = firstRes?.results || [];
+      let totalEntriesCount = firstRes?.count || firstRes?.pagination?.total_entries || (firstRes?.pagination?.total_pages * BACKEND_LIMIT) || 0;
+
+      updateTableData(allResults, startIndex, totalEntriesCount);
       setLoading(false);
+
+      if (startBackendPage < endBackendPage) {
+        for (let p = startBackendPage + 1; p <= endBackendPage; p++) {
+          const res = await getNearbyContacts(candidate.id, { ...queryParams, page: p }, controller.signal);
+
+          if (res?.results) {
+            allResults = [...allResults, ...res.results];
+            updateTableData(allResults, startIndex, totalEntriesCount);
+          }
+        }
+      }
     } catch (err) {
-      console.error(err);
-      setOrganizations([]);
-      setLoading(false);
+      if (err.name === 'AbortError' || err.message === 'canceled') {
+        // ক্যানসেলড
+      } else {
+        console.error("Fetch error:", err);
+        setOrganizations([]);
+        setLoading(false);
+      }
     }
-  }, [candidate.id, currentPage, filters.radius]);
+
+    return () => controller.abort();
+  }, [candidate.id, currentPage, pageSize, filters, debouncedSearch, updateTableData]);
 
   useEffect(() => {
     fetchContacts();
@@ -69,90 +141,61 @@ export default function MailSubmission() {
   /* ================= RESET PAGE ================= */
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters, orgSearch]);
+  }, [filters, debouncedSearch]);
 
   /* ================= DYNAMIC OPTIONS ================= */
-  const getUnique = (key) => {
-    return [...new Set(organizations.map((o) => o[key]).filter(Boolean))];
-  };
-
-  const cityOptions = getUnique("location");
-  const jobOptions = getUnique("job_title");
-  const phaseOptions = getUnique("phase");
+  const cityOptions = allOptions.cities;
+  const jobOptions = allOptions.jobs;
+  const phaseOptions = allOptions.phases;
 
   const radiusOptions = useMemo(() => {
-    const staticValues = [1, 3, 5, 7];
+    const staticValues = [1, 3, 5, 7, 10, 15, 20, 25];
     const everyFive = [];
-    for (let i = 10; i <= 1000; i += 5) {
+    for (let i = 50; i <= 1000; i += 50) {
       everyFive.push(i);
     }
     return [...staticValues, ...everyFive];
   }, []);
 
-  /* ================= FILTER LOGIC ================= */
+  /* ================= FILTER LOGIC (Now handled by Backend) ================= */
   const filteredOrganizations = useMemo(() => {
-    let data = [...organizations];
+    return organizations; // ডাটা এখন ব্যাকএন্ড থেকেই ফিল্টার হয়ে আসছে
+  }, [organizations]);
 
-    if (orgSearch) {
-      const search = orgSearch.toLowerCase();
-      data = data.filter((org) =>
-        [org.name, org.location, org.contact_person, org.job_title]
-          .join(" ")
-          .toLowerCase()
-          .includes(search)
-      );
-    }
-
-    if (filters.city) {
-      data = data.filter((o) => o.location === filters.city);
-    }
-
-    if (filters.job) {
-      data = data.filter((o) => o.job_title === filters.job);
-    }
-
-    if (filters.phase) {
-      data = data.filter((o) => o.phase === filters.phase);
-    }
-
-    // ✅ Safe radius filter
-    if (filters.radius) {
-      const selectedRadius = Number(filters.radius);
-      data = data.filter(
-        (o) => o.radius !== null && o.radius <= selectedRadius
-      );
-    }
-
-    return data;
-  }, [organizations, orgSearch, filters]);
-
-  /* ================= SELECT ================= */
+  /* ================= SELECT LOGIC ================= */
   const toggleSelect = (id) => {
+    if (isGlobalSelected) setIsGlobalSelected(false);
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
   const toggleSelectAll = () => {
-    const pageIds = filteredOrganizations.map((o) => o.id);
+    const pageIds = organizations.map((o) => o.id);
     const isAllSelected = pageIds.every((id) => selectedIds.includes(id));
 
-    if (isAllSelected) {
-      setSelectedIds((prev) => prev.filter((id) => !pageIds.includes(id)));
+    if (isAllSelected || isGlobalSelected) {
+      setSelectedIds([]);
+      setIsGlobalSelected(false);
     } else {
-      setSelectedIds((prev) => [...new Set([...prev, ...pageIds])]);
+      setSelectedIds(pageIds);
     }
   };
 
+  // বর্তমান পেজের সব সিলেক্টেড কি না তা চেক করা (ব্যানারের জন্য)
+  const isAllPageSelected = organizations.length > 0 &&
+    organizations.every((o) => selectedIds.includes(o.id));
+
   // ✅ Persist state on change
   useEffect(() => {
-    updateMailSubmission({ 
-      selectedIds, 
-      filters, 
-      orgSearch, 
-      page: currentPage 
+    updateMailSubmission({
+      selectedIds,
+      filters,
+      orgSearch,
+      page: currentPage,
+      pageSize
     });
-  }, [selectedIds, filters, orgSearch, currentPage, updateMailSubmission]);
+  }, [selectedIds, filters, orgSearch, currentPage, pageSize, updateMailSubmission]);
 
   /* ================= TABLE ================= */
   const columns = [
@@ -163,13 +206,13 @@ export default function MailSubmission() {
         <input
           type="checkbox"
           className="w-4 h-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary/20 cursor-pointer"
-          checked={selectedIds.includes(row.id)}
+          checked={isGlobalSelected || selectedIds.includes(row.id)}
           onChange={() => toggleSelect(row.id)}
         />
       ),
     },
-    { 
-      header: "Organization & Local Authority", 
+    {
+      header: "Organization & Local Authority",
       accessor: "name",
       render: (val, row) => (
         <div className="flex flex-col gap-1 min-w-[200px]">
@@ -181,9 +224,9 @@ export default function MailSubmission() {
         </div>
       )
     },
-    
-    { 
-      header: "Contact Person & Job Title", 
+
+    {
+      header: "Contact Person & Job Title",
       accessor: "contact_person",
       render: (val, row) => (
         <div className="flex flex-col gap-1 min-w-[180px]">
@@ -198,8 +241,8 @@ export default function MailSubmission() {
         </div>
       )
     },
-    { 
-      header: "Email & Location", 
+    {
+      header: "Email & Location",
       accessor: "email",
       render: (val, row) => (
         <div className="flex flex-col gap-1 min-w-[220px]">
@@ -214,8 +257,8 @@ export default function MailSubmission() {
         </div>
       )
     },
-    { 
-      header: "Phase", 
+    {
+      header: "Phase",
       accessor: "phase",
       render: (val) => (
         <span className="px-2 py-1 bg-blue-50 text-brand-primary rounded text-[12px] font-bold uppercase border border-blue-100">
@@ -375,52 +418,133 @@ export default function MailSubmission() {
       {/* Table Section */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
         <div className="p-5 sm:p-7 space-y-5">
-          {/* SELECT ALL */}
-          <label className="flex items-center gap-3 text-sm font-bold text-brand-primary border border-blue-100 px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-50 transition w-max">
-            <input type="checkbox" onChange={toggleSelectAll} />
-            Select All
-          </label>
+          {/* SELECT ALL & SELECTION STATUS */}
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-4">
+              <label className="flex items-center gap-3 text-sm font-bold text-brand-primary border border-blue-100 px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-50 transition w-max">
+                <input
+                  type="checkbox"
+                  checked={isGlobalSelected || (organizations.length > 0 && organizations.every(o => selectedIds.includes(o.id)))}
+                  onChange={toggleSelectAll}
+                />
+                {isGlobalSelected ? "Deselect All" : "Select All Filtered"}
+              </label>
+
+              {/* Selection Summary */}
+              {(selectedIds.length > 0 || isGlobalSelected) && (
+                <div className="text-sm font-medium text-gray-500">
+                  <span className="text-brand-primary font-bold">
+                    {isGlobalSelected ? totalEntries : selectedIds.length}
+                  </span> items selected
+                </div>
+              )}
+            </div>
+
+            {/* Global Selection Banner */}
+            {isAllPageSelected && totalEntries > organizations.length && !isGlobalSelected && (
+              <div className="bg-blue-50 border border-blue-100 p-3 rounded-xl flex items-center justify-center gap-2 text-sm animate-in fade-in slide-in-from-top-1">
+                <span className="text-gray-600">All {organizations.length} items on this page are selected.</span>
+                <button
+                  onClick={() => setIsGlobalSelected(true)}
+                  className="text-brand-primary font-bold hover:underline bg-blue-100/50 px-2 py-1 rounded-md"
+                >
+                  Select all {totalEntries} results in database
+                </button>
+              </div>
+            )}
+
+            {isGlobalSelected && (
+              <div className="bg-brand-primary/10 border border-brand-primary/20 p-3 rounded-xl flex items-center justify-center gap-2 text-sm">
+                <span className="text-brand-primary font-bold italic">✨ All matching {totalEntries} results are selected.</span>
+                <button
+                  onClick={() => { setIsGlobalSelected(false); setSelectedIds([]); }}
+                  className="text-red-600 font-bold hover:underline ml-2"
+                >
+                  Clear Selection
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* TABLE */}
           <div className="max-h-[90vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent pb-6">
-            {loading ? (
+            {loading && organizations.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mb-4"></div>
                 <h3 className="text-xl font-bold tracking-tight text-brand-primary">Loading Contacts...</h3>
                 <p className="text-gray-500 text-sm mt-2">Please wait while we fetch the data.</p>
               </div>
             ) : (
-              <Table columns={columns} data={filteredOrganizations} />
+              <Table
+                columns={columns}
+                data={filteredOrganizations}
+              />
             )}
           </div>
 
-          {/* PAGINATION */}
-          {totalPages > 1 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          )}
+          {/* PAGINATION & PAGE SIZE */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-2">
+            <div className="flex items-center gap-2 text-sm text-gray-600 bg-white border border-gray-100 px-4 py-2 rounded-xl shadow-sm">
+              <label htmlFor="pageSize" className="font-bold whitespace-nowrap">Rows per page:</label>
+              <select
+                id="pageSize"
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="bg-transparent focus:outline-none focus:ring-0 cursor-pointer text-brand-primary font-bold"
+              >
+                {[100, 200, 500, 1000].map(size => (
+                  <option key={size} value={size}>{size}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex-1 w-full flex justify-center md:justify-end">
+              {totalPages > 1 && (
+                <div className="[&>div]:mt-0">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* ACTION BUTTON */}
           <div className="flex justify-center pt-2">
             <button
-              disabled={selectedIds.length === 0}
+              disabled={selectedIds.length === 0 && !isGlobalSelected}
               onClick={() =>
                 navigate("/ai/mail-submission/compose", {
-                  state: { contactIds: selectedIds, candidate },
+                  state: {
+                    contactIds: selectedIds,
+                    isGlobalSelected,
+                    totalSelected: isGlobalSelected ? totalEntries : selectedIds.length,
+                    filters: isGlobalSelected ? {
+                      search: debouncedSearch,
+                      town: filters.city,
+                      job_title: filters.job,
+                      phase: filters.phase,
+                      radius_km: filters.radius
+                    } : null,
+                    candidate
+                  },
                 })
               }
               className={`w-full lg:w-auto px-10 py-3.5 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-300
-              ${
-                selectedIds.length
+              ${(selectedIds.length || isGlobalSelected)
                   ? "bg-gradient-to-r from-brand-primary to-brand-accent text-white hover:scale-[1.02] hover:shadow-lg shadow-md"
                   : "bg-gray-200 text-gray-400 cursor-not-allowed"
-              }`}
+                }`}
             >
               <FiSend size={18} />
-              <span>Proceed to Email Submission Configuration →</span>
+              <span>
+                Proceed with {isGlobalSelected ? totalEntries : selectedIds.length} Contacts →
+              </span>
             </button>
           </div>
         </div>

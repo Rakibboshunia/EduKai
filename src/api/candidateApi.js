@@ -57,10 +57,10 @@ export const deleteCandidate = async (id) => {
 };
 
 /* ================= NEARBY CONTACTS ================= */
-export const getNearbyContacts = async (candidateId, params = {}) => {
+export const getNearbyContacts = async (candidateId, params = {}, signal) => {
   const res = await axiosInstance.get(
     `/api/candidates/${candidateId}/nearby-contacts/`,
-    { params }
+    { params, signal }
   );
 
   return res.data;
