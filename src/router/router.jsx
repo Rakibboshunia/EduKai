@@ -1,3 +1,4 @@
+
 import { createBrowserRouter } from "react-router-dom";
 
 import DashboardLayout from "../layout/DashboardLayout";
@@ -73,6 +74,7 @@ const router = createBrowserRouter([
     ],
   },
 
+  
   /* ================= 404 ================= */
   {
     path: "*",
