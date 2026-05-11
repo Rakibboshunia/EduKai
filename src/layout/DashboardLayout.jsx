@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar";
@@ -17,7 +18,6 @@ export default function DashboardLayout() {
       <div className="flex flex-1 flex-col overflow-hidden">
 
         <Header onMenuClick={() => setIsSidebarOpen(true)} />
-
 
         <main className="flex-1 overflow-y-auto bg-bg-dashboard p-4 md:p-6 text-slate-900 relative overflow-auto hide-scrollbar">
           <Outlet />
